@@ -2,9 +2,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { notesService } from "@/services/notesService";
 import { Note } from "@/types/notes";
+import { ScrapingForm } from "@/components/ScrapingForm";
 
 const Index = () => {
   const [title, setTitle] = useState("");
@@ -34,27 +35,38 @@ const Index = () => {
 
   return (
     <div className="min-h-screen p-8 bg-gray-50">
-      <div className="max-w-2xl mx-auto space-y-8">
+      <div className="max-w-4xl mx-auto space-y-8">
         <h1 className="text-3xl font-bold text-center">Obsidian Notes API</h1>
         
-        <form onSubmit={handleCreateNote} className="space-y-4">
-          <Input
-            placeholder="Note title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-          <Textarea
-            placeholder="Note content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            className="min-h-[200px]"
-          />
-          <Button type="submit" className="w-full">
-            Create Note
-          </Button>
-        </form>
+        <div className="grid gap-8 md:grid-cols-2">
+          <div>
+            <h2 className="text-xl font-semibold mb-4">Create Note</h2>
+            <form onSubmit={handleCreateNote} className="space-y-4">
+              <Input
+                placeholder="Note title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+              <Textarea
+                placeholder="Note content"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                className="min-h-[200px]"
+              />
+              <Button type="submit" className="w-full">
+                Create Note
+              </Button>
+            </form>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-semibold mb-4">Web Scraping</h2>
+            <ScrapingForm />
+          </div>
+        </div>
 
         <div className="space-y-4">
+          <h2 className="text-xl font-semibold">Recent Notes</h2>
           {notes.map((note) => (
             <div key={note.id} className="p-4 bg-white rounded-lg shadow">
               <h2 className="text-xl font-semibold">{note.title}</h2>
