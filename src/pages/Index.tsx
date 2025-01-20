@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,6 +12,24 @@ const Index = () => {
   const [content, setContent] = useState("");
   const [notes, setNotes] = useState<Note[]>([]);
   const { toast } = useToast();
+
+  useEffect(() => {
+    loadNotes();
+  }, []);
+
+  const loadNotes = async () => {
+    try {
+      const fetchedNotes = await notesService.getNotes();
+      setNotes(fetchedNotes);
+    } catch (error) {
+      console.error('Error loading notes:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load notes",
+        variant: "destructive",
+      });
+    }
+  };
 
   const handleCreateNote = async (e: React.FormEvent) => {
     e.preventDefault();

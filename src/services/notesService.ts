@@ -1,24 +1,20 @@
 import { createClient } from '@supabase/supabase-js';
+import { Note } from '@/types/notes';
+import { ScrapingTemplate, ScrapeOptions, ScrapeResult } from '@/types/scraping';
 
 const supabase = createClient(
   process.env.SUPABASE_URL || '',
   process.env.SUPABASE_ANON_KEY || ''
 );
 
-interface ScrapeOptions {
-  urls: string[]
-  extraction_strategy?: "CosineStrategy" | "LLMExtractionStrategy"
-  semantic_filter?: string
-  instruction?: string
-  screenshot?: boolean
-  css_selector?: string
-}
+const CRAWL4AI_URL = "https://crawl4ai.com/crawl";
 
 export const notesService = {
-  async createNote(title: string, content: string, tags: string[] = []) {
+  async createNote(title: string, content: string, tags: string[] = []): Promise<Note> {
     const { data, error } = await supabase
       .from('notes')
       .insert([{ title, content, tags }])
+      .select()
       .single();
 
     if (error) {
@@ -28,7 +24,7 @@ export const notesService = {
     return data;
   },
 
-  async getNotes() {
+  async getNotes(): Promise<Note[]> {
     const { data, error } = await supabase
       .from('notes')
       .select('*');
@@ -40,69 +36,46 @@ export const notesService = {
     return data;
   },
 
-  async updateNote(id: string, updates: Partial<{ title: string; content: string; tags: string[] }>) {
-    const { data, error } = await supabase
-      .from('notes')
-      .update(updates)
-      .eq('id', id)
-      .single();
-
-    if (error) {
-      throw error;
-    }
-
-    return data;
-  },
-
-  async deleteNote(id: string) {
-    const { data, error } = await supabase
-      .from('notes')
-      .delete()
-      .eq('id', id)
-      .single();
-
-    if (error) {
-      throw error;
-    }
-
-    return data;
-  },
-
-  async scrapeContent(options: ScrapeOptions) {
-    console.log('Initiating scrape request with options:', options);
+  async scrapeContent(url: string, options: ScrapeOptions): Promise<ScrapeResult> {
+    console.log('Initiating scrape request:', { url, options });
     
-    const { data: { url: functionUrl }, error: functionError } = await supabase
-      .functions.invoke('scrape', {
-        body: {
-          urls: options.urls,
-          extraction_strategy: options.extraction_strategy || "CosineStrategy",
-          extraction_strategy_args: {
-            semantic_filter: options.semantic_filter,
-            instruction: options.instruction,
-          },
-          screenshot: options.screenshot,
-          css_selector: options.css_selector,
+    const response = await fetch(CRAWL4AI_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        urls: [url],
+        extraction_strategy: "CosineStrategy",
+        extraction_strategy_args: {
+          semantic_filter: options.semantic_filter,
+          instruction: options.instruction,
         },
-      });
-
-    if (functionError) {
-      console.error('Error calling scrape function:', functionError);
-      throw functionError;
-    }
-
-    console.log('Scrape completed successfully:', data);
-    return data;
-  },
-
-  async createNoteFromScrape(url: string, options: Partial<ScrapeOptions> = {}) {
-    const scrapeResult = await this.scrapeContent({
-      urls: [url],
-      ...options,
+        screenshot: options.screenshot,
+      }),
     });
 
+    if (!response.ok) {
+      throw new Error('Failed to scrape content');
+    }
+
+    const result = await response.json();
+    console.log('Scrape completed:', result);
+
+    return {
+      markdown: result.results[0].markdown,
+      extracted_content: result.results[0].extracted_content,
+      metadata: result.results[0].metadata,
+      screenshot: result.results[0].screenshot,
+    };
+  },
+
+  async createNoteFromScrape(url: string, options: ScrapeOptions): Promise<Note> {
+    const scrapeResult = await this.scrapeContent(url, options);
+    
     const note = await this.createNote(
-      scrapeResult.metadata?.title || url,
-      scrapeResult.markdown || scrapeResult.extracted_content,
+      scrapeResult.metadata.title || url,
+      scrapeResult.markdown,
       ['scraped']
     );
 

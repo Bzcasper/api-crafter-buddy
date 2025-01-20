@@ -5,11 +5,40 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { notesService } from "@/services/notesService";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ScrapingTemplate } from "@/types/scraping";
+
+const SCRAPING_TEMPLATES: ScrapingTemplate[] = [
+  {
+    id: "blog",
+    name: "Blog Post",
+    semantic_filter: "blog content, article",
+    instruction: "Extract main article content and format as a blog post",
+    media_folder: "blog-images",
+    output_format: "markdown"
+  },
+  {
+    id: "research",
+    name: "Research Notes",
+    semantic_filter: "academic, research, technical",
+    instruction: "Extract key findings, methodology, and conclusions",
+    media_folder: "research-materials",
+    output_format: "markdown"
+  },
+  {
+    id: "product",
+    name: "Product Review",
+    semantic_filter: "product features, specifications, reviews",
+    instruction: "Extract product details, features, and user reviews",
+    media_folder: "product-images",
+    output_format: "markdown"
+  }
+];
 
 export const ScrapingForm = () => {
   const [url, setUrl] = useState("");
-  const [semanticFilter, setSemanticFilter] = useState("");
-  const [instruction, setInstruction] = useState("");
+  const [selectedTemplate, setSelectedTemplate] = useState<string>("");
+  const [customInstruction, setCustomInstruction] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -18,11 +47,18 @@ export const ScrapingForm = () => {
     setIsLoading(true);
 
     try {
-      console.log('Starting scrape for URL:', url);
+      console.log('Starting scrape with template:', selectedTemplate);
+      const template = SCRAPING_TEMPLATES.find(t => t.id === selectedTemplate);
+      
+      if (!template) {
+        throw new Error("Please select a template");
+      }
+
       const note = await notesService.createNoteFromScrape(url, {
-        semantic_filter: semanticFilter || undefined,
-        instruction: instruction || undefined,
+        semantic_filter: template.semantic_filter,
+        instruction: customInstruction || template.instruction,
         screenshot: true,
+        media_folder: template.media_folder,
       });
 
       toast({
@@ -31,13 +67,12 @@ export const ScrapingForm = () => {
       });
 
       setUrl("");
-      setSemanticFilter("");
-      setInstruction("");
+      setCustomInstruction("");
     } catch (error) {
       console.error('Scraping error:', error);
       toast({
         title: "Error",
-        description: "Failed to scrape content: " + error.message,
+        description: "Failed to scrape content: " + (error instanceof Error ? error.message : "Unknown error"),
         variant: "destructive",
       });
     } finally {
@@ -64,20 +99,27 @@ export const ScrapingForm = () => {
           </div>
           
           <div className="space-y-2">
-            <label className="text-sm font-medium">Semantic Filter (Optional)</label>
-            <Input
-              value={semanticFilter}
-              onChange={(e) => setSemanticFilter(e.target.value)}
-              placeholder="e.g., financial news, technology updates"
-            />
+            <label className="text-sm font-medium">Scraping Template</label>
+            <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a template" />
+              </SelectTrigger>
+              <SelectContent>
+                {SCRAPING_TEMPLATES.map((template) => (
+                  <SelectItem key={template.id} value={template.id}>
+                    {template.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">
             <label className="text-sm font-medium">Custom Instructions (Optional)</label>
             <Textarea
-              value={instruction}
-              onChange={(e) => setInstruction(e.target.value)}
-              placeholder="e.g., Extract main article content and translate to French"
+              value={customInstruction}
+              onChange={(e) => setCustomInstruction(e.target.value)}
+              placeholder="Override template instructions with custom ones"
             />
           </div>
 
