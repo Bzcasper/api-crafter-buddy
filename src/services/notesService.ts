@@ -3,8 +3,8 @@ import { Note } from '@/types/notes';
 import { ScrapingTemplate, ScrapeOptions, ScrapeResult } from '@/types/scraping';
 
 const supabase = createClient(
-  process.env.SUPABASE_URL || '',
-  process.env.SUPABASE_ANON_KEY || ''
+  import.meta.env.VITE_SUPABASE_URL || '',
+  import.meta.env.VITE_SUPABASE_ANON_KEY || ''
 );
 
 const CRAWL4AI_URL = "https://crawl4ai.com/crawl";
