@@ -50,6 +50,7 @@ export const notesService = {
         extraction_strategy_args: {
           semantic_filter: options.semantic_filter,
           instruction: options.instruction,
+          search_query: options.search_query
         },
         screenshot: options.screenshot,
       }),
@@ -73,10 +74,11 @@ export const notesService = {
   async createNoteFromScrape(url: string, options: ScrapeOptions): Promise<Note> {
     const scrapeResult = await this.scrapeContent(url, options);
     
+    // Create a note with the scraped content
     const note = await this.createNote(
       scrapeResult.metadata.title || url,
       scrapeResult.markdown,
-      ['scraped']
+      ['scraped', options.media_folder?.replace('-', '_')]
     );
 
     return note;

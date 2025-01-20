@@ -5,6 +5,7 @@ export interface ScrapingTemplate {
   instruction?: string;
   media_folder?: string;
   output_format: 'markdown' | 'html';
+  search_query?: string;
 }
 
 export interface ScrapeOptions {
@@ -12,6 +13,7 @@ export interface ScrapeOptions {
   instruction?: string;
   screenshot?: boolean;
   media_folder?: string;
+  search_query?: string;
 }
 
 export interface ScrapeResult {

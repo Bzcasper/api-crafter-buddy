@@ -13,7 +13,7 @@ const SCRAPING_TEMPLATES: ScrapingTemplate[] = [
     id: "blog",
     name: "Blog Post",
     semantic_filter: "blog content, article",
-    instruction: "Extract main article content and format as a blog post",
+    instruction: "Extract main article content and format as a blog post with proper headings and sections",
     media_folder: "blog-images",
     output_format: "markdown"
   },
@@ -21,7 +21,7 @@ const SCRAPING_TEMPLATES: ScrapingTemplate[] = [
     id: "research",
     name: "Research Notes",
     semantic_filter: "academic, research, technical",
-    instruction: "Extract key findings, methodology, and conclusions",
+    instruction: "Extract key findings, methodology, and conclusions. Format with proper citations and references",
     media_folder: "research-materials",
     output_format: "markdown"
   },
@@ -29,8 +29,16 @@ const SCRAPING_TEMPLATES: ScrapingTemplate[] = [
     id: "product",
     name: "Product Review",
     semantic_filter: "product features, specifications, reviews",
-    instruction: "Extract product details, features, and user reviews",
+    instruction: "Extract product details, features, and user reviews. Format as a comprehensive review",
     media_folder: "product-images",
+    output_format: "markdown"
+  },
+  {
+    id: "affiliate",
+    name: "Affiliate Content",
+    semantic_filter: "product comparisons, buying guides",
+    instruction: "Extract product comparisons and buying recommendations. Format for affiliate marketing",
+    media_folder: "affiliate-content",
     output_format: "markdown"
   }
 ];
@@ -38,6 +46,7 @@ const SCRAPING_TEMPLATES: ScrapingTemplate[] = [
 export const ScrapingForm = () => {
   const [url, setUrl] = useState("");
   const [selectedTemplate, setSelectedTemplate] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [customInstruction, setCustomInstruction] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -59,6 +68,7 @@ export const ScrapingForm = () => {
         instruction: customInstruction || template.instruction,
         screenshot: true,
         media_folder: template.media_folder,
+        search_query: searchQuery
       });
 
       toast({
@@ -67,6 +77,7 @@ export const ScrapingForm = () => {
       });
 
       setUrl("");
+      setSearchQuery("");
       setCustomInstruction("");
     } catch (error) {
       console.error('Scraping error:', error);
@@ -80,10 +91,12 @@ export const ScrapingForm = () => {
     }
   };
 
+  const selectedTemplateData = SCRAPING_TEMPLATES.find(t => t.id === selectedTemplate);
+
   return (
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle>Web Scraping</CardTitle>
+        <CardTitle>Content Scraping Dashboard</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleScrape} className="space-y-4">
@@ -99,7 +112,17 @@ export const ScrapingForm = () => {
           </div>
           
           <div className="space-y-2">
-            <label className="text-sm font-medium">Scraping Template</label>
+            <label className="text-sm font-medium">Search Query (Optional)</label>
+            <Input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Enter search terms to focus the scraping"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Content Template</label>
             <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
               <SelectTrigger>
                 <SelectValue placeholder="Select a template" />
@@ -112,6 +135,11 @@ export const ScrapingForm = () => {
                 ))}
               </SelectContent>
             </Select>
+            {selectedTemplateData && (
+              <p className="text-sm text-muted-foreground mt-1">
+                {selectedTemplateData.instruction}
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -124,7 +152,7 @@ export const ScrapingForm = () => {
           </div>
 
           <Button type="submit" disabled={isLoading} className="w-full">
-            {isLoading ? "Scraping..." : "Scrape Content"}
+            {isLoading ? "Scraping..." : "Generate Content"}
           </Button>
         </form>
       </CardContent>
