@@ -1,23 +1,13 @@
 import { createClient } from '@supabase/supabase-js';
 import { Note } from '@/types/notes';
 import { ScrapingTemplate, ScrapeOptions, ScrapeResult } from '@/types/scraping';
-
-console.log('Supabase URL:', import.meta.env.VITE_SUPABASE_URL);
-console.log('Supabase Key exists:', !!import.meta.env.VITE_SUPABASE_ANON_KEY);
-
-if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
-  throw new Error('Supabase credentials are missing. Please connect to Supabase in the project settings.');
-}
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-);
+import { supabase } from '@/integrations/supabase/client';
 
 const CRAWL4AI_URL = "https://crawl4ai.com/crawl";
 
 export const notesService = {
   async createNote(title: string, content: string, tags: string[] = []): Promise<Note> {
+    console.log('Creating note:', { title, content, tags });
     const { data, error } = await supabase
       .from('notes')
       .insert([{ title, content, tags }])
@@ -25,6 +15,7 @@ export const notesService = {
       .single();
 
     if (error) {
+      console.error('Error creating note:', error);
       throw error;
     }
 
@@ -32,11 +23,14 @@ export const notesService = {
   },
 
   async getNotes(): Promise<Note[]> {
+    console.log('Fetching notes');
     const { data, error } = await supabase
       .from('notes')
-      .select('*');
+      .select('*')
+      .order('created_at', { ascending: false });
 
     if (error) {
+      console.error('Error fetching notes:', error);
       throw error;
     }
 
@@ -64,7 +58,9 @@ export const notesService = {
     });
 
     if (!response.ok) {
-      throw new Error('Failed to scrape content');
+      const error = await response.text();
+      console.error('Scraping failed:', error);
+      throw new Error('Failed to scrape content: ' + error);
     }
 
     const result = await response.json();
@@ -79,6 +75,7 @@ export const notesService = {
   },
 
   async createNoteFromScrape(url: string, options: ScrapeOptions): Promise<Note> {
+    console.log('Creating note from scrape:', { url, options });
     const scrapeResult = await this.scrapeContent(url, options);
     
     // Create a note with the scraped content

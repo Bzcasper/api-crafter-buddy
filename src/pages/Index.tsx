@@ -54,7 +54,7 @@ const Index = () => {
   return (
     <div className="min-h-screen p-8 bg-gray-50">
       <div className="max-w-4xl mx-auto space-y-8">
-        <h1 className="text-3xl font-bold text-center">Obsidian Notes API</h1>
+        <h1 className="text-3xl font-bold text-center">Content Scraping & Notes</h1>
         
         <div className="grid gap-8 md:grid-cols-2">
           <div>
@@ -89,6 +89,18 @@ const Index = () => {
             <div key={note.id} className="p-4 bg-white rounded-lg shadow">
               <h2 className="text-xl font-semibold">{note.title}</h2>
               <p className="mt-2 text-gray-600">{note.content}</p>
+              {note.tags && note.tags.length > 0 && (
+                <div className="mt-2 flex gap-2">
+                  {note.tags.map((tag, index) => (
+                    <span key={index} className="px-2 py-1 bg-gray-100 rounded-full text-sm text-gray-600">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+              <p className="mt-2 text-xs text-gray-400">
+                Created: {new Date(note.created_at).toLocaleString()}
+              </p>
             </div>
           ))}
         </div>
