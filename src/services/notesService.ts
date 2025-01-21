@@ -2,9 +2,16 @@ import { createClient } from '@supabase/supabase-js';
 import { Note } from '@/types/notes';
 import { ScrapingTemplate, ScrapeOptions, ScrapeResult } from '@/types/scraping';
 
+console.log('Supabase URL:', import.meta.env.VITE_SUPABASE_URL);
+console.log('Supabase Key exists:', !!import.meta.env.VITE_SUPABASE_ANON_KEY);
+
+if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+  throw new Error('Supabase credentials are missing. Please connect to Supabase in the project settings.');
+}
+
 const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL || '',
-  import.meta.env.VITE_SUPABASE_ANON_KEY || ''
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
 );
 
 const CRAWL4AI_URL = "https://crawl4ai.com/crawl";
