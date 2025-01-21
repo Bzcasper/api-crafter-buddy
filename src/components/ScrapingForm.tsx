@@ -6,6 +6,8 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { ScrapingTemplateSelector } from "./scraping/ScrapingTemplateSelector";
 import { ScrapingFormInputs } from "./scraping/ScrapingFormInputs";
 import { SCRAPING_TEMPLATES } from "./scraping/constants";
+import { Progress } from "@/components/ui/progress";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 export const ScrapingForm = () => {
   const [url, setUrl] = useState("");
@@ -13,11 +15,15 @@ export const ScrapingForm = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [customInstruction, setCustomInstruction] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleScrape = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError(null);
+    setProgress(0);
 
     try {
       console.log('Starting scrape with template:', selectedTemplate);
@@ -27,6 +33,8 @@ export const ScrapingForm = () => {
         throw new Error("Please select a template");
       }
 
+      setProgress(25);
+
       const note = await notesService.createNoteFromScrape(url, {
         semantic_filter: template.semantic_filter,
         instruction: customInstruction || template.instruction,
@@ -34,6 +42,8 @@ export const ScrapingForm = () => {
         media_folder: template.media_folder,
         search_query: searchQuery
       });
+
+      setProgress(100);
 
       toast({
         title: "Content scraped successfully",
@@ -45,6 +55,7 @@ export const ScrapingForm = () => {
       setCustomInstruction("");
     } catch (error) {
       console.error('Scraping error:', error);
+      setError(error instanceof Error ? error.message : "Unknown error");
       toast({
         title: "Error",
         description: "Failed to scrape content: " + (error instanceof Error ? error.message : "Unknown error"),
@@ -76,6 +87,22 @@ export const ScrapingForm = () => {
             selectedTemplate={selectedTemplate}
             onTemplateChange={setSelectedTemplate}
           />
+
+          {isLoading && (
+            <div className="space-y-2">
+              <Progress value={progress} className="w-full" />
+              <p className="text-sm text-center text-muted-foreground">
+                {progress < 100 ? "Scraping content..." : "Processing results..."}
+              </p>
+            </div>
+          )}
+
+          {error && (
+            <Alert variant="destructive">
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
 
           <Button type="submit" disabled={isLoading} className="w-full">
             {isLoading ? "Scraping..." : "Generate Content"}

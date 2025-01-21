@@ -3,8 +3,6 @@ import { Note } from '@/types/notes';
 import { ScrapingTemplate, ScrapeOptions, ScrapeResult } from '@/types/scraping';
 import { supabase } from '@/integrations/supabase/client';
 
-const CRAWL4AI_URL = "https://crawl4ai.com/crawl";
-
 export const notesService = {
   async createNote(title: string, content: string, tags: string[] = []): Promise<Note> {
     console.log('Creating note:', { title, content, tags });
@@ -40,51 +38,79 @@ export const notesService = {
   async scrapeContent(url: string, options: ScrapeOptions): Promise<ScrapeResult> {
     console.log('Initiating scrape request:', { url, options });
     
-    const response = await fetch(CRAWL4AI_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        urls: [url],
-        extraction_strategy: "CosineStrategy",
-        extraction_strategy_args: {
-          semantic_filter: options.semantic_filter,
-          instruction: options.instruction,
-          search_query: options.search_query
-        },
-        screenshot: options.screenshot,
-      }),
+    const { data, error } = await supabase.functions.invoke('scrape', {
+      body: {
+        url,
+        searchQuery: options.search_query,
+        customInstruction: options.instruction,
+        semantic_filter: options.semantic_filter
+      }
     });
 
-    if (!response.ok) {
-      const error = await response.text();
+    if (error) {
       console.error('Scraping failed:', error);
-      throw new Error('Failed to scrape content: ' + error);
+      throw new Error('Failed to scrape content: ' + error.message);
     }
 
-    const result = await response.json();
-    console.log('Scrape completed:', result);
-
     return {
-      markdown: result.results[0].markdown,
-      extracted_content: result.results[0].extracted_content,
-      metadata: result.results[0].metadata,
-      screenshot: result.results[0].screenshot,
+      markdown: data.content,
+      extracted_content: data.content,
+      metadata: {
+        title: data.title,
+        images: [data.screenshot]
+      },
+      screenshot: data.screenshot
     };
   },
 
   async createNoteFromScrape(url: string, options: ScrapeOptions): Promise<Note> {
     console.log('Creating note from scrape:', { url, options });
-    const scrapeResult = await this.scrapeContent(url, options);
     
-    // Create a note with the scraped content
-    const note = await this.createNote(
-      scrapeResult.metadata.title || url,
-      scrapeResult.markdown,
-      ['scraped', options.media_folder?.replace('-', '_')]
-    );
+    // Create note with pending status
+    const { data: note, error: createError } = await supabase
+      .from('notes')
+      .insert([{
+        title: 'Scraping in progress...',
+        content: 'Content is being scraped...',
+        source_url: url,
+        status: 'pending'
+      }])
+      .select()
+      .single();
 
-    return note;
+    if (createError) throw createError;
+
+    try {
+      const scrapeResult = await this.scrapeContent(url, options);
+      
+      // Update note with scraped content
+      const { data: updatedNote, error: updateError } = await supabase
+        .from('notes')
+        .update({
+          title: scrapeResult.metadata.title || url,
+          content: scrapeResult.markdown,
+          tags: ['scraped', options.media_folder?.replace('-', '_')],
+          status: 'completed'
+        })
+        .eq('id', note.id)
+        .select()
+        .single();
+
+      if (updateError) throw updateError;
+      return updatedNote;
+    } catch (error) {
+      // Update note with error status
+      const { data: errorNote } = await supabase
+        .from('notes')
+        .update({
+          status: 'error',
+          error_message: error.message
+        })
+        .eq('id', note.id)
+        .select()
+        .single();
+
+      throw error;
+    }
   }
 };

@@ -13,7 +13,10 @@ export type Database = {
         Row: {
           content: string
           created_at: string
+          error_message: string | null
           id: string
+          source_url: string | null
+          status: string | null
           tags: string[] | null
           title: string
           updated_at: string
@@ -21,7 +24,10 @@ export type Database = {
         Insert: {
           content: string
           created_at?: string
+          error_message?: string | null
           id?: string
+          source_url?: string | null
+          status?: string | null
           tags?: string[] | null
           title: string
           updated_at?: string
@@ -29,7 +35,10 @@ export type Database = {
         Update: {
           content?: string
           created_at?: string
+          error_message?: string | null
           id?: string
+          source_url?: string | null
+          status?: string | null
           tags?: string[] | null
           title?: string
           updated_at?: string
