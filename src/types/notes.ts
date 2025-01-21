@@ -5,4 +5,7 @@ export interface Note {
   tags?: string[];
   created_at: string;
   updated_at: string;
+  source_url?: string;
+  status?: string;
+  error_message?: string;
 }
