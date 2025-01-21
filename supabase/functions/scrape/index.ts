@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { DOMParser } from "https://deno.land/x/deno_dom@v0.1.38/deno-dom-wasm.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -23,27 +24,29 @@ serve(async (req) => {
 
     const html = await response.text();
     
-    // Use DOMParser to parse the HTML content
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, 'text/html');
+    // Parse HTML using deno-dom
+    const document = new DOMParser().parseFromString(html, "text/html");
+    if (!document) {
+      throw new Error("Failed to parse HTML content");
+    }
 
     // Extract content based on semantic filter or custom instruction
     let content = '';
-    let title = doc.title || url;
+    let title = document.querySelector('title')?.textContent || url;
 
     if (searchQuery) {
       // Find elements containing the search query
-      const textNodes = Array.from(doc.querySelectorAll('p, h1, h2, h3, h4, h5, h6'))
-        .filter(el => el.textContent?.toLowerCase().includes(searchQuery.toLowerCase()));
+      const elements = document.querySelectorAll('p, h1, h2, h3, h4, h5, h6');
+      const matchingContent = Array.from(elements)
+        .filter(el => el.textContent?.toLowerCase().includes(searchQuery.toLowerCase()))
+        .map(el => el.textContent)
+        .filter(Boolean);
       
-      content = textNodes
-        .map(node => node.textContent)
-        .filter(text => text)
-        .join('\n\n');
+      content = matchingContent.join('\n\n');
     } else {
       // Extract main content
-      const article = doc.querySelector('article');
-      const main = doc.querySelector('main');
+      const article = document.querySelector('article');
+      const main = document.querySelector('main');
       
       if (article) {
         content = article.textContent || '';
@@ -51,7 +54,8 @@ serve(async (req) => {
         content = main.textContent || '';
       } else {
         // Fallback to body content
-        content = doc.body.textContent || '';
+        const body = document.querySelector('body');
+        content = body?.textContent || '';
       }
     }
 
