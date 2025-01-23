@@ -53,7 +53,7 @@ export class ProxyManager {
       this.proxyList = [];
       
       // Validate proxies in parallel with a limit
-      const validationPromises = proxies.map(proxy => this.validateProxy(proxy));
+      const validationPromises = proxies.slice(0, 10).map(proxy => this.validateProxy(proxy));
       const validatedProxies = await Promise.all(validationPromises);
       
       this.proxyList = validatedProxies.filter(proxy => proxy.isValid);
@@ -70,30 +70,27 @@ export class ProxyManager {
     try {
       console.log(`Validating proxy: ${proxy.ip}:${proxy.port}`);
       
-      const response = await fetch('https://yfthvbfdmlozdgdodtpe.supabase.co/functions/v1/validate-proxy', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      const { data, error } = await supabase.functions.invoke('validate-proxy', {
+        body: {
           proxy: {
             ...proxy,
             userAgent: this.getRandomUserAgent()
           }
-        })
+        }
       });
 
-      if (!response.ok) {
-        throw new Error('Validation request failed');
+      if (error) {
+        console.error('Proxy validation failed:', error);
+        proxy.isValid = false;
+        return proxy;
       }
 
-      const result = await response.json();
-      proxy.isValid = result.isValid;
+      proxy.isValid = data.isValid;
       proxy.lastChecked = new Date();
       
-      console.log(`Proxy ${proxy.ip}:${proxy.port} validation result:`, result.isValid);
+      console.log(`Proxy ${proxy.ip}:${proxy.port} validation result:`, data.isValid);
     } catch (error) {
-      console.log(`Proxy ${proxy.ip}:${proxy.port} validation failed:`, error);
+      console.error(`Proxy ${proxy.ip}:${proxy.port} validation failed:`, error);
       proxy.isValid = false;
     }
     return proxy;
