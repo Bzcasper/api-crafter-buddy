@@ -11,36 +11,48 @@ export type Database = {
     Tables: {
       notes: {
         Row: {
+          ai_processed_content: string | null
           content: string
           created_at: string
           error_message: string | null
           id: string
+          obsidian_path: string | null
           source_url: string | null
           status: string | null
           tags: string[] | null
+          template_used: string | null
           title: string
+          topic_classification: string | null
           updated_at: string
         }
         Insert: {
+          ai_processed_content?: string | null
           content: string
           created_at?: string
           error_message?: string | null
           id?: string
+          obsidian_path?: string | null
           source_url?: string | null
           status?: string | null
           tags?: string[] | null
+          template_used?: string | null
           title: string
+          topic_classification?: string | null
           updated_at?: string
         }
         Update: {
+          ai_processed_content?: string | null
           content?: string
           created_at?: string
           error_message?: string | null
           id?: string
+          obsidian_path?: string | null
           source_url?: string | null
           status?: string | null
           tags?: string[] | null
+          template_used?: string | null
           title?: string
+          topic_classification?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -65,6 +77,36 @@ export type Database = {
           email?: string
           id?: string
           obsidian_path?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      scraping_templates: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          template_content: string
+          topic_category: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          template_content: string
+          topic_category: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          template_content?: string
+          topic_category?: string
           updated_at?: string
         }
         Relationships: []

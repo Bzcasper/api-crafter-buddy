@@ -9,6 +9,7 @@ import { SCRAPING_TEMPLATES } from "./scraping/constants";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { ProxyManager } from "@/utils/proxyManager";
+import { Input } from "@/components/ui/input";
 
 export const ScrapingForm = () => {
   const [url, setUrl] = useState("");
@@ -18,6 +19,7 @@ export const ScrapingForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [obsidianPath, setObsidianPath] = useState("");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -59,7 +61,8 @@ export const ScrapingForm = () => {
         instruction: customInstruction || template.instruction,
         screenshot: true,
         media_folder: template.media_folder,
-        search_query: searchQuery
+        search_query: searchQuery,
+        obsidian_path: obsidianPath
       });
 
       setProgress(100);
@@ -106,6 +109,16 @@ export const ScrapingForm = () => {
             selectedTemplate={selectedTemplate}
             onTemplateChange={setSelectedTemplate}
           />
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Obsidian Path (Optional)</label>
+            <Input
+              type="text"
+              value={obsidianPath}
+              onChange={(e) => setObsidianPath(e.target.value)}
+              placeholder="Path in your Obsidian vault (e.g., Notes/Web/)"
+            />
+          </div>
 
           {isLoading && (
             <div className="space-y-2">

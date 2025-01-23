@@ -14,6 +14,7 @@ export interface ScrapeOptions {
   screenshot?: boolean;
   media_folder?: string;
   search_query?: string;
+  obsidian_path?: string;
 }
 
 export interface ScrapeResult {
@@ -24,4 +25,5 @@ export interface ScrapeResult {
     images?: string[];
   };
   screenshot?: string;
+  topic_classification?: string;
 }

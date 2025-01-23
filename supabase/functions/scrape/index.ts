@@ -8,6 +8,70 @@ const corsHeaders = {
   'Content-Type': 'application/json'
 };
 
+async function processWithAI(content: string, instruction: string) {
+  const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
+  if (!openaiApiKey) {
+    throw new Error('OpenAI API key not configured');
+  }
+
+  console.log('Processing content with AI');
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${openaiApiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'gpt-4o-mini',
+      messages: [
+        {
+          role: 'system',
+          content: 'You are an AI assistant that helps process and organize web content. Format the content according to the given template and instructions.'
+        },
+        {
+          role: 'user',
+          content: `Please process this content and organize it according to these instructions: ${instruction}\n\nContent: ${content}`
+        }
+      ],
+    }),
+  });
+
+  const result = await response.json();
+  return result.choices[0].message.content;
+}
+
+async function classifyContent(content: string) {
+  const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
+  if (!openaiApiKey) {
+    throw new Error('OpenAI API key not configured');
+  }
+
+  console.log('Classifying content topic');
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${openaiApiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'gpt-4o-mini',
+      messages: [
+        {
+          role: 'system',
+          content: 'You are an AI assistant that classifies content into categories. Available categories are: blog, research, review. Respond with just the category name.'
+        },
+        {
+          role: 'user',
+          content: `Please classify this content into one of the available categories:\n\n${content}`
+        }
+      ],
+    }),
+  });
+
+  const result = await response.json();
+  return result.choices[0].message.content.trim().toLowerCase();
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { 
@@ -25,7 +89,6 @@ serve(async (req) => {
       throw new Error('URL is required');
     }
 
-    // Initialize proxy and user agent
     const userAgents = [
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
       'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
@@ -36,7 +99,6 @@ serve(async (req) => {
     const randomUserAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
     console.log('Using User-Agent:', randomUserAgent);
 
-    // Fetch the webpage content with retry logic
     const maxRetries = 3;
     let attempt = 0;
     let response;
@@ -77,13 +139,11 @@ serve(async (req) => {
 
     console.log('Successfully fetched HTML content');
     
-    // Parse HTML using deno-dom
     const document = new DOMParser().parseFromString(html, "text/html");
     if (!document) {
       throw new Error("Failed to parse HTML content");
     }
 
-    // Extract content based on semantic filter or custom instruction
     let content = '';
     let title = document.querySelector('title')?.textContent || url;
 
@@ -111,17 +171,22 @@ serve(async (req) => {
       }
     }
 
-    // Clean up the content
     content = content.trim()
       .replace(/\s+/g, ' ')
       .replace(/\n\s*\n/g, '\n\n');
+
+    // Process content with AI
+    console.log('Processing content with AI');
+    const topicCategory = await classifyContent(content);
+    const processedContent = await processWithAI(content, customInstruction || 'Organize and format the content in a clear, structured way.');
 
     console.log('Scraping completed successfully');
 
     return new Response(
       JSON.stringify({
         title,
-        content,
+        content: processedContent,
+        topic_classification: topicCategory,
         metadata: {
           url,
           scrapedAt: new Date().toISOString(),

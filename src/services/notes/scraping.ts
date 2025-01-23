@@ -27,7 +27,8 @@ export const scraping = {
         title: data.title,
         images: [data.screenshot]
       },
-      screenshot: data.screenshot
+      screenshot: data.screenshot,
+      topic_classification: data.topic_classification
     };
   },
 
@@ -40,7 +41,8 @@ export const scraping = {
         title: 'Scraping in progress...',
         content: 'Content is being scraped...',
         source_url: url,
-        status: 'pending'
+        status: 'pending',
+        obsidian_path: options.obsidian_path
       }])
       .select()
       .single();
@@ -56,7 +58,10 @@ export const scraping = {
           title: scrapeResult.metadata.title || url,
           content: scrapeResult.markdown,
           tags: ['scraped', options.media_folder?.replace('-', '_')],
-          status: 'completed'
+          status: 'completed',
+          ai_processed_content: scrapeResult.markdown,
+          template_used: options.media_folder,
+          topic_classification: scrapeResult.topic_classification
         })
         .eq('id', note.id)
         .select()
