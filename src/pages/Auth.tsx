@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { Label } from "@/components/ui/label";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
@@ -18,24 +19,33 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      const { error } = type === 'login'
+      console.log(`Attempting to ${type} with email:`, email);
+      
+      const { data, error } = type === 'login'
         ? await supabase.auth.signInWithPassword({ email, password })
         : await supabase.auth.signUp({ email, password });
 
-      if (error) throw error;
+      console.log(`${type} response:`, { data, error });
+
+      if (error) {
+        console.error(`${type} error:`, error);
+        throw error;
+      }
 
       if (type === 'signup') {
         toast({
           title: "Success",
           description: "Account created successfully! Please check your email for verification.",
         });
-      } else {
+      } else if (data.session) {
+        console.log('Login successful, redirecting...');
         navigate('/');
       }
     } catch (error) {
+      console.error('Auth error:', error);
       toast({
         title: "Error",
-        description: error.message,
+        description: error.message || "An error occurred during authentication",
         variant: "destructive",
       });
     } finally {
@@ -51,19 +61,23 @@ const Auth = () => {
         </CardHeader>
         <CardContent>
           <form onSubmit={(e) => handleAuth(e, 'login')} className="space-y-4">
-            <div>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
               <Input
+                id="email"
                 type="email"
-                placeholder="Email"
+                placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
-            <div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
               <Input
+                id="password"
                 type="password"
-                placeholder="Password"
+                placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
