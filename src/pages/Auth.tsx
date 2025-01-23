@@ -22,19 +22,6 @@ const Auth = () => {
       console.log(`Attempting to ${type} with email:`, email);
       
       if (type === 'signup') {
-        // First check if user exists
-        const { data: { user: existingUser }, error: checkError } = await supabase.auth.admin.getUserByEmail(email);
-
-        if (existingUser) {
-          toast({
-            title: "Error",
-            description: "An account with this email already exists. Please log in instead.",
-            variant: "destructive",
-          });
-          setLoading(false);
-          return;
-        }
-
         // Attempt signup
         const { data: signUpData, error: signUpError } = await supabase.auth.signUp({ 
           email, 
@@ -49,6 +36,15 @@ const Auth = () => {
         console.log('Signup response:', { signUpData, signUpError });
 
         if (signUpError) {
+          if (signUpError.message.includes('User already registered')) {
+            toast({
+              title: "Error",
+              description: "An account with this email already exists. Please log in instead.",
+              variant: "destructive",
+            });
+            setLoading(false);
+            return;
+          }
           throw signUpError;
         }
 
