@@ -9,6 +9,66 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      image_metadata: {
+        Row: {
+          compression_quality: number | null
+          created_at: string
+          filename: string
+          height: number | null
+          id: string
+          metadata: Json | null
+          mime_type: string | null
+          note_id: string | null
+          original_url: string | null
+          size_bytes: number | null
+          storage_path: string
+          width: number | null
+        }
+        Insert: {
+          compression_quality?: number | null
+          created_at?: string
+          filename: string
+          height?: number | null
+          id?: string
+          metadata?: Json | null
+          mime_type?: string | null
+          note_id?: string | null
+          original_url?: string | null
+          size_bytes?: number | null
+          storage_path: string
+          width?: number | null
+        }
+        Update: {
+          compression_quality?: number | null
+          created_at?: string
+          filename?: string
+          height?: number | null
+          id?: string
+          metadata?: Json | null
+          mime_type?: string | null
+          note_id?: string | null
+          original_url?: string | null
+          size_bytes?: number | null
+          storage_path?: string
+          width?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_note"
+            columns: ["note_id"]
+            isOneToOne: false
+            referencedRelation: "notes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "image_metadata_note_id_fkey"
+            columns: ["note_id"]
+            isOneToOne: false
+            referencedRelation: "notes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notes: {
         Row: {
           ai_processed_content: string | null

@@ -15,6 +15,7 @@ export interface ScrapeOptions {
   media_folder?: string;
   search_query?: string;
   obsidian_path?: string;
+  onImageProgress?: (total: number, processed: number) => void;
 }
 
 export interface ScrapeResult {
@@ -26,4 +27,19 @@ export interface ScrapeResult {
   };
   screenshot?: string;
   topic_classification?: string;
+}
+
+export interface ImageMetadata {
+  id: string;
+  note_id: string;
+  storage_path: string;
+  original_url: string;
+  filename: string;
+  mime_type: string;
+  size_bytes: number;
+  width: number;
+  height: number;
+  compression_quality: number;
+  created_at: string;
+  metadata: Record<string, any>;
 }

@@ -20,6 +20,7 @@ export const ScrapingForm = () => {
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [obsidianPath, setObsidianPath] = useState("");
+  const [imageProgress, setImageProgress] = useState<{total: number; processed: number}>({ total: 0, processed: 0 });
   const { toast } = useToast();
 
   useEffect(() => {
@@ -45,6 +46,7 @@ export const ScrapingForm = () => {
     setIsLoading(true);
     setError(null);
     setProgress(0);
+    setImageProgress({ total: 0, processed: 0 });
 
     try {
       console.log('Starting scrape with template:', selectedTemplate);
@@ -62,14 +64,21 @@ export const ScrapingForm = () => {
         screenshot: true,
         media_folder: template.media_folder,
         search_query: searchQuery,
-        obsidian_path: obsidianPath
+        obsidian_path: obsidianPath,
+        onImageProgress: (total, processed) => {
+          setImageProgress({ total, processed });
+          // Update overall progress based on both content and image processing
+          const contentProgress = 50; // Content processing is worth 50% of total progress
+          const imageProgress = processed / total * 50; // Image processing is worth the other 50%
+          setProgress(Math.min(contentProgress + imageProgress, 100));
+        }
       });
 
       setProgress(100);
 
       toast({
         title: "Content scraped successfully",
-        description: "A new note has been created with the scraped content",
+        description: `Created note with ${imageProgress.processed} images`,
       });
 
       setUrl("");
@@ -124,7 +133,11 @@ export const ScrapingForm = () => {
             <div className="space-y-2">
               <Progress value={progress} className="w-full" />
               <p className="text-sm text-center text-muted-foreground">
-                {progress < 100 ? "Scraping content..." : "Processing results..."}
+                {progress < 100 
+                  ? imageProgress.total > 0 
+                    ? `Processing images (${imageProgress.processed}/${imageProgress.total})...` 
+                    : "Scraping content..."
+                  : "Processing results..."}
               </p>
             </div>
           )}
