@@ -1,31 +1,11 @@
 import { supabase } from "@/integrations/supabase/client";
-
-interface Proxy {
-  ip: string;
-  port: number;
-  protocol: string;
-  isValid?: boolean;
-  lastChecked?: Date;
-}
-
-interface ProxyValidationResult {
-  isValid: boolean;
-  responseTime?: number;
-}
+import { Proxy } from "./proxy/types";
+import { USER_AGENTS, UPDATE_INTERVAL } from "./proxy/constants";
 
 export class ProxyManager {
   private static proxyList: Proxy[] = [];
   private static currentProxyIndex = 0;
   private static lastProxyUpdate: Date | null = null;
-  private static readonly UPDATE_INTERVAL = 1000 * 60 * 30; // 30 minutes
-
-  private static readonly USER_AGENTS = [
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0',
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Safari/605.1.15',
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/91.0.864.59'
-  ];
 
   static async initialize(): Promise<void> {
     console.log('Initializing proxy manager');
@@ -54,7 +34,6 @@ export class ProxyManager {
       console.log(`Found ${proxies.length} potential proxies`);
       this.proxyList = [];
       
-      // Validate proxies in parallel with a limit
       const validationPromises = proxies.slice(0, 10).map(proxy => this.validateProxy(proxy));
       const validatedProxies = await Promise.all(validationPromises);
       
@@ -101,7 +80,7 @@ export class ProxyManager {
   static async getProxy(): Promise<Proxy | null> {
     if (!this.proxyList.length || 
         !this.lastProxyUpdate || 
-        Date.now() - this.lastProxyUpdate.getTime() > this.UPDATE_INTERVAL) {
+        Date.now() - this.lastProxyUpdate.getTime() > UPDATE_INTERVAL) {
       await this.updateProxyList();
     }
 
@@ -115,6 +94,6 @@ export class ProxyManager {
   }
 
   static getRandomUserAgent(): string {
-    return this.USER_AGENTS[Math.floor(Math.random() * this.USER_AGENTS.length)];
+    return USER_AGENTS[Math.floor(Math.random() * USER_AGENTS.length)];
   }
 }
