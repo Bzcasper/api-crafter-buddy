@@ -9,7 +9,6 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { 
       headers: corsHeaders,
@@ -26,18 +25,56 @@ serve(async (req) => {
       throw new Error('URL is required');
     }
 
-    // Fetch the webpage content
-    const response = await fetch(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-      }
-    });
+    // Initialize proxy and user agent
+    const userAgents = [
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0',
+      'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    ];
+    
+    const randomUserAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
+    console.log('Using User-Agent:', randomUserAgent);
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch URL: ${response.statusText}`);
+    // Fetch the webpage content with retry logic
+    const maxRetries = 3;
+    let attempt = 0;
+    let response;
+    let html;
+
+    while (attempt < maxRetries) {
+      try {
+        console.log(`Attempt ${attempt + 1} of ${maxRetries}`);
+        response = await fetch(url, {
+          headers: {
+            'User-Agent': randomUserAgent,
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.5',
+            'Connection': 'keep-alive',
+            'Upgrade-Insecure-Requests': '1',
+            'Cache-Control': 'max-age=0'
+          }
+        });
+
+        if (response.ok) {
+          html = await response.text();
+          break;
+        } else {
+          console.log(`Attempt ${attempt + 1} failed with status: ${response.status}`);
+          await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
+        }
+      } catch (error) {
+        console.error(`Attempt ${attempt + 1} error:`, error);
+        if (attempt === maxRetries - 1) throw error;
+        await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
+      }
+      attempt++;
     }
 
-    const html = await response.text();
+    if (!html) {
+      throw new Error('Failed to fetch webpage after multiple attempts');
+    }
+
     console.log('Successfully fetched HTML content');
     
     // Parse HTML using deno-dom
@@ -52,7 +89,6 @@ serve(async (req) => {
 
     if (searchQuery) {
       console.log('Applying search query:', searchQuery);
-      // Find elements containing the search query
       const elements = document.querySelectorAll('p, h1, h2, h3, h4, h5, h6');
       const matchingContent = Array.from(elements)
         .filter(el => el.textContent?.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -62,7 +98,6 @@ serve(async (req) => {
       content = matchingContent.join('\n\n');
     } else {
       console.log('Extracting main content');
-      // Extract main content
       const article = document.querySelector('article');
       const main = document.querySelector('main');
       
@@ -71,7 +106,6 @@ serve(async (req) => {
       } else if (main) {
         content = main.textContent || '';
       } else {
-        // Fallback to body content
         const body = document.querySelector('body');
         content = body?.textContent || '';
       }
@@ -91,6 +125,7 @@ serve(async (req) => {
         metadata: {
           url,
           scrapedAt: new Date().toISOString(),
+          userAgent: randomUserAgent
         }
       }),
       {

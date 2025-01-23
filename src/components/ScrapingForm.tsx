@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { notesService } from "@/services/notesService";
@@ -8,6 +8,7 @@ import { ScrapingFormInputs } from "./scraping/ScrapingFormInputs";
 import { SCRAPING_TEMPLATES } from "./scraping/constants";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { ProxyManager } from "@/utils/proxyManager";
 
 export const ScrapingForm = () => {
   const [url, setUrl] = useState("");
@@ -18,6 +19,24 @@ export const ScrapingForm = () => {
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
+
+  useEffect(() => {
+    const initializeProxy = async () => {
+      try {
+        await ProxyManager.initialize();
+        console.log('Proxy system initialized');
+      } catch (error) {
+        console.error('Failed to initialize proxy system:', error);
+        toast({
+          title: "Warning",
+          description: "Proxy system initialization failed. Falling back to direct connections.",
+          variant: "destructive",
+        });
+      }
+    };
+
+    initializeProxy();
+  }, []);
 
   const handleScrape = async (e: React.FormEvent) => {
     e.preventDefault();
