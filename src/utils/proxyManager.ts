@@ -69,27 +69,29 @@ export class ProxyManager {
   private static async validateProxy(proxy: Proxy): Promise<Proxy> {
     try {
       console.log(`Validating proxy: ${proxy.ip}:${proxy.port}`);
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000);
-
-      const start = Date.now();
-      const response = await fetch('https://api.ipify.org?format=json', {
-        signal: controller.signal,
+      
+      const response = await fetch('https://yfthvbfdmlozdgdodtpe.supabase.co/functions/v1/validate-proxy', {
+        method: 'POST',
         headers: {
-          'User-Agent': this.getRandomUserAgent()
-        }
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          proxy: {
+            ...proxy,
+            userAgent: this.getRandomUserAgent()
+          }
+        })
       });
 
-      clearTimeout(timeoutId);
-      const responseTime = Date.now() - start;
-
-      if (response.ok && responseTime < 10000) {
-        proxy.isValid = true;
-        proxy.lastChecked = new Date();
-        console.log(`Proxy ${proxy.ip}:${proxy.port} is valid (${responseTime}ms)`);
-      } else {
-        proxy.isValid = false;
+      if (!response.ok) {
+        throw new Error('Validation request failed');
       }
+
+      const result = await response.json();
+      proxy.isValid = result.isValid;
+      proxy.lastChecked = new Date();
+      
+      console.log(`Proxy ${proxy.ip}:${proxy.port} validation result:`, result.isValid);
     } catch (error) {
       console.log(`Proxy ${proxy.ip}:${proxy.port} validation failed:`, error);
       proxy.isValid = false;
