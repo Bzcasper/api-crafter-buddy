@@ -25,7 +25,7 @@ export const scraping = {
       extracted_content: data.content,
       metadata: {
         title: data.title,
-        images: [data.screenshot]
+        images: data.images || []
       },
       screenshot: data.screenshot,
       topic_classification: data.topic_classification

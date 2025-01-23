@@ -1,8 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1';
-import { extractContent, extractImages, extractTitle } from './utils/contentExtractor.ts';
-import { processWithAI } from './utils/aiProcessor.ts';
-import { fetchWithUserAgent } from './utils/fetchUtils.ts';
+import FirecrawlApp from 'npm:@mendable/firecrawl-js';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -23,36 +20,37 @@ serve(async (req) => {
       throw new Error('URL is required');
     }
 
-    const response = await fetchWithUserAgent(url);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch webpage: ${response.statusText}`);
+    const firecrawl = new FirecrawlApp({ 
+      apiKey: Deno.env.get('FIRECRAWL_API_KEY') 
+    });
+
+    console.log('Initiating Firecrawl scrape');
+    const crawlResponse = await firecrawl.crawlUrl(url, {
+      limit: 1, // Start with single page for compatibility
+      scrapeOptions: {
+        formats: ['markdown', 'html'],
+        searchQuery: searchQuery,
+        customInstructions: customInstruction,
+        semanticFilter: semantic_filter
+      }
+    });
+
+    if (!crawlResponse.success) {
+      throw new Error(`Firecrawl scraping failed: ${crawlResponse.error}`);
     }
 
-    const html = await response.text();
-    console.log('Successfully fetched HTML content');
-
-    const content = extractContent(html, searchQuery);
-    const imageUrls = extractImages(html);
-    const title = extractTitle(html, url);
-
-    console.log(`Found ${imageUrls.length} images`);
-
-    // Process content with AI
-    console.log('Processing content with AI');
-    const processedContent = await processWithAI(
-      content, 
-      customInstruction || 'Organize and format the content in a clear, structured way.'
-    );
+    const pageData = crawlResponse.data[0];
+    console.log('Successfully scraped content with Firecrawl');
 
     return new Response(
       JSON.stringify({
-        title,
-        content: processedContent,
-        images: imageUrls,
+        title: pageData.title || url,
+        content: pageData.markdown || pageData.text,
+        images: pageData.images || [],
         metadata: {
           url,
           scrapedAt: new Date().toISOString(),
-          totalImages: imageUrls.length
+          totalImages: (pageData.images || []).length
         }
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
