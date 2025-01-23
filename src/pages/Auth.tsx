@@ -23,11 +23,7 @@ const Auth = () => {
       
       if (type === 'signup') {
         // First check if user exists
-        const { data: existingUser } = await supabase
-          .from('profiles')
-          .select()
-          .eq('email', email)
-          .single();
+        const { data: { user: existingUser }, error: checkError } = await supabase.auth.admin.getUserByEmail(email);
 
         if (existingUser) {
           toast({
@@ -45,26 +41,36 @@ const Auth = () => {
           password,
           options: {
             data: {
-              email: email, // Store email in user metadata
+              email: email,
             }
           }
         });
 
         console.log('Signup response:', { signUpData, signUpError });
 
-        if (signUpError) throw signUpError;
+        if (signUpError) {
+          throw signUpError;
+        }
 
-        // Create profile record
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert([{ id: signUpData.user?.id, email }]);
+        if (signUpData.user) {
+          // Create profile record
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .insert([{ 
+              id: signUpData.user.id, 
+              email: email 
+            }]);
 
-        if (profileError) throw profileError;
+          if (profileError) {
+            console.error('Profile creation error:', profileError);
+            throw new Error('Failed to create user profile');
+          }
 
-        toast({
-          title: "Success",
-          description: "Account created successfully! Please check your email for verification.",
-        });
+          toast({
+            title: "Success",
+            description: "Account created successfully! Please check your email for verification.",
+          });
+        }
       } else {
         // Login flow
         const { data, error } = await supabase.auth.signInWithPassword({ 
