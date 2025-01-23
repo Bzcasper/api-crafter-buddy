@@ -85,7 +85,7 @@ const Auth = () => {
         if (signUpData.user) {
           toast({
             title: "Success",
-            description: "Account created successfully! Please check your email for verification.",
+            description: "Account created successfully! Please check your email for verification before logging in.",
           });
         }
       } else {
@@ -101,7 +101,9 @@ const Auth = () => {
           let errorMessage = "Invalid email or password";
           
           if (error.message.includes('Email not confirmed')) {
-            errorMessage = "Please verify your email before logging in";
+            errorMessage = "Please verify your email before logging in. Check your inbox for the verification link.";
+          } else if (error.message.includes('Invalid login credentials')) {
+            errorMessage = "Invalid email or password. If you haven't registered yet, please create an account first.";
           }
           
           toast({
