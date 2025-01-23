@@ -60,9 +60,6 @@ const Auth = () => {
           password,
           options: {
             emailRedirectTo: window.location.origin,
-            data: {
-              email,
-            }
           }
         });
 
@@ -73,12 +70,6 @@ const Auth = () => {
             toast({
               title: "Error",
               description: "An account with this email already exists. Please log in instead.",
-              variant: "destructive",
-            });
-          } else if (signUpError.message.includes('anonymous_provider_disabled')) {
-            toast({
-              title: "Error",
-              description: "Please provide both email and password to sign up.",
               variant: "destructive",
             });
           } else {
@@ -96,7 +87,6 @@ const Auth = () => {
             title: "Success",
             description: "Account created successfully! Please check your email for verification.",
           });
-          navigate('/');
         }
       } else {
         // Login flow
@@ -108,24 +98,26 @@ const Auth = () => {
         console.log('Login response:', { data, error });
 
         if (error) {
-          if (error.message.includes('Invalid login credentials')) {
-            toast({
-              title: "Error",
-              description: "Invalid email or password. Please try again.",
-              variant: "destructive",
-            });
-          } else {
-            toast({
-              title: "Error",
-              description: error.message,
-              variant: "destructive",
-            });
+          let errorMessage = "Invalid email or password";
+          
+          if (error.message.includes('Email not confirmed')) {
+            errorMessage = "Please verify your email before logging in";
           }
+          
+          toast({
+            title: "Error",
+            description: errorMessage,
+            variant: "destructive",
+          });
           return;
         }
 
         if (data.session) {
           console.log('Login successful, redirecting...');
+          toast({
+            title: "Success",
+            description: "Logged in successfully!",
+          });
           navigate('/');
         }
       }
