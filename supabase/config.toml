@@ -1,1 +1,4 @@
 project_id = "yfthvbfdmlozdgdodtpe"
+
+[functions.modal-handler]
+verify_jwt = true
