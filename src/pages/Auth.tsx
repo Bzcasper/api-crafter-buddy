@@ -21,25 +21,82 @@ const Auth = () => {
     try {
       console.log(`Attempting to ${type} with email:`, email);
       
-      const { data, error } = type === 'login'
-        ? await supabase.auth.signInWithPassword({ email, password })
-        : await supabase.auth.signUp({ email, password });
-
-      console.log(`${type} response:`, { data, error });
-
-      if (error) {
-        console.error(`${type} error:`, error);
-        throw error;
-      }
-
       if (type === 'signup') {
+        // First check if user exists
+        const { data: existingUser } = await supabase
+          .from('profiles')
+          .select()
+          .eq('email', email)
+          .single();
+
+        if (existingUser) {
+          toast({
+            title: "Error",
+            description: "An account with this email already exists. Please log in instead.",
+            variant: "destructive",
+          });
+          setLoading(false);
+          return;
+        }
+
+        // Attempt signup
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({ 
+          email, 
+          password,
+          options: {
+            data: {
+              email: email, // Store email in user metadata
+            }
+          }
+        });
+
+        console.log('Signup response:', { signUpData, signUpError });
+
+        if (signUpError) throw signUpError;
+
+        // Create profile record
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert([{ id: signUpData.user?.id, email }]);
+
+        if (profileError) throw profileError;
+
         toast({
           title: "Success",
           description: "Account created successfully! Please check your email for verification.",
         });
-      } else if (data.session) {
-        console.log('Login successful, redirecting...');
-        navigate('/');
+      } else {
+        // Login flow
+        const { data, error } = await supabase.auth.signInWithPassword({ 
+          email, 
+          password 
+        });
+
+        console.log('Login response:', { data, error });
+
+        if (error) {
+          if (error.message.includes('Email not confirmed')) {
+            toast({
+              title: "Error",
+              description: "Please verify your email before logging in.",
+              variant: "destructive",
+            });
+          } else if (error.message.includes('Invalid login credentials')) {
+            toast({
+              title: "Error",
+              description: "Invalid email or password. Please try again.",
+              variant: "destructive",
+            });
+          } else {
+            throw error;
+          }
+          return;
+        }
+
+        if (data.session) {
+          console.log('Login successful, redirecting...');
+          navigate('/');
+        }
       }
     } catch (error) {
       console.error('Auth error:', error);
