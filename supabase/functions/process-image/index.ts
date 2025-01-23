@@ -1,6 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
-import Sharp from 'https://esm.sh/sharp@0.32.6'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -24,22 +23,6 @@ serve(async (req) => {
 
     const imageBuffer = await response.arrayBuffer()
     
-    // Process image with Sharp
-    const image = Sharp(new Uint8Array(imageBuffer))
-    const metadata = await image.metadata()
-    
-    // Compress image while maintaining quality
-    const processedBuffer = await image
-      .resize(1200, 1200, {
-        fit: 'inside',
-        withoutEnlargement: true
-      })
-      .jpeg({
-        quality: 85,
-        progressive: true
-      })
-      .toBuffer()
-
     // Initialize Supabase client
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -53,7 +36,7 @@ serve(async (req) => {
     // Upload to Supabase Storage
     const { error: uploadError } = await supabase.storage
       .from('scraped-images')
-      .upload(storagePath, processedBuffer, {
+      .upload(storagePath, imageBuffer, {
         contentType: 'image/jpeg',
         upsert: false
       })
@@ -61,6 +44,10 @@ serve(async (req) => {
     if (uploadError) {
       throw uploadError
     }
+
+    // Get image dimensions using response headers or metadata
+    const contentLength = response.headers.get('content-length')
+    const contentType = response.headers.get('content-type')
 
     // Save metadata to database
     const { error: dbError } = await supabase
@@ -70,15 +57,11 @@ serve(async (req) => {
         storage_path: storagePath,
         original_url: imageUrl,
         filename,
-        mime_type: 'image/jpeg',
-        size_bytes: processedBuffer.byteLength,
-        width: metadata.width,
-        height: metadata.height,
-        compression_quality: 85,
+        mime_type: contentType,
+        size_bytes: contentLength ? parseInt(contentLength) : imageBuffer.byteLength,
         metadata: {
-          original_format: metadata.format,
           original_size: imageBuffer.byteLength,
-          compression_ratio: imageBuffer.byteLength / processedBuffer.byteLength
+          headers: Object.fromEntries(response.headers.entries())
         }
       })
 
@@ -91,9 +74,8 @@ serve(async (req) => {
         success: true,
         storagePath,
         metadata: {
-          width: metadata.width,
-          height: metadata.height,
-          size: processedBuffer.byteLength
+          size: imageBuffer.byteLength,
+          type: contentType
         }
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
