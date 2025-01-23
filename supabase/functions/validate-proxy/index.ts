@@ -24,15 +24,30 @@ serve(async (req) => {
 
     try {
       const start = Date.now();
+      const proxyUrl = `http://${proxy.ip}:${proxy.port}`;
+      console.log('Using proxy URL:', proxyUrl);
+
       const response = await fetch('https://api.ipify.org?format=json', {
         signal: controller.signal,
         headers: {
           'User-Agent': proxy.userAgent
+        },
+        // Configure the proxy
+        client: {
+          proxy: proxyUrl
         }
       });
 
       clearTimeout(timeoutId);
       const responseTime = Date.now() - start;
+
+      if (!response.ok) {
+        console.log('Proxy validation failed - bad response:', response.status);
+        throw new Error(`Invalid response: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('Proxy validation response:', data);
 
       const isValid = response.ok && responseTime < 10000;
       console.log(`Proxy validation result: ${isValid} (${responseTime}ms)`);
@@ -41,6 +56,7 @@ serve(async (req) => {
         JSON.stringify({ 
           isValid,
           responseTime,
+          proxyIp: data.ip,
           message: isValid ? 'Proxy validated successfully' : 'Proxy validation failed'
         }),
         {
