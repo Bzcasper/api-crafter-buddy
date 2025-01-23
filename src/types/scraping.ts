@@ -37,9 +37,9 @@ export interface ImageMetadata {
   filename: string;
   mime_type: string;
   size_bytes: number;
-  width: number;
-  height: number;
-  compression_quality: number;
+  width?: number;
+  height?: number;
+  compression_quality?: number;
   created_at: string;
   metadata: Record<string, any>;
 }
