@@ -38,7 +38,7 @@ serve(async (req) => {
     });
 
     const crawlResponse = await firecrawl.crawlUrl(url, {
-      limit: 1, // Start with single page for compatibility
+      limit: 1,
       scrapeOptions: {
         formats: ['markdown', 'html'],
         searchQuery: searchQuery,
