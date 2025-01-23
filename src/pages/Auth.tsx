@@ -16,19 +16,29 @@ const Auth = () => {
 
   const handleAuth = async (e: React.FormEvent, type: 'login' | 'signup') => {
     e.preventDefault();
+    
+    if (!email || !password) {
+      toast({
+        title: "Error",
+        description: "Please enter both email and password",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
       console.log(`Attempting to ${type} with email:`, email);
       
       if (type === 'signup') {
-        // Attempt signup
         const { data: signUpData, error: signUpError } = await supabase.auth.signUp({ 
           email, 
           password,
           options: {
+            emailRedirectTo: window.location.origin,
             data: {
-              email: email,
+              email,
             }
           }
         });
@@ -42,30 +52,28 @@ const Auth = () => {
               description: "An account with this email already exists. Please log in instead.",
               variant: "destructive",
             });
-            setLoading(false);
-            return;
+          } else if (signUpError.message.includes('anonymous_provider_disabled')) {
+            toast({
+              title: "Error",
+              description: "Please provide both email and password to sign up.",
+              variant: "destructive",
+            });
+          } else {
+            toast({
+              title: "Error",
+              description: signUpError.message,
+              variant: "destructive",
+            });
           }
-          throw signUpError;
+          return;
         }
 
         if (signUpData.user) {
-          // Create profile record
-          const { error: profileError } = await supabase
-            .from('profiles')
-            .insert([{ 
-              id: signUpData.user.id, 
-              email: email 
-            }]);
-
-          if (profileError) {
-            console.error('Profile creation error:', profileError);
-            throw new Error('Failed to create user profile');
-          }
-
           toast({
             title: "Success",
             description: "Account created successfully! Please check your email for verification.",
           });
+          navigate('/');
         }
       } else {
         // Login flow
@@ -77,20 +85,18 @@ const Auth = () => {
         console.log('Login response:', { data, error });
 
         if (error) {
-          if (error.message.includes('Email not confirmed')) {
-            toast({
-              title: "Error",
-              description: "Please verify your email before logging in.",
-              variant: "destructive",
-            });
-          } else if (error.message.includes('Invalid login credentials')) {
+          if (error.message.includes('Invalid login credentials')) {
             toast({
               title: "Error",
               description: "Invalid email or password. Please try again.",
               variant: "destructive",
             });
           } else {
-            throw error;
+            toast({
+              title: "Error",
+              description: error.message,
+              variant: "destructive",
+            });
           }
           return;
         }
