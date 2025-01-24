@@ -1,16 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { AnalyticsDashboard } from "./AnalyticsDashboard"
 
 export const Analytics = () => {
-  return (
-    <div className="p-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Analytics Dashboard</CardTitle>
-        </CardHeader>
-        <CardContent>
-          Analytics content will go here
-        </CardContent>
-      </Card>
-    </div>
-  )
+  return <AnalyticsDashboard />
 }
