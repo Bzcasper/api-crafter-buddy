@@ -10,8 +10,8 @@ export const DashboardCalendar = () => {
       <CardHeader>
         <CardTitle>Content Calendar</CardTitle>
       </CardHeader>
-      <CardContent className="h-[400px] flex flex-col">
-        <div className="flex-none flex justify-center">
+      <CardContent className="h-[400px] flex flex-col space-y-4">
+        <div className="flex justify-center">
           <Calendar
             mode="single"
             selected={date}
@@ -41,14 +41,15 @@ export const DashboardCalendar = () => {
             }}
           />
         </div>
-        <div className="mt-4 flex-1 overflow-y-auto">
-          <h4 className="font-semibold mb-2">Scheduled Posts</h4>
+        
+        <div className="flex-1 overflow-y-auto px-1">
+          <h4 className="font-semibold mb-3 text-body">Scheduled Posts</h4>
           <div className="space-y-2">
-            <div className="text-sm p-2 bg-accent rounded">
+            <div className="scheduled-post">
               <div className="font-medium">Product Launch Post</div>
               <div className="text-xs text-muted-foreground">Today at 2:00 PM</div>
             </div>
-            <div className="text-sm p-2 bg-accent rounded">
+            <div className="scheduled-post">
               <div className="font-medium">Weekly Newsletter</div>
               <div className="text-xs text-muted-foreground">Tomorrow at 10:00 AM</div>
             </div>
