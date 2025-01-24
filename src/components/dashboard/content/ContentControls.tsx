@@ -2,7 +2,7 @@ import { Slider } from "@/components/ui/slider"
 import { Button } from "@/components/ui/button"
 
 interface ContentControlsProps {
-  onControlChange: (type: string, value: number) => void;
+  onControlChange: (type: string, value: number) => void
 }
 
 export const ContentControls = ({ onControlChange }: ContentControlsProps) => {
