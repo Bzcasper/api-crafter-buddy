@@ -23,6 +23,20 @@ export const WebsiteCreationForm = () => {
     e.preventDefault()
     
     try {
+      // Get the current user's session
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+      
+      if (sessionError) throw sessionError
+      
+      if (!session?.user?.id) {
+        toast({
+          title: "Error",
+          description: "You must be logged in to create a website.",
+          variant: "destructive"
+        })
+        return
+      }
+
       const { data: website, error } = await supabase
         .from('websites')
         .insert({
@@ -30,7 +44,8 @@ export const WebsiteCreationForm = () => {
           domain,
           template: selectedTemplate,
           settings: {},
-          status: 'draft'
+          status: 'draft',
+          created_by: session.user.id // Include the user ID here
         })
         .select()
         .single()
