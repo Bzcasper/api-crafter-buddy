@@ -240,24 +240,42 @@ export type Database = {
       }
       profiles: {
         Row: {
+          agent_license_number: string | null
+          avatar_url: string | null
+          bio: string | null
           created_at: string
           email: string
+          full_name: string | null
           id: string
+          is_agent: boolean | null
           obsidian_path: string | null
+          phone_number: string | null
           updated_at: string
         }
         Insert: {
+          agent_license_number?: string | null
+          avatar_url?: string | null
+          bio?: string | null
           created_at?: string
           email: string
+          full_name?: string | null
           id: string
+          is_agent?: boolean | null
           obsidian_path?: string | null
+          phone_number?: string | null
           updated_at?: string
         }
         Update: {
+          agent_license_number?: string | null
+          avatar_url?: string | null
+          bio?: string | null
           created_at?: string
           email?: string
+          full_name?: string | null
           id?: string
+          is_agent?: boolean | null
           obsidian_path?: string | null
+          phone_number?: string | null
           updated_at?: string
         }
         Relationships: []

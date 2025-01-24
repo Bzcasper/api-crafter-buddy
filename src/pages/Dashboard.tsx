@@ -225,8 +225,8 @@ const Dashboard = () => {
   return (
     <DashboardLayout>
       <Routes>
-        <Route path="/" element={<DashboardHome />} />
-        <Route path="/website-management" element={<WebsiteManagement />} />
+        <Route index element={<DashboardHome />} />
+        <Route path="website-management" element={<WebsiteManagement />} />
       </Routes>
     </DashboardLayout>
   )
