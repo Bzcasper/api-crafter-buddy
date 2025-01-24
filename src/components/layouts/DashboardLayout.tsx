@@ -9,7 +9,6 @@ import { cn } from "@/lib/utils"
 import { useMediaQuery } from "@/hooks/use-media-query"
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
-  // Set initial collapsed state to true
   const [isCollapsed, setIsCollapsed] = useState(true)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
   const isDesktop = useMediaQuery("(min-width: 768px)")
@@ -75,7 +74,6 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               maxSize={30}
               collapsible={true}
               collapsedSize={4}
-              defaultCollapsed={true}
               onCollapse={() => setIsCollapsed(true)}
               onExpand={() => setIsCollapsed(false)}
               className={cn(
