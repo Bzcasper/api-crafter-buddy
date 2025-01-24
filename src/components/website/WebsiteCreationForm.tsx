@@ -1,11 +1,9 @@
 import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { WebsiteTemplates } from "./templates/WebsiteTemplates"
 import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
-import { BasicDetailsForm } from "./creation/BasicDetailsForm"
-import { DeploymentSettings } from "./creation/DeploymentSettings"
+import { TemplateSelection } from "./creation/TemplateSelection"
+import { WebsiteDetailsForm } from "./creation/WebsiteDetailsForm"
+import { DeploymentForm } from "./creation/DeploymentForm"
 
 export const WebsiteCreationForm = () => {
   const [step, setStep] = useState<'template' | 'details' | 'deployment'>('template')
@@ -183,73 +181,34 @@ export const WebsiteCreationForm = () => {
     }
   }
 
-  const renderStep = () => {
-    switch (step) {
-      case 'template':
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Choose a Template</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <WebsiteTemplates onSelect={handleTemplateSelect} />
-            </CardContent>
-          </Card>
-        )
-      case 'details':
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Website Details</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <BasicDetailsForm
-                title={title}
-                setTitle={setTitle}
-                domain={domain}
-                setDomain={setDomain}
-                font={font}
-                setFont={setFont}
-                primaryColor={primaryColor}
-                setPrimaryColor={setPrimaryColor}
-                favicon={favicon}
-                setFavicon={setFavicon}
-              />
-              <div className="flex justify-between mt-6">
-                <Button variant="outline" onClick={() => setStep('template')}>
-                  Back to Templates
-                </Button>
-                <Button onClick={() => setStep('deployment')}>
-                  Next: Deployment
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )
-      case 'deployment':
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Deployment Settings</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <DeploymentSettings 
-                onGitHubConnect={handleGitHubConnect}
-                onNetlifyConnect={handleNetlifyConnect}
-              />
-              <div className="flex justify-between mt-6">
-                <Button variant="outline" onClick={() => setStep('details')}>
-                  Back to Details
-                </Button>
-                <Button onClick={handleSubmit}>
-                  Create Website
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )
-    }
+  switch (step) {
+    case 'template':
+      return <TemplateSelection onTemplateSelect={handleTemplateSelect} />
+    case 'details':
+      return (
+        <WebsiteDetailsForm
+          title={title}
+          setTitle={setTitle}
+          domain={domain}
+          setDomain={setDomain}
+          font={font}
+          setFont={setFont}
+          primaryColor={primaryColor}
+          setPrimaryColor={setPrimaryColor}
+          favicon={favicon}
+          setFavicon={setFavicon}
+          onBack={() => setStep('template')}
+          onNext={() => setStep('deployment')}
+        />
+      )
+    case 'deployment':
+      return (
+        <DeploymentForm
+          onGitHubConnect={handleGitHubConnect}
+          onNetlifyConnect={handleNetlifyConnect}
+          onBack={() => setStep('details')}
+          onSubmit={handleSubmit}
+        />
+      )
   }
-
-  return renderStep()
 }
