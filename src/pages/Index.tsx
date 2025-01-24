@@ -1,92 +1,79 @@
-import { useState, useEffect } from "react";
-import { notesService } from "@/services/notesService";
-import { newsService, NewsArticle } from "@/services/newsService";
-import { Note } from "@/types/notes";
-import { ScrapingForm } from "@/components/ScrapingForm";
-import { NotesList } from "@/components/notes/NotesList";
-import { ContentGenerationForm } from "@/components/ContentGenerationForm";
-import { NewsList } from "@/components/news/NewsList";
-import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { PropertyMap } from "@/components/map/PropertyMap"
+import { BlogPostList } from "@/components/blog/BlogPostList"
+import { Hero } from "@/components/Hero"
+import { Navbar } from "@/components/Navbar"
+import { Footer } from "@/components/Footer"
+import { Building, MapPin, TrendingUp, Users } from "lucide-react"
 
 const Index = () => {
-  const [notes, setNotes] = useState<Note[]>([]);
-  const [newsArticles, setNewsArticles] = useState<NewsArticle[]>([]);
-  const { toast } = useToast();
-
-  useEffect(() => {
-    loadNotes();
-    loadNews();
-  }, []);
-
-  const loadNotes = async () => {
-    try {
-      const fetchedNotes = await notesService.getNotes();
-      setNotes(fetchedNotes);
-    } catch (error) {
-      console.error('Error loading notes:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load notes",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const loadNews = async () => {
-    try {
-      const articles = await newsService.fetchRealEstateNews();
-      setNewsArticles(articles);
-    } catch (error) {
-      console.error('Error loading news:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load news articles",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleNoteCreated = (note: Note) => {
-    setNotes([note, ...notes]);
-  };
-
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto py-8 px-4">
-        <h1 className="text-4xl font-bold text-center mb-8">Content Generation Dashboard</h1>
+    <div className="min-h-screen flex flex-col">
+      <Navbar />
+      <main className="flex-1">
+        <Hero />
         
-        <div className="grid gap-8 lg:grid-cols-2">
-          {/* Content Generation Section */}
-          <div className="space-y-6">
-            <div className="bg-card rounded-lg shadow-lg p-6">
-              <h2 className="text-2xl font-semibold mb-6">AI Content Generation</h2>
-              <ContentGenerationForm />
-            </div>
+        {/* Stats Section */}
+        <section className="container mx-auto py-12 grid gap-6 md:grid-cols-4">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Listings</CardTitle>
+              <Building className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">2,345</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Active Auctions</CardTitle>
+              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">145</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Cities Covered</CardTitle>
+              <MapPin className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">89</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Active Users</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">1,234</div>
+            </CardContent>
+          </Card>
+        </section>
+
+        {/* Map Section */}
+        <section className="container mx-auto py-12">
+          <h2 className="text-3xl font-bold mb-8">Nearby Properties & Auctions</h2>
+          <div className="h-[600px] w-full rounded-lg overflow-hidden">
+            <PropertyMap />
           </div>
+        </section>
 
-          {/* Web Scraping Section */}
-          <div className="space-y-6">
-            <div className="bg-card rounded-lg shadow-lg p-6">
-              <h2 className="text-2xl font-semibold mb-6">Web Scraping</h2>
-              <ScrapingForm />
-            </div>
+        {/* Blog Section */}
+        <section className="container mx-auto py-12">
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-3xl font-bold">Latest Real Estate Insights</h2>
+            <Button variant="outline">View All Posts</Button>
           </div>
-        </div>
-
-        {/* News Section */}
-        <div className="mt-12">
-          <h2 className="text-2xl font-semibold mb-6">Latest Real Estate News</h2>
-          <NewsList articles={newsArticles} />
-        </div>
-
-        {/* Notes List Section */}
-        <div className="mt-12">
-          <h2 className="text-2xl font-semibold mb-6">Recent Notes</h2>
-          <NotesList notes={notes} />
-        </div>
-      </div>
+          <BlogPostList />
+        </section>
+      </main>
+      <Footer />
     </div>
-  );
-};
+  )
+}
 
-export default Index;
+export default Index
