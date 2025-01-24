@@ -1,18 +1,21 @@
 import { useState, useEffect } from "react";
 import { notesService } from "@/services/notesService";
+import { newsService, NewsArticle } from "@/services/newsService";
 import { Note } from "@/types/notes";
 import { ScrapingForm } from "@/components/ScrapingForm";
 import { NotesList } from "@/components/notes/NotesList";
-import { ManualNoteForm } from "@/components/notes/ManualNoteForm";
 import { ContentGenerationForm } from "@/components/ContentGenerationForm";
+import { NewsList } from "@/components/news/NewsList";
 import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
   const [notes, setNotes] = useState<Note[]>([]);
+  const [newsArticles, setNewsArticles] = useState<NewsArticle[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
     loadNotes();
+    loadNews();
   }, []);
 
   const loadNotes = async () => {
@@ -24,6 +27,20 @@ const Index = () => {
       toast({
         title: "Error",
         description: "Failed to load notes",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const loadNews = async () => {
+    try {
+      const articles = await newsService.fetchRealEstateNews();
+      setNewsArticles(articles);
+    } catch (error) {
+      console.error('Error loading news:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load news articles",
         variant: "destructive",
       });
     }
@@ -54,6 +71,12 @@ const Index = () => {
               <ScrapingForm />
             </div>
           </div>
+        </div>
+
+        {/* News Section */}
+        <div className="mt-12">
+          <h2 className="text-2xl font-semibold mb-6">Latest Real Estate News</h2>
+          <NewsList articles={newsArticles} />
         </div>
 
         {/* Notes List Section */}
