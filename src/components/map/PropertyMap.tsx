@@ -69,6 +69,8 @@ export const PropertyMap = () => {
             )
             .addTo(map.current!);
         });
+
+        console.log('Map initialized successfully');
       },
       (error) => {
         console.error('Error getting location:', error);
@@ -86,6 +88,8 @@ export const PropertyMap = () => {
           center: defaultCoordinates,
           zoom: 12
         });
+
+        map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
       }
     );
 
@@ -97,6 +101,6 @@ export const PropertyMap = () => {
   }, [toast]);
 
   return (
-    <div ref={mapContainer} className="w-full h-full rounded-lg" />
+    <div ref={mapContainer} className="w-full h-[500px] rounded-lg border" />
   );
 };
