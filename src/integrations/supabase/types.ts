@@ -331,6 +331,133 @@ export type Database = {
         }
         Relationships: []
       }
+      website_assets: {
+        Row: {
+          created_at: string
+          filename: string
+          folder_path: string | null
+          id: string
+          mime_type: string | null
+          size_bytes: number | null
+          storage_path: string
+          website_id: string
+        }
+        Insert: {
+          created_at?: string
+          filename: string
+          folder_path?: string | null
+          id?: string
+          mime_type?: string | null
+          size_bytes?: number | null
+          storage_path: string
+          website_id: string
+        }
+        Update: {
+          created_at?: string
+          filename?: string
+          folder_path?: string | null
+          id?: string
+          mime_type?: string | null
+          size_bytes?: number | null
+          storage_path?: string
+          website_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "website_assets_website_id_fkey"
+            columns: ["website_id"]
+            isOneToOne: false
+            referencedRelation: "websites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      website_pages: {
+        Row: {
+          content: string | null
+          created_at: string
+          id: string
+          is_published: boolean | null
+          meta_description: string | null
+          slug: string
+          title: string
+          updated_at: string
+          website_id: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          is_published?: boolean | null
+          meta_description?: string | null
+          slug: string
+          title: string
+          updated_at?: string
+          website_id: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          is_published?: boolean | null
+          meta_description?: string | null
+          slug?: string
+          title?: string
+          updated_at?: string
+          website_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "website_pages_website_id_fkey"
+            columns: ["website_id"]
+            isOneToOne: false
+            referencedRelation: "websites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      websites: {
+        Row: {
+          analytics_id: string | null
+          created_at: string
+          created_by: string
+          domain: string | null
+          id: string
+          last_published_at: string | null
+          settings: Json | null
+          status: string | null
+          template: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          analytics_id?: string | null
+          created_at?: string
+          created_by: string
+          domain?: string | null
+          id?: string
+          last_published_at?: string | null
+          settings?: Json | null
+          status?: string | null
+          template: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          analytics_id?: string | null
+          created_at?: string
+          created_by?: string
+          domain?: string | null
+          id?: string
+          last_published_at?: string | null
+          settings?: Json | null
+          status?: string | null
+          template?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
