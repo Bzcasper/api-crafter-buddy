@@ -22,6 +22,7 @@ import { CompetitionTracker } from "@/components/dashboard/competition/Competiti
 import { AdvancedReports } from "@/components/dashboard/reports/AdvancedReports"
 import { SystemSettings } from "@/components/dashboard/settings/SystemSettings"
 import { DashboardHome } from "@/components/dashboard/DashboardHome"
+import { WebsiteCreationForm } from "@/components/website/WebsiteCreationForm"
 
 const queryClient = new QueryClient()
 
@@ -75,6 +76,7 @@ const App = () => (
           >
             <Route index element={<DashboardHome />} />
             <Route path="website-management" element={<WebsiteManagement />} />
+            <Route path="websites/new" element={<WebsiteCreationForm />} />
             <Route path="analytics" element={<Analytics />} />
             <Route path="content" element={<ContentStudio />} />
             <Route path="data" element={<DataCollection />} />

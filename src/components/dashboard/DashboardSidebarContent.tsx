@@ -13,6 +13,7 @@ import {
   Users,
   FileText,
   Settings,
+  Plus,
 } from "lucide-react";
 
 const menuItems = [
@@ -25,6 +26,11 @@ const menuItems = [
     title: "Website Management",
     path: "/dashboard/website-management",
     icon: Globe,
+  },
+  {
+    title: "Create Website",
+    path: "/dashboard/websites/new",
+    icon: Plus,
   },
   {
     title: "Advanced Analytics",
