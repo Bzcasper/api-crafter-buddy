@@ -1,13 +1,13 @@
 import { 
   BarChart3, 
   Brain, 
-  Globe, 
-  Link as LinkIcon, 
-  List,
+  Bot,
   FileText,
   Image,
   Settings,
-  Bot
+  MessageSquare,
+  Calendar,
+  Activity
 } from "lucide-react"
 import { Link, useLocation } from "react-router-dom"
 import {
@@ -43,6 +43,11 @@ const menuItems = [
     icon: FileText,
   },
   {
+    title: "Post Manager",
+    path: "/dashboard/posts",
+    icon: Calendar,
+  },
+  {
     title: "Media Library",
     path: "/dashboard/media",
     icon: Image,
@@ -50,7 +55,7 @@ const menuItems = [
   {
     title: "Analytics",
     path: "/dashboard/analytics",
-    icon: BarChart3,
+    icon: Activity,
   },
   {
     title: "Settings",
@@ -63,7 +68,7 @@ export function DashboardSidebar() {
   const location = useLocation()
 
   return (
-    <Sidebar className="w-[280px] border-r border-slate-200">
+    <Sidebar className="w-sidebar border-r border-slate-200 bg-white">
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
@@ -75,9 +80,9 @@ export function DashboardSidebar() {
                     asChild
                     isActive={location.pathname === item.path}
                   >
-                    <Link to={item.path}>
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.title}</span>
+                    <Link to={item.path} className="flex items-center gap-3 px-4 py-2">
+                      <item.icon className="h-5 w-5" />
+                      <span className="font-medium">{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

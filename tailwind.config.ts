@@ -30,16 +30,15 @@ export default {
         error: '#EF4444',
         slate: '#1E293B',
         muted: '#64748B',
-        // Keep existing color tokens for compatibility
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
         background: '#F4F7FE',
         foreground: '#1E293B',
         secondary: {
           DEFAULT: '#4F46E5',
           foreground: 'white'
         },
+        border: 'hsl(var(--border))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))'
@@ -61,33 +60,18 @@ export default {
         sans: ['Inter', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
       },
-			borderRadius: {
-				lg: 'var(--radius)',
-				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)'
-			},
-			keyframes: {
-				'accordion-down': {
-					from: {
-						height: '0'
-					},
-					to: {
-						height: 'var(--radix-accordion-content-height)'
-					}
-				},
-				'accordion-up': {
-					from: {
-						height: 'var(--radix-accordion-content-height)'
-					},
-					to: {
-						height: '0'
-					}
-				}
-			},
-			animation: {
-				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
-			}
+      screens: {
+        'xs': '576px',
+        'sm': '768px',
+        'md': '992px',
+        'lg': '1200px',
+      },
+      height: {
+        'topnav': '80px',
+      },
+      width: {
+        'sidebar': '280px',
+      },
     }
   },
   plugins: [require("tailwindcss-animate")],
