@@ -6,15 +6,15 @@ import { DeploymentForm } from "./DeploymentForm"
 import { WebsiteCreationProvider, useWebsiteCreation } from "./WebsiteCreationContext"
 
 const WebsiteCreationContent = () => {
-  const { step } = useWebsiteCreation()
+  const { state } = useWebsiteCreation()
 
   return (
     <Card>
       <CardContent className="pt-6">
-        <StepIndicator currentStep={step} />
-        {step === 'template' && <TemplateSelection />}
-        {step === 'details' && <WebsiteDetailsForm />}
-        {step === 'deployment' && <DeploymentForm />}
+        <StepIndicator currentStep={state.step} />
+        <TemplateSelection />
+        <WebsiteDetailsForm />
+        <DeploymentForm />
       </CardContent>
     </Card>
   )

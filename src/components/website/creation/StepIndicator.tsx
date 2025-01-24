@@ -1,6 +1,6 @@
 import { Check, ChevronRight } from "lucide-react"
 
-interface StepIndicatorProps {
+export interface StepIndicatorProps {
   currentStep: 'template' | 'details' | 'deployment'
 }
 
@@ -9,7 +9,7 @@ export const StepIndicator = ({ currentStep }: StepIndicatorProps) => {
     { id: 'template', label: 'Choose Template' },
     { id: 'details', label: 'Website Details' },
     { id: 'deployment', label: 'Deployment' }
-  ]
+  ] as const
 
   return (
     <div className="flex items-center justify-center mb-6">
