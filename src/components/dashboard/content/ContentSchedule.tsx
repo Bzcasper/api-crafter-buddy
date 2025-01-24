@@ -18,14 +18,14 @@ export const ContentSchedule = () => {
         <div className="grid grid-cols-5 gap-4">
           {scheduleData.map((day) => (
             <div key={day.day} className="text-center">
-              <div className="font-medium mb-2">{day.day}</div>
+              <div className="font-medium mb-2 text-muted-foreground">{day.day}</div>
               {day.posts.map((post, index) => (
                 <div 
                   key={index}
-                  className="scheduled-post"
+                  className="bg-pink-500/10 rounded-md p-2 text-pink-500"
                 >
                   <div className="text-xs font-medium">{post.time}</div>
-                  <div className="text-xs text-muted-foreground">{post.title}</div>
+                  <div className="text-xs">{post.title}</div>
                 </div>
               ))}
             </div>

@@ -9,7 +9,7 @@ export const ContentControls = ({ onControlChange }: ContentControlsProps) => {
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <label className="text-sm font-medium">Creativity Level</label>
+        <label className="text-sm font-medium text-muted-foreground">Creativity Level</label>
         <Slider 
           defaultValue={[50]} 
           max={100} 
@@ -20,7 +20,7 @@ export const ContentControls = ({ onControlChange }: ContentControlsProps) => {
       </div>
       
       <div className="space-y-2">
-        <label className="text-sm font-medium">Content Length</label>
+        <label className="text-sm font-medium text-muted-foreground">Content Length</label>
         <Slider 
           defaultValue={[50]} 
           max={100} 
@@ -31,7 +31,7 @@ export const ContentControls = ({ onControlChange }: ContentControlsProps) => {
       </div>
       
       <div className="space-y-2">
-        <label className="text-sm font-medium">Tone Matching</label>
+        <label className="text-sm font-medium text-muted-foreground">Tone Matching</label>
         <Slider 
           defaultValue={[50]} 
           max={100} 
@@ -42,9 +42,9 @@ export const ContentControls = ({ onControlChange }: ContentControlsProps) => {
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-medium">Style Presets</label>
+        <label className="text-sm font-medium text-muted-foreground">Style Presets</label>
         <div className="flex gap-2">
-          <Button variant="default" size="sm">Professional</Button>
+          <Button variant="default" size="sm" className="bg-pink-500 hover:bg-pink-600">Professional</Button>
           <Button variant="outline" size="sm">Casual</Button>
           <Button variant="outline" size="sm">Fun</Button>
         </div>
