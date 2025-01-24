@@ -1,102 +1,70 @@
-import { Link, useLocation } from "react-router-dom";
-import { cn } from "@/lib/utils";
+import { Link, useLocation } from "react-router-dom"
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 import {
-  Command,
-  Globe,
   BarChart3,
-  Pencil,
-  Database,
-  Megaphone,
-  Bot,
-  Image,
-  Search,
-  Users,
-  FileText,
+  Globe,
+  Home,
   Settings,
-} from "lucide-react";
+  Users,
+} from "lucide-react"
 
-const menuItems = [
+interface SidebarLink {
+  icon: typeof Home
+  label: string
+  href: string
+}
+
+const links: SidebarLink[] = [
   {
-    title: "AI Command Center",
-    path: "/dashboard",
-    icon: Command,
+    icon: Home,
+    label: "Dashboard",
+    href: "/dashboard",
   },
   {
-    title: "Website Management",
-    path: "/dashboard/websites",
     icon: Globe,
+    label: "Website Management",
+    href: "/dashboard/website-management",
   },
   {
-    title: "Advanced Analytics",
-    path: "/dashboard/analytics",
-    icon: BarChart3,
-  },
-  {
-    title: "Content Studio",
-    path: "/dashboard/content",
-    icon: Pencil,
-  },
-  {
-    title: "Data Collection",
-    path: "/dashboard/data",
-    icon: Database,
-  },
-  {
-    title: "Campaign Manager",
-    path: "/dashboard/campaigns",
-    icon: Megaphone,
-  },
-  {
-    title: "Automation Center",
-    path: "/dashboard/automation",
-    icon: Bot,
-  },
-  {
-    title: "Media Library",
-    path: "/dashboard/media",
-    icon: Image,
-  },
-  {
-    title: "SEO Optimizer",
-    path: "/dashboard/seo",
-    icon: Search,
-  },
-  {
-    title: "Competition Tracker",
-    path: "/dashboard/competition",
     icon: Users,
+    label: "Team",
+    href: "/dashboard/team",
   },
   {
-    title: "Advanced Reports",
-    path: "/dashboard/reports",
-    icon: FileText,
+    icon: BarChart3,
+    label: "Analytics",
+    href: "/dashboard/analytics",
   },
   {
-    title: "System Settings",
-    path: "/dashboard/settings",
     icon: Settings,
+    label: "Settings",
+    href: "/dashboard/settings",
   },
-];
+]
 
-export const DashboardSidebarContent = ({ collapsed = false }: { collapsed?: boolean }) => {
-  const location = useLocation();
+export function DashboardSidebarContent({ collapsed }: { collapsed: boolean }) {
+  const location = useLocation()
 
   return (
-    <nav className="flex-1 space-y-1">
-      {menuItems.map((item) => (
-        <Link
-          key={item.path}
-          to={item.path}
-          className={cn(
-            "sidebar-item",
-            location.pathname === item.path && "active",
-            collapsed ? "justify-center px-2" : "px-4"
-          )}
-        >
-          <item.icon className="h-5 w-5 flex-shrink-0 text-primary" />
-          {!collapsed && <span>{item.title}</span>}
-        </Link>
-      ))}
-    </nav>
-  );
-};
+    <div className="flex h-full w-full flex-col gap-2">
+      {links.map((link, index) => {
+        const Icon = link.icon
+        return (
+          <Link key={index} to={link.href}>
+            <Button
+              variant="ghost"
+              className={cn(
+                "w-full justify-start",
+                location.pathname === link.href && "bg-accent"
+              )}
+            >
+              <Icon className="h-5 w-5" />
+              {!collapsed && <span className="ml-2">{link.label}</span>}
+            </Button>
+          </Link>
+        )
+      })}
+    </div>
+  )
+}

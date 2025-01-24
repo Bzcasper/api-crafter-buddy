@@ -2,6 +2,8 @@ import { DashboardLayout } from "@/components/layouts/DashboardLayout"
 import { DashboardStats } from "@/components/dashboard/DashboardStats"
 import { DashboardAnalytics } from "@/components/dashboard/DashboardAnalytics"
 import { DashboardCalendar } from "@/components/dashboard/DashboardCalendar"
+import { Routes, Route } from "react-router-dom"
+import WebsiteManagement from "./WebsiteManagement"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Brain, Globe, PieChart, Megaphone } from "lucide-react"
 import {
@@ -71,18 +73,16 @@ const adCampaigns = [
   },
 ]
 
-const Dashboard = () => {
+const DashboardHome = () => {
   const [metricType, setMetricType] = useState("traffic")
 
   return (
-    <DashboardLayout>
-      <div className="space-y-4 p-4 max-w-[2000px] mx-auto">
-        <DashboardStats />
-        <DashboardAnalytics />
-        
-        {/* Pie Chart and Campaigns Row */}
-        <div className="grid gap-4 md:grid-cols-2">
-          {/* Traffic Distribution */}
+    <div className="space-y-4 p-4 max-w-[2000px] mx-auto">
+      <DashboardStats />
+      <DashboardAnalytics />
+      
+      {/* Pie Chart and Campaigns Row */}
+      <div className="grid gap-4 md:grid-cols-2">
           <Card className="bg-card">
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="flex items-center gap-2">
@@ -158,11 +158,10 @@ const Dashboard = () => {
               </div>
             </CardContent>
           </Card>
-        </div>
+      </div>
 
-        {/* Bottom Row */}
-        <div className="grid gap-4 md:grid-cols-3">
-          {/* AI Insights */}
+      {/* Bottom Row */}
+      <div className="grid gap-4 md:grid-cols-3">
           <Card className="bg-card">
             <CardHeader>
               <CardTitle>AI Insights</CardTitle>
@@ -215,8 +214,18 @@ const Dashboard = () => {
           </Card>
 
           <DashboardCalendar />
-        </div>
       </div>
+    </div>
+  )
+}
+
+const Dashboard = () => {
+  return (
+    <DashboardLayout>
+      <Routes>
+        <Route path="/" element={<DashboardHome />} />
+        <Route path="/website-management" element={<WebsiteManagement />} />
+      </Routes>
     </DashboardLayout>
   )
 }
