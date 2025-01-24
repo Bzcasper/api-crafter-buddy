@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils"
 import { useMediaQuery } from "@/hooks/use-media-query"
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
+  // Initialize with collapsed state
   const [isCollapsed, setIsCollapsed] = useState(true)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
   const isDesktop = useMediaQuery("(min-width: 768px)")
@@ -77,8 +78,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               onCollapse={() => setIsCollapsed(true)}
               onExpand={() => setIsCollapsed(false)}
               className={cn(
-                "bg-white",
-                isCollapsed ? "min-w-[50px]" : "min-w-[200px]",
+                "bg-white transition-all duration-300",
+                isCollapsed ? "min-w-[50px] max-w-[50px]" : "min-w-[200px]",
                 !isDesktop && "hidden md:block"
               )}
             >
@@ -89,9 +90,14 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             <ResizableHandle withHandle />
             
             {/* Main Content Panel */}
-            <ResizablePanel defaultSize={85}>
-              <main className="h-full overflow-y-auto bg-background">
-                {children}
+            <ResizablePanel 
+              defaultSize={85}
+              className="overflow-hidden"
+            >
+              <main className="h-full overflow-y-auto bg-background p-4">
+                <div className="mx-auto max-w-[2000px]">
+                  {children}
+                </div>
               </main>
             </ResizablePanel>
           </ResizablePanelGroup>
