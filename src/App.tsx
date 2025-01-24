@@ -10,6 +10,7 @@ import Auth from "./pages/Auth"
 import Dashboard from "./pages/Dashboard"
 import Terms from "./pages/Terms"
 import Privacy from "./pages/Privacy"
+import WebsiteManagement from "./pages/WebsiteManagement"
 
 const queryClient = new QueryClient()
 
@@ -58,6 +59,14 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/website-management"
+            element={
+              <ProtectedRoute>
+                <WebsiteManagement />
               </ProtectedRoute>
             }
           />
