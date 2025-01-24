@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { DashboardLayout } from "@/components/layouts/DashboardLayout"
 import { Calendar } from "@/components/ui/calendar"
@@ -57,7 +57,7 @@ const aiInsights = [
 ]
 
 const Dashboard = () => {
-  const [date, setDate] = React.useState<Date | undefined>(new Date())
+  const [date, setDate] = useState<Date | undefined>(new Date())
 
   return (
     <DashboardLayout>
