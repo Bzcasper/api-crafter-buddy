@@ -1,7 +1,6 @@
 import { useState } from "react"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar"
-import { DashboardActivityBar } from "@/components/dashboard/DashboardActivityBar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Bell, Menu, RocketIcon, Search, Settings, User } from "lucide-react"
@@ -63,10 +62,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         </header>
 
         {/* Main Layout with Resizable Sidebar */}
-        <div className="flex-1 pt-16 pb-8">
+        <div className="flex-1 pt-16">
           <ResizablePanelGroup 
             direction="horizontal" 
-            className="h-[calc(100vh-6rem)]"
+            className="h-[calc(100vh-4rem)]"
           >
             {/* Sidebar Panel */}
             <ResizablePanel
@@ -78,8 +77,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               onCollapse={() => setIsCollapsed(true)}
               onExpand={() => setIsCollapsed(false)}
               className={cn(
-                "bg-white transition-all duration-300",
-                isCollapsed ? "min-w-[50px] max-w-[50px]" : "min-w-[200px]",
+                "bg-white",
+                isCollapsed ? "min-w-[50px]" : "min-w-[200px]",
                 !isDesktop && "hidden md:block"
               )}
             >
@@ -90,21 +89,13 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             <ResizableHandle withHandle />
             
             {/* Main Content Panel */}
-            <ResizablePanel 
-              defaultSize={85}
-              className="overflow-hidden"
-            >
-              <main className="h-full overflow-y-auto bg-background p-4">
-                <div className="mx-auto max-w-[2000px]">
-                  {children}
-                </div>
+            <ResizablePanel defaultSize={85}>
+              <main className="h-full overflow-y-auto bg-background">
+                {children}
               </main>
             </ResizablePanel>
           </ResizablePanelGroup>
         </div>
-
-        {/* Activity Bar */}
-        <DashboardActivityBar />
 
         {/* Mobile Sidebar */}
         <div 
