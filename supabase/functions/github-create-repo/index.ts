@@ -20,6 +20,8 @@ serve(async (req) => {
       throw new Error('GitHub token not configured')
     }
 
+    console.log('Creating GitHub repository:', repoName)
+
     // Create repository on GitHub
     const response = await fetch('https://api.github.com/user/repos', {
       method: 'POST',
@@ -37,10 +39,12 @@ serve(async (req) => {
 
     if (!response.ok) {
       const error = await response.json()
+      console.error('GitHub API error:', error)
       throw new Error(`GitHub API error: ${error.message}`)
     }
 
     const repo = await response.json()
+    console.log('Repository created successfully:', repo.html_url)
 
     return new Response(
       JSON.stringify({ 
@@ -56,6 +60,7 @@ serve(async (req) => {
       },
     )
   } catch (error) {
+    console.error('Error creating repository:', error)
     return new Response(
       JSON.stringify({ 
         success: false, 
