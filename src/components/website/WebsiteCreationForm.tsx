@@ -1,21 +1,14 @@
 import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { WebsiteTemplates } from "./templates/WebsiteTemplates"
 import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import { BasicDetailsForm } from "./creation/BasicDetailsForm"
+import { DeploymentSettings } from "./creation/DeploymentSettings"
 
 export const WebsiteCreationForm = () => {
-  const [step, setStep] = useState<'template' | 'details'>('template')
+  const [step, setStep] = useState<'template' | 'details' | 'deployment'>('template')
   const [selectedTemplate, setSelectedTemplate] = useState("")
   const [title, setTitle] = useState("")
   const [domain, setDomain] = useState("")
@@ -27,6 +20,44 @@ export const WebsiteCreationForm = () => {
   const handleTemplateSelect = (templateId: string) => {
     setSelectedTemplate(templateId)
     setStep('details')
+  }
+
+  const handleGitHubConnect = async (repoName: string) => {
+    try {
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+      
+      if (sessionError) throw sessionError
+      
+      if (!session?.user?.id) {
+        toast({
+          title: "Error",
+          description: "You must be logged in to connect to GitHub.",
+          variant: "destructive"
+        })
+        return
+      }
+
+      const { data, error } = await supabase.functions.invoke('github-create-repo', {
+        body: { repoName }
+      })
+
+      if (error) throw error
+
+      toast({
+        title: "Success",
+        description: "GitHub repository created successfully!"
+      })
+
+      // Move to next step or complete the process
+      handleSubmit()
+    } catch (error) {
+      console.error('Error connecting to GitHub:', error)
+      toast({
+        title: "Error",
+        description: "Failed to create GitHub repository. Please try again.",
+        variant: "destructive"
+      })
+    }
   }
 
   const handleFaviconUpload = async (file: File) => {
@@ -47,9 +78,7 @@ export const WebsiteCreationForm = () => {
     }
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
+  const handleSubmit = async () => {
     try {
       const { data: { session }, error: sessionError } = await supabase.auth.getSession()
       
@@ -116,92 +145,67 @@ export const WebsiteCreationForm = () => {
     }
   }
 
-  if (step === 'template') {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Choose a Template</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <WebsiteTemplates onSelect={handleTemplateSelect} />
-        </CardContent>
-      </Card>
-    )
+  const renderStep = () => {
+    switch (step) {
+      case 'template':
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle>Choose a Template</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <WebsiteTemplates onSelect={handleTemplateSelect} />
+            </CardContent>
+          </Card>
+        )
+      case 'details':
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle>Website Details</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <BasicDetailsForm
+                title={title}
+                setTitle={setTitle}
+                domain={domain}
+                setDomain={setDomain}
+                font={font}
+                setFont={setFont}
+                primaryColor={primaryColor}
+                setPrimaryColor={setPrimaryColor}
+                favicon={favicon}
+                setFavicon={setFavicon}
+              />
+              <div className="flex justify-between mt-6">
+                <Button variant="outline" onClick={() => setStep('template')}>
+                  Back to Templates
+                </Button>
+                <Button onClick={() => setStep('deployment')}>
+                  Next: Deployment
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )
+      case 'deployment':
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle>Deployment Settings</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <DeploymentSettings onGitHubConnect={handleGitHubConnect} />
+              <div className="flex justify-between mt-6">
+                <Button variant="outline" onClick={() => setStep('details')}>
+                  Back to Details
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )
+    }
   }
 
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Website Details</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="title">Website Title</Label>
-            <Input
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="My Awesome Website"
-              required
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="domain">Custom Domain (Optional)</Label>
-            <Input
-              id="domain"
-              value={domain}
-              onChange={(e) => setDomain(e.target.value)}
-              placeholder="www.mywebsite.com"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="favicon">Favicon</Label>
-            <Input
-              id="favicon"
-              type="file"
-              accept="image/*"
-              onChange={(e) => setFavicon(e.target.files?.[0] || null)}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="primaryColor">Primary Color</Label>
-            <Input
-              id="primaryColor"
-              type="color"
-              value={primaryColor}
-              onChange={(e) => setPrimaryColor(e.target.value)}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="font">Font Family</Label>
-            <Select value={font} onValueChange={setFont}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a font" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Inter">Inter</SelectItem>
-                <SelectItem value="Roboto">Roboto</SelectItem>
-                <SelectItem value="Open Sans">Open Sans</SelectItem>
-                <SelectItem value="Montserrat">Montserrat</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="flex justify-between">
-            <Button type="button" variant="outline" onClick={() => setStep('template')}>
-              Back to Templates
-            </Button>
-            <Button type="submit">
-              Create Website
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
-  )
+  return renderStep()
 }
