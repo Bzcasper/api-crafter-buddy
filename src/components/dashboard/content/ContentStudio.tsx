@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Save } from "lucide-react"
-import { useParams } from "react-router-dom"
+import { Save, PlusCircle } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
 export const ContentStudio = () => {
   const [content, setContent] = useState("")
@@ -15,6 +15,7 @@ export const ContentStudio = () => {
   const [saving, setSaving] = useState(false)
   const [loading, setLoading] = useState(true)
   const [websiteId, setWebsiteId] = useState<string | null>(null)
+  const navigate = useNavigate()
 
   // Load website ID and initial content
   useEffect(() => {
@@ -27,18 +28,18 @@ export const ContentStudio = () => {
         }
 
         // Get the first website for now (you can add website selection later)
-        const { data: websites, error: websiteError } = await supabase
+        const { data: website, error: websiteError } = await supabase
           .from('websites')
           .select('id')
           .eq('created_by', session.user.id)
           .limit(1)
-          .single()
+          .maybeSingle()
 
         if (websiteError) throw websiteError
 
-        if (websites) {
-          setWebsiteId(websites.id)
-          await loadPageContent(websites.id, selectedPage)
+        if (website) {
+          setWebsiteId(website.id)
+          await loadPageContent(website.id, selectedPage)
         }
       } catch (error) {
         console.error('Error loading website:', error)
@@ -63,7 +64,7 @@ export const ContentStudio = () => {
         .select('content')
         .eq('website_id', websiteId)
         .eq('slug', page)
-        .single()
+        .maybeSingle()
 
       if (error) throw error
 
@@ -145,6 +146,29 @@ export const ContentStudio = () => {
         <Card>
           <CardContent className="pt-6">
             Loading website content...
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  // Show message if no website exists
+  if (!websiteId) {
+    return (
+      <div className="p-6">
+        <Card>
+          <CardContent className="pt-6 text-center">
+            <h3 className="text-lg font-semibold mb-4">No Website Found</h3>
+            <p className="text-muted-foreground mb-6">
+              You need to create a website before you can start editing content.
+            </p>
+            <Button 
+              onClick={() => navigate('/dashboard/websites/new')} 
+              className="gap-2"
+            >
+              <PlusCircle className="h-4 w-4" />
+              Create New Website
+            </Button>
           </CardContent>
         </Card>
       </div>
