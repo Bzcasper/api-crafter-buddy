@@ -9,12 +9,13 @@ import { cn } from "@/lib/utils"
 import { useMediaQuery } from "@/hooks/use-media-query"
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const [isCollapsed, setIsCollapsed] = useState(false)
+  // Set initial collapsed state to true
+  const [isCollapsed, setIsCollapsed] = useState(true)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
   const isDesktop = useMediaQuery("(min-width: 768px)")
 
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={false}>
       <div className="flex h-screen w-full overflow-hidden bg-background">
         {/* Top Navigation */}
         <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-white border-b border-slate-200">
@@ -69,11 +70,12 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           >
             {/* Sidebar Panel */}
             <ResizablePanel
-              defaultSize={20}
-              minSize={15}
+              defaultSize={15}
+              minSize={10}
               maxSize={30}
               collapsible={true}
               collapsedSize={4}
+              defaultCollapsed={true}
               onCollapse={() => setIsCollapsed(true)}
               onExpand={() => setIsCollapsed(false)}
               className={cn(
@@ -89,7 +91,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             <ResizableHandle withHandle />
             
             {/* Main Content Panel */}
-            <ResizablePanel defaultSize={80}>
+            <ResizablePanel defaultSize={85}>
               <main className="h-full overflow-y-auto bg-background">
                 {children}
               </main>

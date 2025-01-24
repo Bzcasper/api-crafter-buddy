@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { DashboardLayout } from "@/components/layouts/DashboardLayout"
 import { Calendar } from "@/components/ui/calendar"
@@ -90,9 +90,9 @@ const Dashboard = () => {
 
   return (
     <DashboardLayout>
-      <div className="space-y-3 p-3 bg-[#F8FAFF]">
+      <div className="space-y-4 p-4 max-w-[2000px] mx-auto">
         {/* Top Stats */}
-        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           <Card className="bg-white shadow-sm hover:shadow-md transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Clicks</CardTitle>
@@ -135,130 +135,127 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        {/* Analytics and Pie Chart Row */}
-        <div className="grid gap-3 md:grid-cols-2">
-          {/* Analytics Chart */}
+        {/* Site-wide Analytics Chart */}
+        <Card className="bg-white shadow-sm">
+          <CardHeader>
+            <CardTitle>Site-wide Analytics</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[300px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={analyticsData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
+                  <XAxis dataKey="name" stroke="#64748B" />
+                  <YAxis stroke="#64748B" />
+                  <Tooltip />
+                  <Area
+                    type="monotone"
+                    dataKey="value"
+                    stroke="#6366F1"
+                    fill="#D3E4FD"
+                    fillOpacity={0.6}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="engagement"
+                    stroke="#4F46E5"
+                    fill="#B2CCFA"
+                    fillOpacity={0.6}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Pie Chart and Campaigns Row */}
+        <div className="grid gap-4 md:grid-cols-2">
+          {/* Traffic Distribution */}
           <Card className="bg-white shadow-sm">
-            <CardHeader>
-              <CardTitle>Site-wide Analytics</CardTitle>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                <PieChart className="h-5 w-5" />
+                Traffic Distribution
+              </CardTitle>
+              <Select value={metricType} onValueChange={setMetricType}>
+                <SelectTrigger className="w-[120px]">
+                  <SelectValue placeholder="Select metric" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="traffic">Traffic</SelectItem>
+                  <SelectItem value="clicks">Clicks</SelectItem>
+                  <SelectItem value="engagement">Engagement</SelectItem>
+                </SelectContent>
+              </Select>
             </CardHeader>
             <CardContent>
               <div className="h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={analyticsData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
-                    <XAxis dataKey="name" stroke="#64748B" />
-                    <YAxis stroke="#64748B" />
-                    <Tooltip />
-                    <Area
-                      type="monotone"
+                  <RechartsePieChart>
+                    <Pie
+                      data={pieData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      paddingAngle={5}
                       dataKey="value"
-                      stroke="#6366F1"
-                      fill="#D3E4FD"
-                      fillOpacity={0.6}
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="engagement"
-                      stroke="#4F46E5"
-                      fill="#B2CCFA"
-                      fillOpacity={0.6}
-                    />
-                  </AreaChart>
+                    >
+                      {pieData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </RechartsePieChart>
                 </ResponsiveContainer>
               </div>
             </CardContent>
           </Card>
 
-          {/* Traffic Distribution & Ads */}
-          <div className="space-y-3">
-            {/* Pie Chart Card */}
-            <Card className="bg-white shadow-sm">
-              <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle className="flex items-center gap-2">
-                  <PieChart className="h-5 w-5" />
-                  Traffic Distribution
-                </CardTitle>
-                <Select value={metricType} onValueChange={setMetricType}>
-                  <SelectTrigger className="w-[120px]">
-                    <SelectValue placeholder="Select metric" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="traffic">Traffic</SelectItem>
-                    <SelectItem value="clicks">Clicks</SelectItem>
-                    <SelectItem value="engagement">Engagement</SelectItem>
-                  </SelectContent>
-                </Select>
-              </CardHeader>
-              <CardContent>
-                <div className="h-[200px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <RechartsePieChart>
-                      <Pie
-                        data={pieData}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={60}
-                        outerRadius={80}
-                        fill="#8884d8"
-                        paddingAngle={5}
-                        dataKey="value"
-                      >
-                        {pieData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </RechartsePieChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Advertisement Campaigns */}
-            <Card className="bg-white shadow-sm">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Megaphone className="h-5 w-5" />
-                  Active Campaigns
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {adCampaigns.map((campaign, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                      <div>
-                        <h4 className="font-semibold">{campaign.title}</h4>
-                        <span className="text-sm text-muted-foreground">
-                          Budget: {campaign.budget}
-                        </span>
-                      </div>
-                      <div className="text-right">
-                        <span className={`inline-block px-2 py-1 rounded text-xs ${
-                          campaign.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
-                        }`}>
-                          {campaign.status}
-                        </span>
-                        <div className="text-sm text-muted-foreground mt-1">
-                          Reach: {campaign.reach}
-                        </div>
+          {/* Advertisement Campaigns */}
+          <Card className="bg-white shadow-sm">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Megaphone className="h-5 w-5" />
+                Active Campaigns
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {adCampaigns.map((campaign, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                    <div>
+                      <h4 className="font-semibold">{campaign.title}</h4>
+                      <span className="text-sm text-muted-foreground">
+                        Budget: {campaign.budget}
+                      </span>
+                    </div>
+                    <div className="text-right">
+                      <span className={`inline-block px-2 py-1 rounded text-xs ${
+                        campaign.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
+                      }`}>
+                        {campaign.status}
+                      </span>
+                      <div className="text-sm text-muted-foreground mt-1">
+                        Reach: {campaign.reach}
                       </div>
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Three Column Layout */}
-        <div className="grid gap-3 md:grid-cols-3">
+        {/* Bottom Row */}
+        <div className="grid gap-4 md:grid-cols-3">
           {/* AI Insights */}
           <Card className="bg-white shadow-sm">
             <CardHeader>
               <CardTitle>AI Insights</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="h-[400px] overflow-y-auto">
               <div className="space-y-4">
                 {aiInsights.map((insight, index) => (
                   <div key={index} className="flex items-start gap-4 rounded-lg border p-3 bg-slate-50">
@@ -278,7 +275,7 @@ const Dashboard = () => {
             <CardHeader>
               <CardTitle>Websites</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="h-[400px] overflow-y-auto">
               <div className="space-y-4">
                 {websiteData.map((site, index) => (
                   <div key={index} className="flex items-start gap-4 rounded-lg border p-3 cursor-pointer hover:bg-slate-50">
@@ -310,7 +307,7 @@ const Dashboard = () => {
             <CardHeader>
               <CardTitle>Content Calendar</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="h-[400px] overflow-y-auto">
               <Calendar
                 mode="single"
                 selected={date}
