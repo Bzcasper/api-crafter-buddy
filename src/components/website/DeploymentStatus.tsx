@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { CloudOff, CloudDone, RefreshCw } from "lucide-react"
+import { CloudOff, CheckCircle, RefreshCw } from "lucide-react"
 
 export function DeploymentStatus() {
   return (
@@ -13,7 +13,7 @@ export function DeploymentStatus() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <CloudDone className="h-5 w-5 text-green-500" />
+              <CheckCircle className="h-5 w-5 text-green-500" />
               <div>
                 <h4 className="font-semibold">Production</h4>
                 <p className="text-sm text-muted-foreground">Last deployed 2 hours ago</p>
