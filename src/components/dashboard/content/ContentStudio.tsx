@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Save, PlusCircle, Generator, History, FileText } from "lucide-react"
+import { Save, PlusCircle, Wand2, History, FileText } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { ContentControls } from "./ContentControls"
 import { ContentSchedule } from "./ContentSchedule"
@@ -206,7 +206,7 @@ export const ContentStudio = () => {
               <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
                 <TabsList>
                   <TabsTrigger value="generator" className="gap-2">
-                    <Generator className="h-4 w-4" />
+                    <Wand2 className="h-4 w-4" />
                     Generator
                   </TabsTrigger>
                   <TabsTrigger value="templates" className="gap-2">
