@@ -7,6 +7,7 @@ import { ContentGenerator } from "@/components/website/ContentGenerator"
 import { CampaignAnalytics } from "@/components/website/CampaignAnalytics"
 import { IntegrationHub } from "@/components/website/IntegrationHub"
 import { AdvancedSettings } from "@/components/website/AdvancedSettings"
+import { WebsiteSelector } from "@/components/website/WebsiteSelector"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
 import { Download, ChevronDown, ExternalLink } from "lucide-react"
@@ -95,6 +96,11 @@ export default function WebsiteManagement() {
         </div>
       </div>
 
+      {/* Website Selection Cards */}
+      <div className="mb-6">
+        <WebsiteSelector />
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 mb-6">
         <WebsiteInsights />
         <Card className="bg-purple-600 text-white">
@@ -116,12 +122,10 @@ export default function WebsiteManagement() {
 
       <div className="space-y-4 lg:space-y-6">
         <WebsiteStats />
+        <CampaignAnalytics />
+        <IntegrationHub />
         <ActiveWebsites />
         <ContentGenerator />
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
-          <CampaignAnalytics />
-          <IntegrationHub />
-        </div>
         <AdvancedSettings />
       </div>
     </div>
