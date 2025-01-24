@@ -5,21 +5,11 @@ import {
   FileText,
   Image,
   Settings,
-  MessageSquare,
   Calendar,
   Activity
 } from "lucide-react"
 import { Link, useLocation } from "react-router-dom"
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar"
+import { cn } from "@/lib/utils"
 
 const menuItems = [
   {
@@ -64,33 +54,36 @@ const menuItems = [
   },
 ]
 
-export function DashboardSidebar() {
+interface DashboardSidebarProps {
+  collapsed?: boolean
+}
+
+export function DashboardSidebar({ collapsed = false }: DashboardSidebarProps) {
   const location = useLocation()
 
   return (
-    <Sidebar className="w-sidebar border-r border-slate-200 bg-white">
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.path}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={location.pathname === item.path}
-                  >
-                    <Link to={item.path} className="flex items-center gap-3 px-4 py-2">
-                      <item.icon className="h-5 w-5" />
-                      <span className="font-medium">{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
+    <div className="h-full flex flex-col gap-2 p-2">
+      <nav className="flex-1">
+        <div className="space-y-1">
+          {menuItems.map((item) => (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={cn(
+                "flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors",
+                "hover:bg-slate-100 hover:text-slate-900",
+                location.pathname === item.path
+                  ? "bg-slate-100 text-slate-900"
+                  : "text-slate-600",
+                collapsed && "justify-center"
+              )}
+            >
+              <item.icon className="h-5 w-5 flex-shrink-0" />
+              {!collapsed && <span>{item.title}</span>}
+            </Link>
+          ))}
+        </div>
+      </nav>
+    </div>
   )
 }
