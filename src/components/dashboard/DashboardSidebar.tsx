@@ -1,4 +1,14 @@
-import { BarChart3, Globe, Link as LinkIcon, List } from "lucide-react"
+import { 
+  BarChart3, 
+  Brain, 
+  Globe, 
+  Link as LinkIcon, 
+  List,
+  FileText,
+  Image,
+  Settings,
+  Spider
+} from "lucide-react"
 import { Link, useLocation } from "react-router-dom"
 import {
   Sidebar,
@@ -18,19 +28,34 @@ const menuItems = [
     icon: BarChart3,
   },
   {
-    title: "Websites",
-    path: "/dashboard/websites",
-    icon: Globe,
+    title: "AI Hub",
+    path: "/dashboard/ai-hub",
+    icon: Brain,
   },
   {
-    title: "Affiliate",
-    path: "/dashboard/affiliate",
-    icon: LinkIcon,
+    title: "Web Scraping",
+    path: "/dashboard/scraping",
+    icon: Spider,
   },
   {
-    title: "Logs",
-    path: "/dashboard/logs",
-    icon: List,
+    title: "Content Generator",
+    path: "/dashboard/content",
+    icon: FileText,
+  },
+  {
+    title: "Media Library",
+    path: "/dashboard/media",
+    icon: Image,
+  },
+  {
+    title: "Analytics",
+    path: "/dashboard/analytics",
+    icon: BarChart3,
+  },
+  {
+    title: "Settings",
+    path: "/dashboard/settings",
+    icon: Settings,
   },
 ]
 
@@ -38,7 +63,7 @@ export function DashboardSidebar() {
   const location = useLocation()
 
   return (
-    <Sidebar>
+    <Sidebar className="w-[280px] border-r border-slate-200">
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
