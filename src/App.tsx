@@ -8,6 +8,8 @@ import { supabase } from "@/integrations/supabase/client"
 import Index from "./pages/Index"
 import Auth from "./pages/Auth"
 import Dashboard from "./pages/Dashboard"
+import Terms from "./pages/Terms"
+import Privacy from "./pages/Privacy"
 
 const queryClient = new QueryClient()
 
@@ -49,6 +51,8 @@ const App = () => (
         <Sonner />
         <Routes>
           <Route path="/auth" element={<Auth />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
           <Route
             path="/dashboard/*"
             element={

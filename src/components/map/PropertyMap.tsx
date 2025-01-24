@@ -19,13 +19,14 @@ export const PropertyMap = () => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        setUserLocation([longitude, latitude]);
+        const coordinates: [number, number] = [longitude, latitude];
+        setUserLocation(coordinates);
         
         // Initialize map with user's location
         map.current = new mapboxgl.Map({
           container: mapContainer.current,
           style: 'mapbox://styles/mapbox/light-v11',
-          center: [longitude, latitude],
+          center: coordinates,
           zoom: 12
         });
 
@@ -34,20 +35,20 @@ export const PropertyMap = () => {
 
         // Add user location marker
         new mapboxgl.Marker({ color: '#FF0000' })
-          .setLngLat([longitude, latitude])
+          .setLngLat(coordinates)
           .setPopup(new mapboxgl.Popup().setHTML('<h3>Your Location</h3>'))
           .addTo(map.current);
 
-        // Add sample property markers (replace with real data)
+        // Add sample property markers
         const sampleProperties = [
           {
-            coordinates: [longitude + 0.01, latitude + 0.01],
+            coordinates: [longitude + 0.01, latitude + 0.01] as [number, number],
             price: '$450,000',
             type: 'Auction',
             address: '123 Main St'
           },
           {
-            coordinates: [longitude - 0.01, latitude - 0.01],
+            coordinates: [longitude - 0.01, latitude - 0.01] as [number, number],
             price: '$380,000',
             type: 'For Sale',
             address: '456 Oak Ave'
@@ -68,7 +69,6 @@ export const PropertyMap = () => {
             )
             .addTo(map.current!);
         });
-
       },
       (error) => {
         console.error('Error getting location:', error);
@@ -78,11 +78,12 @@ export const PropertyMap = () => {
           variant: "destructive"
         });
 
-        // Initialize map with default location
+        // Initialize map with default location (NYC)
+        const defaultCoordinates: [number, number] = [-74.006, 40.7128];
         map.current = new mapboxgl.Map({
           container: mapContainer.current,
           style: 'mapbox://styles/mapbox/light-v11',
-          center: [-74.006, 40.7128], // Default to NYC
+          center: defaultCoordinates,
           zoom: 12
         });
       }
