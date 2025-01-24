@@ -3,13 +3,15 @@ import { StepIndicator } from "./creation/StepIndicator"
 import { TemplateSelection } from "./creation/TemplateSelection"
 import { WebsiteDetailsForm } from "./creation/WebsiteDetailsForm"
 import { DeploymentForm } from "./creation/DeploymentForm"
-import { WebsiteCreationProvider } from "./creation/WebsiteCreationContext"
+import { WebsiteCreationProvider, useWebsiteCreation } from "./creation/WebsiteCreationContext"
 
 const WebsiteCreationContent = () => {
+  const { state } = useWebsiteCreation()
+
   return (
     <Card>
       <CardContent className="pt-6">
-        <StepIndicator />
+        <StepIndicator currentStep={state.step} />
         <TemplateSelection />
         <WebsiteDetailsForm />
         <DeploymentForm />
