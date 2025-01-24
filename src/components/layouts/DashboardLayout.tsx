@@ -17,8 +17,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background">
         {/* Top Navigation */}
-        <header className="fixed top-0 left-0 right-0 h-topnav bg-white border-b border-slate-200 z-50 flex items-center px-4 md:px-6">
-          <div className="flex items-center gap-4 flex-1">
+        <header className="fixed top-0 left-0 right-0 h-topnav bg-white border-b border-slate-200 z-50 flex items-center">
+          <div className="flex items-center gap-4 w-full px-4">
             {/* Mobile Menu Toggle */}
             <Button 
               variant="ghost" 
@@ -91,9 +91,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             {/* Main Content Panel */}
             <ResizablePanel defaultSize={80}>
               <main className="h-full bg-background overflow-y-auto">
-                <div className="container mx-auto p-6">
-                  {children}
-                </div>
+                {children}
               </main>
             </ResizablePanel>
           </ResizablePanelGroup>

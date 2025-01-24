@@ -62,7 +62,7 @@ export function DashboardSidebar({ collapsed = false }: DashboardSidebarProps) {
   const location = useLocation()
 
   return (
-    <div className="h-full flex flex-col gap-2 p-2">
+    <div className="h-full flex flex-col">
       <nav className="flex-1">
         <div className="space-y-1">
           {menuItems.map((item) => (
@@ -70,12 +70,12 @@ export function DashboardSidebar({ collapsed = false }: DashboardSidebarProps) {
               key={item.path}
               to={item.path}
               className={cn(
-                "flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors",
+                "flex items-center gap-3 h-10 text-sm font-medium transition-colors",
                 "hover:bg-slate-100 hover:text-slate-900",
                 location.pathname === item.path
                   ? "bg-slate-100 text-slate-900"
                   : "text-slate-600",
-                collapsed && "justify-center"
+                collapsed ? "justify-center px-2" : "px-4"
               )}
             >
               <item.icon className="h-5 w-5 flex-shrink-0" />
