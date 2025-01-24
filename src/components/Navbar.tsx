@@ -4,26 +4,23 @@ import { Link } from "react-router-dom"
 
 export const Navbar = () => {
   return (
-    <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <nav className="border-b bg-white">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center gap-6">
             <Link to="/" className="flex items-center gap-2">
-              <Building className="h-6 w-6" />
+              <Building className="h-6 w-6 text-blue-500" />
               <span className="font-bold">RealtyInsights</span>
             </Link>
             <div className="hidden md:flex gap-6">
-              <Link to="/properties" className="text-muted-foreground hover:text-foreground">
+              <Link to="/properties" className="text-gray-600 hover:text-gray-900">
                 Properties
               </Link>
-              <Link to="/auctions" className="text-muted-foreground hover:text-foreground">
+              <Link to="/auctions" className="text-gray-600 hover:text-gray-900">
                 Auctions
               </Link>
-              <Link to="/blog" className="text-muted-foreground hover:text-foreground">
+              <Link to="/blog" className="text-gray-600 hover:text-gray-900">
                 Blog
-              </Link>
-              <Link to="/market-data" className="text-muted-foreground hover:text-foreground">
-                Market Data
               </Link>
             </div>
           </div>
@@ -31,7 +28,7 @@ export const Navbar = () => {
             <Button variant="ghost" asChild>
               <Link to="/auth">Sign In</Link>
             </Button>
-            <Button asChild>
+            <Button asChild className="bg-blue-500 hover:bg-blue-600">
               <Link to="/auth">Get Started</Link>
             </Button>
           </div>
