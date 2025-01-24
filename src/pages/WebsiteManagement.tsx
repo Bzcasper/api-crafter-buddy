@@ -9,7 +9,8 @@ import { IntegrationHub } from "@/components/website/IntegrationHub"
 import { AdvancedSettings } from "@/components/website/AdvancedSettings"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
-import { Download, ChevronDown } from "lucide-react"
+import { Download, ChevronDown, ExternalLink } from "lucide-react"
+import { Link } from "react-router-dom"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -53,6 +54,12 @@ export default function WebsiteManagement() {
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold">AI-Powered Website Manager</h1>
         <div className="flex gap-4">
+          <Link to="/">
+            <Button variant="outline" className="flex items-center gap-2">
+              <ExternalLink className="h-4 w-4" />
+              View Landing Page
+            </Button>
+          </Link>
           <Button variant="default" className="bg-blue-600 hover:bg-blue-700">
             + New Website
           </Button>

@@ -62,22 +62,7 @@ const App = () => (
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/website-management"
-            element={
-              <ProtectedRoute>
-                <WebsiteManagement />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <Navigate to="/dashboard" replace />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/" element={<Index />} />
         </Routes>
       </TooltipProvider>
     </BrowserRouter>

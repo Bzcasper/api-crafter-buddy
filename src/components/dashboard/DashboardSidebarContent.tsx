@@ -23,7 +23,7 @@ const menuItems = [
   },
   {
     title: "Website Management",
-    path: "/dashboard/websites",
+    path: "/dashboard/website-management",
     icon: Globe,
   },
   {
