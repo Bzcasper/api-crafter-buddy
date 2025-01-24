@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar"
+import { DashboardActivityBar } from "@/components/dashboard/DashboardActivityBar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Bell, Menu, RocketIcon, Search, Settings, User } from "lucide-react"
@@ -9,7 +10,6 @@ import { cn } from "@/lib/utils"
 import { useMediaQuery } from "@/hooks/use-media-query"
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
-  // Initialize with collapsed state
   const [isCollapsed, setIsCollapsed] = useState(true)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
   const isDesktop = useMediaQuery("(min-width: 768px)")
@@ -63,10 +63,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         </header>
 
         {/* Main Layout with Resizable Sidebar */}
-        <div className="flex-1 pt-16">
+        <div className="flex-1 pt-16 pb-8">
           <ResizablePanelGroup 
             direction="horizontal" 
-            className="h-[calc(100vh-4rem)]"
+            className="h-[calc(100vh-6rem)]"
           >
             {/* Sidebar Panel */}
             <ResizablePanel
@@ -102,6 +102,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             </ResizablePanel>
           </ResizablePanelGroup>
         </div>
+
+        {/* Activity Bar */}
+        <DashboardActivityBar />
 
         {/* Mobile Sidebar */}
         <div 

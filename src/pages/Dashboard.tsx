@@ -90,7 +90,7 @@ const Dashboard = () => {
 
   return (
     <DashboardLayout>
-      <div className="space-y-4 p-4 max-w-[2000px] mx-auto">
+      <div className="space-y-4">
         {/* Top Stats */}
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           <Card className="bg-white shadow-sm hover:shadow-md transition-shadow">
@@ -141,7 +141,7 @@ const Dashboard = () => {
             <CardTitle>Site-wide Analytics</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-[300px]">
+            <div className="h-[250px]">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={analyticsData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
@@ -189,7 +189,7 @@ const Dashboard = () => {
               </Select>
             </CardHeader>
             <CardContent>
-              <div className="h-[300px]">
+              <div className="h-[250px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <RechartsePieChart>
                     <Pie
@@ -255,7 +255,7 @@ const Dashboard = () => {
             <CardHeader>
               <CardTitle>AI Insights</CardTitle>
             </CardHeader>
-            <CardContent className="h-[400px] overflow-y-auto">
+            <CardContent className="h-[300px] overflow-y-auto">
               <div className="space-y-4">
                 {aiInsights.map((insight, index) => (
                   <div key={index} className="flex items-start gap-4 rounded-lg border p-3 bg-slate-50">
@@ -275,7 +275,7 @@ const Dashboard = () => {
             <CardHeader>
               <CardTitle>Websites</CardTitle>
             </CardHeader>
-            <CardContent className="h-[400px] overflow-y-auto">
+            <CardContent className="h-[300px] overflow-y-auto">
               <div className="space-y-4">
                 {websiteData.map((site, index) => (
                   <div key={index} className="flex items-start gap-4 rounded-lg border p-3 cursor-pointer hover:bg-slate-50">
@@ -307,14 +307,14 @@ const Dashboard = () => {
             <CardHeader>
               <CardTitle>Content Calendar</CardTitle>
             </CardHeader>
-            <CardContent className="h-[400px] overflow-y-auto">
+            <CardContent>
               <Calendar
                 mode="single"
                 selected={date}
                 onSelect={setDate}
                 className="rounded-md border"
               />
-              <div className="mt-4">
+              <div className="mt-2">
                 <h4 className="font-semibold mb-2">Scheduled Posts</h4>
                 <div className="space-y-2">
                   <div className="text-sm p-2 bg-slate-50 rounded">
