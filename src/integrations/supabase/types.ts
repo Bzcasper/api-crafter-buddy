@@ -331,6 +331,47 @@ export type Database = {
         }
         Relationships: []
       }
+      website_analytics: {
+        Row: {
+          avg_session_duration: unknown | null
+          bounce_rate: number | null
+          created_at: string
+          date: string
+          id: string
+          page_views: number | null
+          unique_visitors: number | null
+          website_id: string
+        }
+        Insert: {
+          avg_session_duration?: unknown | null
+          bounce_rate?: number | null
+          created_at?: string
+          date?: string
+          id?: string
+          page_views?: number | null
+          unique_visitors?: number | null
+          website_id: string
+        }
+        Update: {
+          avg_session_duration?: unknown | null
+          bounce_rate?: number | null
+          created_at?: string
+          date?: string
+          id?: string
+          page_views?: number | null
+          unique_visitors?: number | null
+          website_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "website_analytics_website_id_fkey"
+            columns: ["website_id"]
+            isOneToOne: false
+            referencedRelation: "websites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       website_assets: {
         Row: {
           created_at: string
@@ -422,11 +463,13 @@ export type Database = {
           created_at: string
           created_by: string
           domain: string | null
+          favicon_url: string | null
           id: string
           last_published_at: string | null
           settings: Json | null
           status: string | null
           template: string
+          theme_settings: Json | null
           title: string
           updated_at: string
         }
@@ -435,11 +478,13 @@ export type Database = {
           created_at?: string
           created_by: string
           domain?: string | null
+          favicon_url?: string | null
           id?: string
           last_published_at?: string | null
           settings?: Json | null
           status?: string | null
           template: string
+          theme_settings?: Json | null
           title: string
           updated_at?: string
         }
@@ -448,11 +493,13 @@ export type Database = {
           created_at?: string
           created_by?: string
           domain?: string | null
+          favicon_url?: string | null
           id?: string
           last_published_at?: string | null
           settings?: Json | null
           status?: string | null
           template?: string
+          theme_settings?: Json | null
           title?: string
           updated_at?: string
         }
