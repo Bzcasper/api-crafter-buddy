@@ -13,6 +13,7 @@ import { ThemeProvider } from "next-themes"
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [isCollapsed, setIsCollapsed] = useState(true)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
   const isDesktop = useMediaQuery("(min-width: 768px)")
 
   return (
@@ -38,15 +39,27 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 <span className="hidden sm:inline">SocialBoost</span>
               </div>
               
+              {/* Spacer */}
+              <div className="flex-1" />
+              
               {/* Search */}
-              <div className="flex-1 max-w-2xl mx-4">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <div className="relative flex items-center mr-2">
+                {isSearchOpen && (
                   <Input 
                     placeholder="Search..." 
-                    className="w-full pl-10"
+                    className="w-[200px] md:w-[300px] absolute right-0 top-1/2 -translate-y-1/2"
+                    autoFocus
+                    onBlur={() => setIsSearchOpen(false)}
                   />
-                </div>
+                )}
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  onClick={() => setIsSearchOpen(!isSearchOpen)}
+                  className="relative z-10"
+                >
+                  <Search className="h-5 w-5" />
+                </Button>
               </div>
               
               {/* Right Actions */}

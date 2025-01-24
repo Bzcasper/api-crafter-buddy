@@ -5,12 +5,23 @@ import { Calendar } from "@/components/ui/calendar"
 export const DashboardCalendar = () => {
   const [date, setDate] = useState<Date | undefined>(new Date())
 
+  const scheduledPosts = [
+    {
+      title: "Product Launch Post",
+      datetime: "Today at 2:00 PM"
+    },
+    {
+      title: "Weekly Newsletter",
+      datetime: "Tomorrow at 10:00 AM"
+    }
+  ]
+
   return (
     <Card className="bg-card">
       <CardHeader>
         <CardTitle>Content Calendar</CardTitle>
       </CardHeader>
-      <CardContent className="h-[400px] flex flex-col space-y-4">
+      <CardContent className="flex flex-col space-y-4">
         <div className="flex justify-center">
           <Calendar
             mode="single"
@@ -42,18 +53,14 @@ export const DashboardCalendar = () => {
           />
         </div>
         
-        <div className="flex-1 overflow-y-auto px-1">
-          <h4 className="font-semibold mb-3 text-body">Scheduled Posts</h4>
-          <div className="space-y-2">
-            <div className="scheduled-post">
-              <div className="font-medium">Product Launch Post</div>
-              <div className="text-xs text-muted-foreground">Today at 2:00 PM</div>
+        <div className="space-y-2 pt-4">
+          <h4 className="font-semibold text-body mb-3">Upcoming Schedule</h4>
+          {scheduledPosts.map((post, index) => (
+            <div key={index} className="flex justify-between items-center p-3 bg-accent/50 backdrop-blur-sm border border-accent/20 rounded-lg hover:bg-accent/70 transition-all dark:bg-accent/30 dark:border-accent/10">
+              <span className="font-medium">{post.title}</span>
+              <span className="text-sm text-muted-foreground">{post.datetime}</span>
             </div>
-            <div className="scheduled-post">
-              <div className="font-medium">Weekly Newsletter</div>
-              <div className="text-xs text-muted-foreground">Tomorrow at 10:00 AM</div>
-            </div>
-          </div>
+          ))}
         </div>
       </CardContent>
     </Card>
