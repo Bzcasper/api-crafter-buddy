@@ -7,7 +7,7 @@ import {
   FileText,
   Image,
   Settings,
-  Spider
+  Bot
 } from "lucide-react"
 import { Link, useLocation } from "react-router-dom"
 import {
@@ -35,7 +35,7 @@ const menuItems = [
   {
     title: "Web Scraping",
     path: "/dashboard/scraping",
-    icon: Spider,
+    icon: Bot,
   },
   {
     title: "Content Generator",
