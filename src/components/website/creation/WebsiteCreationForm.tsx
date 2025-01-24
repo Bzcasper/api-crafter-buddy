@@ -12,9 +12,9 @@ const WebsiteCreationContent = () => {
     <Card>
       <CardContent className="pt-6">
         <StepIndicator currentStep={state.step} />
-        <TemplateSelection />
-        <WebsiteDetailsForm />
-        <DeploymentForm />
+        {state.step === 'template' && <TemplateSelection />}
+        {state.step === 'details' && <WebsiteDetailsForm />}
+        {state.step === 'deployment' && <DeploymentForm />}
       </CardContent>
     </Card>
   )

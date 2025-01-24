@@ -13,7 +13,7 @@ interface WebsiteCreationState {
 interface WebsiteCreationContextType {
   state: WebsiteCreationState
   setState: (state: Partial<WebsiteCreationState>) => void
-  setStep: (step: 'template' | 'details' | 'deployment') => void
+  setStep: (step: WebsiteCreationState['step']) => void
 }
 
 const WebsiteCreationContext = createContext<WebsiteCreationContextType | undefined>(undefined)
@@ -33,7 +33,7 @@ export const WebsiteCreationProvider = ({ children }: { children: React.ReactNod
     setState(prevState => ({ ...prevState, ...newState }))
   }
 
-  const setStep = (step: 'template' | 'details' | 'deployment') => {
+  const setStep = (step: WebsiteCreationState['step']) => {
     setState(prevState => ({ ...prevState, step }))
   }
 
