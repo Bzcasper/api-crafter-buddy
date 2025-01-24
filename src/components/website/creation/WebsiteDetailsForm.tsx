@@ -1,63 +1,32 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { BasicDetailsForm } from "./BasicDetailsForm"
+import { useWebsiteCreation } from "./WebsiteCreationContext"
 
-interface WebsiteDetailsFormProps {
-  title: string;
-  setTitle: (value: string) => void;
-  domain: string;
-  setDomain: (value: string) => void;
-  font: string;
-  setFont: (value: string) => void;
-  primaryColor: string;
-  setPrimaryColor: (value: string) => void;
-  favicon: File | null;
-  setFavicon: (value: File | null) => void;
-  onBack: () => void;
-  onNext: () => void;
-}
+export const WebsiteDetailsForm = () => {
+  const { state, setState, setStep } = useWebsiteCreation()
 
-export const WebsiteDetailsForm = ({
-  title,
-  setTitle,
-  domain,
-  setDomain,
-  font,
-  setFont,
-  primaryColor,
-  setPrimaryColor,
-  favicon,
-  setFavicon,
-  onBack,
-  onNext,
-}: WebsiteDetailsFormProps) => {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Website Details</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <BasicDetailsForm
-          title={title}
-          setTitle={setTitle}
-          domain={domain}
-          setDomain={setDomain}
-          font={font}
-          setFont={setFont}
-          primaryColor={primaryColor}
-          setPrimaryColor={setPrimaryColor}
-          favicon={favicon}
-          setFavicon={setFavicon}
-        />
-        <div className="flex justify-between mt-6">
-          <Button variant="outline" onClick={onBack}>
-            Back to Templates
-          </Button>
-          <Button onClick={onNext}>
-            Next: Deployment
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+    <div className="space-y-6">
+      <BasicDetailsForm
+        title={state.title}
+        setTitle={(title) => setState({ title })}
+        domain={state.domain}
+        setDomain={(domain) => setState({ domain })}
+        font={state.font}
+        setFont={(font) => setState({ font })}
+        primaryColor={state.primaryColor}
+        setPrimaryColor={(primaryColor) => setState({ primaryColor })}
+        favicon={state.favicon}
+        setFavicon={(favicon) => setState({ favicon })}
+      />
+      <div className="flex justify-between">
+        <Button variant="outline" onClick={() => setStep('template')}>
+          Back to Templates
+        </Button>
+        <Button onClick={() => setStep('deployment')}>
+          Next: Deployment
+        </Button>
+      </div>
+    </div>
   )
 }

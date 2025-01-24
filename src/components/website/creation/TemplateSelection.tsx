@@ -1,19 +1,13 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { WebsiteTemplates } from "../templates/WebsiteTemplates"
+import { useWebsiteCreation } from "./WebsiteCreationContext"
 
-interface TemplateSelectionProps {
-  onTemplateSelect: (templateId: string) => void;
-}
+export const TemplateSelection = () => {
+  const { setState, setStep } = useWebsiteCreation()
 
-export const TemplateSelection = ({ onTemplateSelect }: TemplateSelectionProps) => {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Choose a Template</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <WebsiteTemplates onSelect={onTemplateSelect} />
-      </CardContent>
-    </Card>
-  )
+  const handleTemplateSelect = (templateId: string) => {
+    setState({ selectedTemplate: templateId })
+    setStep('details')
+  }
+
+  return <WebsiteTemplates onSelect={handleTemplateSelect} />
 }
