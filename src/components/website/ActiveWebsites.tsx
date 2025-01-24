@@ -9,11 +9,11 @@ export function ActiveWebsites() {
         <CardTitle>Active Websites</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
+        <div className="grid gap-4">
           <div className="bg-gray-50 dark:bg-card/50 p-4 rounded-lg">
-            <div className="flex justify-between items-center mb-2">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-2">
               <h3 className="font-semibold">realestate.com</h3>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <Badge variant="default" className="bg-blue-600">
                   Live
                 </Badge>
@@ -26,7 +26,7 @@ export function ActiveWebsites() {
               </div>
             </div>
             <div className="space-y-2">
-              <div className="flex justify-between text-sm">
+              <div className="flex flex-col sm:flex-row justify-between text-sm gap-2">
                 <span>Health Score: 92/100</span>
                 <span>SEO: 85%</span>
               </div>

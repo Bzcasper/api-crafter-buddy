@@ -17,14 +17,14 @@ export function AdvancedSettings() {
         <CardTitle>Advanced Settings</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-2">
+        <div className="grid gap-2 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {settings.map((setting) => (
             <Button
               key={setting.name}
               variant="ghost"
               className="w-full justify-start text-left"
             >
-              <setting.icon className="mr-2 h-4 w-4" />
+              <setting.icon className="mr-2 h-4 w-4 shrink-0" />
               {setting.name}
             </Button>
           ))}

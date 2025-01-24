@@ -50,29 +50,29 @@ export default function WebsiteManagement() {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div className="flex justify-between items-center mb-8">
+    <div className="container mx-auto p-4 lg:p-6 min-h-screen overflow-y-auto">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
         <h1 className="text-2xl font-bold">AI-Powered Website Manager</h1>
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-2 w-full lg:w-auto">
           <Link to="/">
-            <Button variant="outline" className="flex items-center gap-2">
+            <Button variant="outline" className="flex items-center gap-2 w-full lg:w-auto">
               <ExternalLink className="h-4 w-4" />
               View Landing Page
             </Button>
           </Link>
-          <Button variant="default" className="bg-blue-600 hover:bg-blue-700">
+          <Button variant="default" className="bg-blue-600 hover:bg-blue-700 w-full lg:w-auto">
             + New Website
           </Button>
-          <Button variant="default" className="bg-purple-600 hover:bg-purple-700">
+          <Button variant="default" className="bg-purple-600 hover:bg-purple-700 w-full lg:w-auto">
             Generate Content
           </Button>
-          <Button variant="default" className="bg-cyan-600 hover:bg-cyan-700">
+          <Button variant="default" className="bg-cyan-600 hover:bg-cyan-700 w-full lg:w-auto">
             Launch Campaign
           </Button>
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="flex items-center gap-2">
+              <Button variant="outline" className="flex items-center gap-2 w-full lg:w-auto">
                 <Download className="h-4 w-4" />
                 Export Data
                 <ChevronDown className="h-4 w-4" />
@@ -95,7 +95,7 @@ export default function WebsiteManagement() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 mb-6">
         <WebsiteInsights />
         <Card className="bg-purple-600 text-white">
           <CardHeader>
@@ -114,12 +114,16 @@ export default function WebsiteManagement() {
         </Card>
       </div>
 
-      <WebsiteStats />
-      <ActiveWebsites />
-      <ContentGenerator />
-      <CampaignAnalytics />
-      <IntegrationHub />
-      <AdvancedSettings />
+      <div className="space-y-4 lg:space-y-6">
+        <WebsiteStats />
+        <ActiveWebsites />
+        <ContentGenerator />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+          <CampaignAnalytics />
+          <IntegrationHub />
+        </div>
+        <AdvancedSettings />
+      </div>
     </div>
   )
 }
