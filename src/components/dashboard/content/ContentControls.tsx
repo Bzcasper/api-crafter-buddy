@@ -15,6 +15,7 @@ export const ContentControls = ({ onControlChange }: ContentControlsProps) => {
           max={100} 
           step={1} 
           onValueChange={(value) => onControlChange('creativity', value[0])}
+          className="w-full"
         />
       </div>
       
@@ -25,6 +26,7 @@ export const ContentControls = ({ onControlChange }: ContentControlsProps) => {
           max={100} 
           step={1}
           onValueChange={(value) => onControlChange('length', value[0])}
+          className="w-full"
         />
       </div>
       
@@ -35,6 +37,7 @@ export const ContentControls = ({ onControlChange }: ContentControlsProps) => {
           max={100} 
           step={1}
           onValueChange={(value) => onControlChange('tone', value[0])}
+          className="w-full"
         />
       </div>
 

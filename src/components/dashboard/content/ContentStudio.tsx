@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Save, PlusCircle, Wand2, History, FileText } from "lucide-react"
+import { Save, Wand2, History, FileText } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { ContentControls } from "./ContentControls"
 import { ContentSchedule } from "./ContentSchedule"
@@ -18,7 +18,6 @@ export const ContentStudio = () => {
   const [saving, setSaving] = useState(false)
   const [loading, setLoading] = useState(true)
   const [websiteId, setWebsiteId] = useState<string | null>(null)
-  const [activeTab, setActiveTab] = useState("generator")
   const navigate = useNavigate()
 
   // Load website ID and initial content
@@ -107,14 +106,12 @@ export const ContentStudio = () => {
     try {
       setSaving(true)
       
-      // Get current user session
       const { data: { session } } = await supabase.auth.getSession()
       
       if (!session?.user?.id) {
         throw new Error("You must be logged in to save content")
       }
 
-      // Save to website_pages table
       const { error } = await supabase
         .from('website_pages')
         .upsert({
@@ -146,7 +143,6 @@ export const ContentStudio = () => {
 
   const handleControlChange = (type: string, value: number) => {
     console.log(`${type} changed to ${value}`)
-    // Implement AI content adjustment based on controls
   }
 
   if (loading) {
@@ -171,10 +167,10 @@ export const ContentStudio = () => {
               You need to create a website before you can start editing content.
             </p>
             <Button 
-              onClick={() => navigate('/dashboard/websites/new')} 
+              onClick={() => navigate('/dashboard/websites/new')}
+              variant="default"
               className="gap-2"
             >
-              <PlusCircle className="h-4 w-4" />
               Create New Website
             </Button>
           </CardContent>
@@ -185,25 +181,24 @@ export const ContentStudio = () => {
 
   return (
     <div className="p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-semibold">AI Content Studio</h1>
+        <div className="flex gap-2">
+          <Button variant="default" className="gap-2">
+            Schedule Post
+          </Button>
+          <Button variant="outline" className="gap-2">
+            AI Active
+          </Button>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Content Area */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 space-y-6">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>AI Content Studio</CardTitle>
-              <div className="flex gap-2">
-                <Button 
-                  onClick={handleSave}
-                  disabled={saving}
-                  className="gap-2"
-                >
-                  <Save className="h-4 w-4" />
-                  Save Changes
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+            <CardContent className="pt-6">
+              <Tabs defaultValue="generator" className="space-y-6">
                 <TabsList>
                   <TabsTrigger value="generator" className="gap-2">
                     <Wand2 className="h-4 w-4" />
@@ -223,41 +218,23 @@ export const ContentStudio = () => {
                   <div className="space-y-6">
                     <ContentControls onControlChange={handleControlChange} />
                     
-                    <Tabs defaultValue="home" className="space-y-4">
-                      <TabsList>
-                        <TabsTrigger 
-                          value="home"
-                          onClick={() => handlePageChange("home")}
-                        >
-                          Home
-                        </TabsTrigger>
-                        <TabsTrigger 
-                          value="about"
-                          onClick={() => handlePageChange("about")}
-                        >
-                          About
-                        </TabsTrigger>
-                        <TabsTrigger 
-                          value="blog"
-                          onClick={() => handlePageChange("blog")}
-                        >
-                          Blog
-                        </TabsTrigger>
-                        <TabsTrigger 
-                          value="contact"
-                          onClick={() => handlePageChange("contact")}
-                        >
-                          Contact
-                        </TabsTrigger>
-                      </TabsList>
+                    <div className="border rounded-lg p-4 min-h-[300px] bg-background">
+                      <WebsiteEditor 
+                        content={content} 
+                        onChange={setContent}
+                      />
+                    </div>
 
-                      <div className="border rounded-lg p-4">
-                        <WebsiteEditor 
-                          content={content} 
-                          onChange={setContent}
-                        />
-                      </div>
-                    </Tabs>
+                    <div className="flex justify-end">
+                      <Button 
+                        onClick={handleSave}
+                        disabled={saving}
+                        className="gap-2"
+                      >
+                        <Save className="h-4 w-4" />
+                        Save Changes
+                      </Button>
+                    </div>
                   </div>
                 </TabsContent>
 
