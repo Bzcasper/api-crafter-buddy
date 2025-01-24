@@ -13,7 +13,7 @@ export const PropertyMap = () => {
     if (!mapContainer.current) return;
 
     // Initialize map
-    mapboxgl.accessToken = process.env.MAPBOX_TOKEN || '';
+    mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN || '';
     
     // Get user's location
     navigator.geolocation.getCurrentPosition(
