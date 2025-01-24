@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { DashboardLayout } from "@/components/layouts/DashboardLayout"
-import { Brain, Users, TrendingUp, Zap } from "lucide-react"
+import { Globe, TrendingUp, Users, Brain } from "lucide-react"
 import {
   LineChart,
   Line,
@@ -13,7 +13,12 @@ import {
   Area,
 } from "recharts"
 
-const data = [
+const websiteData = [
+  { name: "corporate-site.com", traffic: "45.2k", conversion: "3.8%" },
+  { name: "blog.example.com", traffic: "28.7k", conversion: "2.9%" },
+]
+
+const analyticsData = [
   { name: "Jan", value: 400, engagement: 240 },
   { name: "Feb", value: 300, engagement: 139 },
   { name: "Mar", value: 600, engagement: 980 },
@@ -24,7 +29,7 @@ const data = [
 const Dashboard = () => {
   return (
     <DashboardLayout>
-      <div className="space-y-4">
+      <div className="space-y-6 p-6">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -69,14 +74,36 @@ const Dashboard = () => {
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <Card className="col-span-2">
+          <Card>
             <CardHeader>
-              <CardTitle>Performance Overview</CardTitle>
+              <CardTitle>Website Management</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {websiteData.map((site) => (
+                  <div key={site.name} className="flex items-center justify-between rounded-lg border p-4">
+                    <div>
+                      <h4 className="font-semibold">{site.name}</h4>
+                      <div className="flex gap-4 text-sm text-muted-foreground">
+                        <span>Traffic: {site.traffic}</span>
+                        <span>Conversion: {site.conversion}</span>
+                      </div>
+                    </div>
+                    <Globe className="h-5 w-5 text-muted" />
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Analytics Hub</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={data}>
+                  <AreaChart data={analyticsData}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" />
                     <YAxis />
@@ -117,7 +144,7 @@ const Dashboard = () => {
                   </div>
                 </div>
                 <div className="flex items-start gap-4 rounded-lg border p-4">
-                  <Zap className="h-5 w-5 text-warning" />
+                  <TrendingUp className="h-5 w-5 text-warning" />
                   <div>
                     <h4 className="font-semibold">Best Posting Time</h4>
                     <p className="text-sm text-muted">Engagement peaks between 6-8 PM EST. Consider scheduling posts during this window.</p>
@@ -126,9 +153,10 @@ const Dashboard = () => {
               </div>
             </CardContent>
           </Card>
+
           <Card>
             <CardHeader>
-              <CardTitle>Upcoming Content</CardTitle>
+              <CardTitle>Content Pipeline</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">

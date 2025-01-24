@@ -1,41 +1,55 @@
 import { 
-  BarChart3, 
-  Brain, 
+  Command,
+  Globe,
+  BarChart3,
+  Pencil,
+  Database,
+  Megaphone,
   Bot,
-  FileText,
   Image,
-  Settings,
-  Calendar,
-  Activity
+  Search,
+  Users,
+  FileText,
+  Settings
 } from "lucide-react"
 import { Link, useLocation } from "react-router-dom"
 import { cn } from "@/lib/utils"
 
 const menuItems = [
   {
-    title: "Overview",
+    title: "AI Command Center",
     path: "/dashboard",
+    icon: Command,
+  },
+  {
+    title: "Website Management",
+    path: "/dashboard/websites",
+    icon: Globe,
+  },
+  {
+    title: "Advanced Analytics",
+    path: "/dashboard/analytics",
     icon: BarChart3,
   },
   {
-    title: "AI Hub",
-    path: "/dashboard/ai-hub",
-    icon: Brain,
-  },
-  {
-    title: "Web Scraping",
-    path: "/dashboard/scraping",
-    icon: Bot,
-  },
-  {
-    title: "Content Generator",
+    title: "Content Studio",
     path: "/dashboard/content",
-    icon: FileText,
+    icon: Pencil,
   },
   {
-    title: "Post Manager",
-    path: "/dashboard/posts",
-    icon: Calendar,
+    title: "Data Collection",
+    path: "/dashboard/data",
+    icon: Database,
+  },
+  {
+    title: "Campaign Manager",
+    path: "/dashboard/campaigns",
+    icon: Megaphone,
+  },
+  {
+    title: "Automation Center",
+    path: "/dashboard/automation",
+    icon: Bot,
   },
   {
     title: "Media Library",
@@ -43,12 +57,22 @@ const menuItems = [
     icon: Image,
   },
   {
-    title: "Analytics",
-    path: "/dashboard/analytics",
-    icon: Activity,
+    title: "SEO Optimizer",
+    path: "/dashboard/seo",
+    icon: Search,
   },
   {
-    title: "Settings",
+    title: "Competition Tracker",
+    path: "/dashboard/competition",
+    icon: Users,
+  },
+  {
+    title: "Advanced Reports",
+    path: "/dashboard/reports",
+    icon: FileText,
+  },
+  {
+    title: "System Settings",
     path: "/dashboard/settings",
     icon: Settings,
   },
@@ -62,7 +86,7 @@ export function DashboardSidebar({ collapsed = false }: DashboardSidebarProps) {
   const location = useLocation()
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col bg-white">
       <nav className="flex-1">
         <div className="space-y-1">
           {menuItems.map((item) => (
@@ -70,10 +94,10 @@ export function DashboardSidebar({ collapsed = false }: DashboardSidebarProps) {
               key={item.path}
               to={item.path}
               className={cn(
-                "flex items-center gap-3 h-10 text-sm font-medium transition-colors",
-                "hover:bg-slate-100 hover:text-slate-900",
+                "flex items-center gap-3 h-12 text-sm font-medium transition-colors",
+                "hover:bg-slate-50 hover:text-slate-900",
                 location.pathname === item.path
-                  ? "bg-slate-100 text-slate-900"
+                  ? "bg-slate-50 text-slate-900"
                   : "text-slate-600",
                 collapsed ? "justify-center px-2" : "px-4"
               )}
