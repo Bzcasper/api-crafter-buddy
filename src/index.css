@@ -6,25 +6,25 @@
 
 @layer base {
   :root {
-    --background: 231 15% 18%;
-    --foreground: 60 30% 96%;
-    --card: 232 14% 31%;
-    --card-foreground: 60 30% 96%;
-    --popover: 232 14% 31%;
-    --popover-foreground: 60 30% 96%;
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
     --primary: 326 100% 74%;
-    --primary-foreground: 60 30% 96%;
-    --secondary: 232 14% 31%;
-    --secondary-foreground: 60 30% 96%;
-    --muted: 232 14% 31%;
-    --muted-foreground: 225 27% 51%;
-    --accent: 232 14% 31%;
-    --accent-foreground: 60 30% 96%;
-    --destructive: 0 100% 67%;
-    --destructive-foreground: 60 30% 96%;
-    --border: 232 14% 31%;
-    --input: 232 14% 31%;
-    --ring: 326 100% 74%;
+    --primary-foreground: 355.7 100% 97.3%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 346.8 77.2% 49.8%;
   }
 
   .dark {
@@ -57,10 +57,10 @@
     @apply bg-background text-foreground font-sans;
   }
 
-  /* Custom Scrollbar */
+  /* Custom Scrollbar - Only shows when scrolling */
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
   }
 
   ::-webkit-scrollbar-track {
@@ -68,7 +68,7 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-dracula-comment/30 rounded-full hover:bg-dracula-comment/50 transition-colors;
+    @apply bg-dracula-comment/20 rounded-full hover:bg-dracula-comment/40 transition-colors;
   }
 
   /* Firefox */
@@ -81,12 +81,12 @@
 @layer components {
   .sidebar-item {
     @apply flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors
-    hover:bg-dracula-current hover:text-dracula-foreground
+    hover:bg-dracula-current/50 hover:text-dracula-foreground
     dark:hover:bg-dracula-current/50 dark:hover:text-dracula-foreground;
   }
 
   .sidebar-item.active {
-    @apply bg-dracula-current text-dracula-foreground
+    @apply bg-dracula-current/50 text-dracula-foreground
     dark:bg-dracula-current/50 dark:text-dracula-foreground;
   }
 }
