@@ -6,7 +6,7 @@ import { ActiveWebsites } from "@/components/website/ActiveWebsites"
 import { WebsiteCreationForm } from "@/components/website/WebsiteCreationForm"
 import { WebsiteEditor } from "@/components/website/editor/WebsiteEditor"
 import { useState } from "react"
-import { Download, ChevronDown, ExternalLink } from "lucide-react"
+import { Download, ChevronDown, ExternalLink, Upload, BarChart } from "lucide-react"
 import { Link } from "react-router-dom"
 import {
   DropdownMenu,
@@ -16,6 +16,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { FileManager } from "@/components/website/FileManager"
+import { DeploymentStatus } from "@/components/website/DeploymentStatus"
 
 export default function WebsiteManagement() {
   const [showCreationForm, setShowCreationForm] = useState(false)
@@ -39,10 +41,12 @@ export default function WebsiteManagement() {
             + New Website
           </Button>
           <Button variant="default" className="bg-purple-600 hover:bg-purple-700 w-full lg:w-auto">
-            Generate Content
+            <Upload className="h-4 w-4 mr-2" />
+            Upload Assets
           </Button>
           <Button variant="default" className="bg-cyan-600 hover:bg-cyan-700 w-full lg:w-auto">
-            Launch Campaign
+            <BarChart className="h-4 w-4 mr-2" />
+            Analytics
           </Button>
           
           <DropdownMenu>
@@ -78,26 +82,33 @@ export default function WebsiteManagement() {
         <>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 mb-6">
             <WebsiteInsights />
-            <Card className="bg-purple-600 text-white">
-              <CardHeader>
-                <CardTitle>Website Performance</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <p className="text-sm font-semibold">Active Websites: 3</p>
-                  <p className="text-sm">Total Visitors: 2,450</p>
-                  <p className="text-sm">Top Performing: "Main Blog"</p>
-                </div>
-                <Button variant="secondary" className="w-full bg-white/20 hover:bg-white/30">
-                  View Analytics
-                </Button>
-              </CardContent>
-            </Card>
+            <DeploymentStatus />
           </div>
 
           <div className="space-y-4 lg:space-y-6">
             <WebsiteStats />
             <ActiveWebsites />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>File Manager</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <FileManager />
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Recent Deployments</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {/* Deployment history will be implemented here */}
+                    <p className="text-muted-foreground">No recent deployments</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </>
       )}
