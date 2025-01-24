@@ -19,58 +19,57 @@ export default {
     },
     extend: {
       colors: {
-        // Brand Colors
+        // Dracula Theme Colors
+        dracula: {
+          background: "#282A36",
+          current: "#44475A",
+          foreground: "#F8F8F2",
+          comment: "#6272A4",
+          cyan: "#8BE9FD",
+          green: "#50FA7B",
+          orange: "#FFB86C",
+          pink: "#FF79C6",
+          purple: "#BD93F9",
+          red: "#FF5555",
+          yellow: "#F1FA8C"
+        },
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: '#6366F1',
-          dark: '#4F46E5',
-          foreground: 'white'
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
         },
-        success: '#10B981',
-        warning: '#FBBF24',
-        error: '#EF4444',
-        slate: '#1E293B',
-        muted: '#64748B',
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
         secondary: {
-          DEFAULT: '#4F46E5',
-          foreground: 'white'
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
         },
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
         destructive: {
-          DEFAULT: 'hsl(var(--destructive))',
-          foreground: 'hsl(var(--destructive-foreground))'
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
         },
         accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          foreground: 'hsl(var(--accent-foreground))'
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
         },
         popover: {
-          DEFAULT: 'hsl(var(--popover))',
-          foreground: 'hsl(var(--popover-foreground))'
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
         },
         card: {
-          DEFAULT: 'hsl(var(--card))',
-          foreground: 'hsl(var(--card-foreground))'
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
         }
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
-      },
-      screens: {
-        'xs': '576px',
-        'sm': '768px',
-        'md': '992px',
-        'lg': '1200px',
-      },
-      height: {
-        'topnav': '80px',
-      },
-      width: {
-        'sidebar': '280px',
       },
     }
   },
