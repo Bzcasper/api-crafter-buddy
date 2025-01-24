@@ -9,7 +9,15 @@ import { IntegrationHub } from "@/components/website/IntegrationHub"
 import { AdvancedSettings } from "@/components/website/AdvancedSettings"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
-import { Download } from "lucide-react"
+import { Download, ChevronDown } from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 export default function WebsiteManagement() {
   const { toast } = useToast()
@@ -27,7 +35,6 @@ export default function WebsiteManagement() {
         description: `${type} data has been exported to Google Sheets`,
       })
 
-      // Open the sheet in a new tab
       if (data.sheetId) {
         window.open(`https://docs.google.com/spreadsheets/d/${data.sheetId}`, '_blank')
       }
@@ -55,36 +62,51 @@ export default function WebsiteManagement() {
           <Button variant="default" className="bg-cyan-600 hover:bg-cyan-700">
             Launch Campaign
           </Button>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              onClick={() => handleExport('companies')}
-              className="flex items-center gap-2"
-            >
-              <Download className="h-4 w-4" />
-              Export Companies
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => handleExport('contacts')}
-              className="flex items-center gap-2"
-            >
-              <Download className="h-4 w-4" />
-              Export Contacts
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => handleExport('deals')}
-              className="flex items-center gap-2"
-            >
-              <Download className="h-4 w-4" />
-              Export Deals
-            </Button>
-          </div>
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="flex items-center gap-2">
+                <Download className="h-4 w-4" />
+                Export Data
+                <ChevronDown className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56 bg-white dark:bg-gray-800">
+              <DropdownMenuLabel>Choose Data to Export</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => handleExport('companies')}>
+                Export Companies
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleExport('contacts')}>
+                Export Contacts
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleExport('deals')}>
+                Export Deals
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
-      <WebsiteInsights />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <WebsiteInsights />
+        <Card className="bg-purple-600 text-white">
+          <CardHeader>
+            <CardTitle>Affiliate Marketing Module</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <p className="text-sm font-semibold">Active Campaigns: 3</p>
+              <p className="text-sm">Total Revenue: $2,450</p>
+              <p className="text-sm">Top Performing: "Summer Sale 2024"</p>
+            </div>
+            <Button variant="secondary" className="w-full bg-white/20 hover:bg-white/30">
+              Manage Campaigns
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+
       <WebsiteStats />
       <ActiveWebsites />
       <ContentGenerator />
