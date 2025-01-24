@@ -7,12 +7,12 @@ interface WebsiteCreationState {
   favicon: File | null
   primaryColor: string
   font: string
+  step: 'template' | 'details' | 'deployment'
 }
 
 interface WebsiteCreationContextType {
   state: WebsiteCreationState
   setState: (state: Partial<WebsiteCreationState>) => void
-  step: 'template' | 'details' | 'deployment'
   setStep: (step: 'template' | 'details' | 'deployment') => void
 }
 
@@ -25,17 +25,20 @@ export const WebsiteCreationProvider = ({ children }: { children: React.ReactNod
     domain: "",
     favicon: null,
     primaryColor: "#0f172a",
-    font: "Inter"
+    font: "Inter",
+    step: 'template'
   })
-
-  const [step, setStep] = useState<'template' | 'details' | 'deployment'>('template')
 
   const updateState = (newState: Partial<WebsiteCreationState>) => {
     setState(prevState => ({ ...prevState, ...newState }))
   }
 
+  const setStep = (step: 'template' | 'details' | 'deployment') => {
+    setState(prevState => ({ ...prevState, step }))
+  }
+
   return (
-    <WebsiteCreationContext.Provider value={{ state, setState: updateState, step, setStep }}>
+    <WebsiteCreationContext.Provider value={{ state, setState: updateState, setStep }}>
       {children}
     </WebsiteCreationContext.Provider>
   )

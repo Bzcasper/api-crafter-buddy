@@ -9,6 +9,8 @@ export const DeploymentForm = () => {
   const { state, setStep } = useWebsiteCreation()
   const { toast } = useToast()
 
+  if (state.step !== 'deployment') return null
+
   const handleGitHubConnect = async (repoName: string) => {
     try {
       const { data: { session }, error: sessionError } = await supabase.auth.getSession()

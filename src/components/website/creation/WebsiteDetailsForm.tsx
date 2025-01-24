@@ -5,6 +5,8 @@ import { useWebsiteCreation } from "./WebsiteCreationContext"
 export const WebsiteDetailsForm = () => {
   const { state, setState, setStep } = useWebsiteCreation()
 
+  if (state.step !== 'details') return null
+
   return (
     <div className="space-y-6">
       <BasicDetailsForm
