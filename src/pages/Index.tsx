@@ -4,6 +4,7 @@ import { Note } from "@/types/notes";
 import { ScrapingForm } from "@/components/ScrapingForm";
 import { NotesList } from "@/components/notes/NotesList";
 import { ManualNoteForm } from "@/components/notes/ManualNoteForm";
+import { ContentGenerationForm } from "@/components/ContentGenerationForm";
 import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
@@ -35,22 +36,22 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto py-8 px-4">
-        <h1 className="text-4xl font-bold text-center mb-8">Web Scraping Dashboard</h1>
+        <h1 className="text-4xl font-bold text-center mb-8">Content Generation Dashboard</h1>
         
         <div className="grid gap-8 lg:grid-cols-2">
+          {/* Content Generation Section */}
+          <div className="space-y-6">
+            <div className="bg-card rounded-lg shadow-lg p-6">
+              <h2 className="text-2xl font-semibold mb-6">AI Content Generation</h2>
+              <ContentGenerationForm />
+            </div>
+          </div>
+
           {/* Web Scraping Section */}
           <div className="space-y-6">
             <div className="bg-card rounded-lg shadow-lg p-6">
               <h2 className="text-2xl font-semibold mb-6">Web Scraping</h2>
               <ScrapingForm />
-            </div>
-          </div>
-
-          {/* Manual Note Creation Section */}
-          <div className="space-y-6">
-            <div className="bg-card rounded-lg shadow-lg p-6">
-              <h2 className="text-2xl font-semibold mb-6">Manual Note Creation</h2>
-              <ManualNoteForm onNoteCreated={handleNoteCreated} />
             </div>
           </div>
         </div>
