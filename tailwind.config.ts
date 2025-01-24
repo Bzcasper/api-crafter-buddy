@@ -30,8 +30,8 @@ export default {
         error: '#EF4444',
         slate: '#1E293B',
         muted: '#64748B',
-        background: '#F4F7FE',
-        foreground: '#1E293B',
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
         secondary: {
           DEFAULT: '#4F46E5',
           foreground: 'white'
@@ -52,8 +52,8 @@ export default {
           foreground: 'hsl(var(--popover-foreground))'
         },
         card: {
-          DEFAULT: 'white',
-          foreground: '#1E293B'
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))'
         }
       },
       fontFamily: {
