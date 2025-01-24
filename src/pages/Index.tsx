@@ -5,6 +5,7 @@ import { Navbar } from "@/components/Navbar"
 import { Footer } from "@/components/Footer"
 import { Search, MapPin, DollarSign, Building2 } from "lucide-react"
 import { Link } from "react-router-dom"
+import { PropertyMap } from "@/components/map/PropertyMap"
 
 const Index = () => {
   return (
@@ -33,13 +34,11 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Explore Properties */}
+      {/* Map Section */}
       <section className="py-16 container mx-auto px-4">
         <h2 className="text-2xl font-bold mb-8">Explore Properties</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[1, 2, 3].map((item) => (
-            <Card key={item} className="h-64 bg-gray-100 animate-pulse" />
-          ))}
+        <div className="h-[600px] w-full">
+          <PropertyMap />
         </div>
       </section>
 
