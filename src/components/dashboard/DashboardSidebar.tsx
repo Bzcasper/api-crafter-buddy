@@ -6,7 +6,7 @@ interface DashboardSidebarProps {
 
 export function DashboardSidebar({ collapsed = false }: DashboardSidebarProps) {
   return (
-    <div className="h-full flex flex-col bg-dracula-background border-r border-dracula-current/30">
+    <div className="h-full flex flex-col bg-background border-r border-border">
       <DashboardSidebarContent collapsed={collapsed} />
     </div>
   );

@@ -93,7 +93,7 @@ export const DashboardSidebarContent = ({ collapsed = false }: { collapsed?: boo
             collapsed ? "justify-center px-2" : "px-4"
           )}
         >
-          <item.icon className="h-5 w-5 flex-shrink-0 text-dracula-purple" />
+          <item.icon className="h-5 w-5 flex-shrink-0 text-primary" />
           {!collapsed && <span>{item.title}</span>}
         </Link>
       ))}
