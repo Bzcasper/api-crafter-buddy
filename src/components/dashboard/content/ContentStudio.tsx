@@ -5,8 +5,11 @@ import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Save, PlusCircle } from "lucide-react"
+import { Save, PlusCircle, Generator, History, FileText } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import { ContentControls } from "./ContentControls"
+import { ContentSchedule } from "./ContentSchedule"
+import { PerformanceInsights } from "./PerformanceInsights"
 
 export const ContentStudio = () => {
   const [content, setContent] = useState("")
@@ -15,6 +18,7 @@ export const ContentStudio = () => {
   const [saving, setSaving] = useState(false)
   const [loading, setLoading] = useState(true)
   const [websiteId, setWebsiteId] = useState<string | null>(null)
+  const [activeTab, setActiveTab] = useState("generator")
   const navigate = useNavigate()
 
   // Load website ID and initial content
@@ -140,6 +144,11 @@ export const ContentStudio = () => {
     }
   }
 
+  const handleControlChange = (type: string, value: number) => {
+    console.log(`${type} changed to ${value}`)
+    // Implement AI content adjustment based on controls
+  }
+
   if (loading) {
     return (
       <div className="p-6">
@@ -152,7 +161,6 @@ export const ContentStudio = () => {
     )
   }
 
-  // Show message if no website exists
   if (!websiteId) {
     return (
       <div className="p-6">
@@ -177,74 +185,104 @@ export const ContentStudio = () => {
 
   return (
     <div className="p-6">
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Content Studio</CardTitle>
-          <Button 
-            onClick={handleSave}
-            disabled={saving}
-            className="gap-2"
-          >
-            <Save className="h-4 w-4" />
-            Save Changes
-          </Button>
-        </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="home" className="space-y-4">
-            <TabsList>
-              <TabsTrigger 
-                value="home"
-                onClick={() => handlePageChange("home")}
-              >
-                Home
-              </TabsTrigger>
-              <TabsTrigger 
-                value="about"
-                onClick={() => handlePageChange("about")}
-              >
-                About
-              </TabsTrigger>
-              <TabsTrigger 
-                value="blog"
-                onClick={() => handlePageChange("blog")}
-              >
-                Blog
-              </TabsTrigger>
-              <TabsTrigger 
-                value="contact"
-                onClick={() => handlePageChange("contact")}
-              >
-                Contact
-              </TabsTrigger>
-            </TabsList>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Main Content Area */}
+        <div className="lg:col-span-2">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle>AI Content Studio</CardTitle>
+              <div className="flex gap-2">
+                <Button 
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="gap-2"
+                >
+                  <Save className="h-4 w-4" />
+                  Save Changes
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+                <TabsList>
+                  <TabsTrigger value="generator" className="gap-2">
+                    <Generator className="h-4 w-4" />
+                    Generator
+                  </TabsTrigger>
+                  <TabsTrigger value="templates" className="gap-2">
+                    <FileText className="h-4 w-4" />
+                    Templates
+                  </TabsTrigger>
+                  <TabsTrigger value="history" className="gap-2">
+                    <History className="h-4 w-4" />
+                    History
+                  </TabsTrigger>
+                </TabsList>
 
-            <TabsContent value="home" className="space-y-4">
-              <WebsiteEditor 
-                content={content} 
-                onChange={setContent}
-              />
-            </TabsContent>
-            <TabsContent value="about" className="space-y-4">
-              <WebsiteEditor 
-                content={content} 
-                onChange={setContent}
-              />
-            </TabsContent>
-            <TabsContent value="blog" className="space-y-4">
-              <WebsiteEditor 
-                content={content} 
-                onChange={setContent}
-              />
-            </TabsContent>
-            <TabsContent value="contact" className="space-y-4">
-              <WebsiteEditor 
-                content={content} 
-                onChange={setContent}
-              />
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
+                <TabsContent value="generator">
+                  <div className="space-y-6">
+                    <ContentControls onControlChange={handleControlChange} />
+                    
+                    <Tabs defaultValue="home" className="space-y-4">
+                      <TabsList>
+                        <TabsTrigger 
+                          value="home"
+                          onClick={() => handlePageChange("home")}
+                        >
+                          Home
+                        </TabsTrigger>
+                        <TabsTrigger 
+                          value="about"
+                          onClick={() => handlePageChange("about")}
+                        >
+                          About
+                        </TabsTrigger>
+                        <TabsTrigger 
+                          value="blog"
+                          onClick={() => handlePageChange("blog")}
+                        >
+                          Blog
+                        </TabsTrigger>
+                        <TabsTrigger 
+                          value="contact"
+                          onClick={() => handlePageChange("contact")}
+                        >
+                          Contact
+                        </TabsTrigger>
+                      </TabsList>
+
+                      <div className="border rounded-lg p-4">
+                        <WebsiteEditor 
+                          content={content} 
+                          onChange={setContent}
+                        />
+                      </div>
+                    </Tabs>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="templates">
+                  <div className="text-center text-muted-foreground py-8">
+                    Templates feature coming soon
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="history">
+                  <div className="text-center text-muted-foreground py-8">
+                    History feature coming soon
+                  </div>
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Sidebar */}
+        <div className="space-y-6">
+          <ContentSchedule />
+          <PerformanceInsights />
+        </div>
+      </div>
     </div>
   )
 }
