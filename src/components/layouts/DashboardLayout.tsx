@@ -15,10 +15,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-background">
+      <div className="flex h-screen w-full overflow-hidden bg-background">
         {/* Top Navigation */}
-        <header className="fixed top-0 left-0 right-0 h-topnav bg-white border-b border-slate-200 z-50 flex items-center">
-          <div className="flex items-center gap-4 w-full px-4">
+        <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-white border-b border-slate-200">
+          <div className="flex h-full items-center px-4">
             {/* Mobile Menu Toggle */}
             <Button 
               variant="ghost" 
@@ -30,13 +30,13 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             </Button>
             
             {/* Logo */}
-            <div className="flex items-center gap-2 text-2xl font-bold text-primary">
+            <div className="flex items-center gap-2 text-xl font-bold text-primary">
               <RocketIcon className="h-6 w-6" />
               <span className="hidden sm:inline">SocialBoost</span>
             </div>
             
             {/* Search */}
-            <div className="flex-1 max-w-2xl mx-auto hidden md:block">
+            <div className="flex-1 max-w-2xl mx-4">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted h-4 w-4" />
                 <Input 
@@ -47,7 +47,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             </div>
             
             {/* Right Actions */}
-            <div className="flex items-center gap-2 md:gap-4">
+            <div className="flex items-center gap-2">
               <Button variant="ghost" size="icon">
                 <Bell className="h-5 w-5" />
               </Button>
@@ -62,10 +62,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         </header>
 
         {/* Main Layout with Resizable Sidebar */}
-        <div className="flex-1 pt-topnav">
+        <div className="flex-1 pt-16">
           <ResizablePanelGroup 
             direction="horizontal" 
-            className="min-h-[calc(100vh-theme(spacing.topnav))]"
+            className="h-[calc(100vh-4rem)]"
           >
             {/* Sidebar Panel */}
             <ResizablePanel
@@ -77,7 +77,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               onCollapse={() => setIsCollapsed(true)}
               onExpand={() => setIsCollapsed(false)}
               className={cn(
-                "bg-white transition-all duration-300",
+                "bg-white",
                 isCollapsed ? "min-w-[50px]" : "min-w-[200px]",
                 !isDesktop && "hidden md:block"
               )}
@@ -86,11 +86,11 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             </ResizablePanel>
             
             {/* Resize Handle */}
-            <ResizableHandle withHandle className="bg-slate-200" />
+            <ResizableHandle withHandle />
             
             {/* Main Content Panel */}
             <ResizablePanel defaultSize={80}>
-              <main className="h-full bg-background overflow-y-auto">
+              <main className="h-full overflow-y-auto bg-background">
                 {children}
               </main>
             </ResizablePanel>
