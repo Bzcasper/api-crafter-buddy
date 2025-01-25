@@ -6,28 +6,27 @@ export type Platform = {
 
 export type ContentGenerationParams = {
   model: string;
-  topic: string;
-  prompt: string;
+  website: string;
   parameters: {
     creativity: number;
     length: number;
     tone: number;
   };
-  platforms: string[];
+  platforms: Platform[];
 };
 
 export type Website = {
   id: string;
   title: string;
-  domain?: string;
+  domain?: string | null;
   template: string;
   settings?: Record<string, any>;
   status?: string;
   created_at: string;
   updated_at: string;
-  last_published_at?: string;
-  analytics_id?: string;
-  favicon_url?: string;
+  last_published_at?: string | null;
+  analytics_id?: string | null;
+  favicon_url?: string | null;
   theme_settings?: {
     fonts: {
       body: string;
@@ -40,6 +39,7 @@ export type Website = {
     };
     layout: string;
   };
+  created_by: string;
 };
 
 export type ContentScheduleEntry = {

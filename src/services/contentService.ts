@@ -31,10 +31,12 @@ export const contentService = {
       
       return (data || []).map(site => ({
         ...site,
-        settings: site.settings as Record<string, any>,
-        theme_settings: site.theme_settings as Record<string, any>,
-        status: site.status as Website['status']
-      }))
+        theme_settings: site.theme_settings || {
+          fonts: { body: "Inter", heading: "Inter" },
+          colors: { accent: "#0ea5e9", primary: "#0f172a", secondary: "#64748b" },
+          layout: "default"
+        }
+      })) as Website[]
     } catch (error) {
       console.error('Error fetching websites:', error)
       throw error
