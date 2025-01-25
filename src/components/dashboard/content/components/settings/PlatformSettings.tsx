@@ -104,7 +104,7 @@ export const PlatformSettings = () => {
                 <h4 className="font-medium mb-2">Scheduling Rules</h4>
                 <div className="space-y-2 text-sm">
                   <p>Time gap between posts: 15 mins</p>
-                  <p>Platform priority: FB > TW > LI</p>
+                  <p>Platform priority: FB {'->'} TW {'->'} LI</p>
                   <p>Auto-queue: Enabled</p>
                 </div>
               </div>

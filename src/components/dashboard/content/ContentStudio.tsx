@@ -12,6 +12,46 @@ import { useState } from "react"
 
 export const ContentStudio = () => {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'content' | 'analytics' | 'settings'>('dashboard');
+  const [activeSettingsTab, setActiveSettingsTab] = useState<'platform' | 'content' | 'advanced'>('platform');
+
+  const renderSettings = () => {
+    switch (activeSettingsTab) {
+      case 'platform':
+        return <PlatformSettings />;
+      case 'content':
+        return <ContentSettings />;
+      case 'advanced':
+        return (
+          <div className="space-y-8">
+            <Card>
+              <CardHeader>
+                <CardTitle>Advanced Settings</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">AI Configuration</h3>
+                    <div className="space-y-2 text-sm">
+                      <p>Model: GPT-4</p>
+                      <p>Temperature: 0.7</p>
+                      <p>Max Tokens: 2000</p>
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">API Integration</h3>
+                    <div className="space-y-2 text-sm">
+                      <p>Rate Limiting: 100 req/min</p>
+                      <p>Retry Strategy: Exponential</p>
+                      <p>Timeout: 30s</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        );
+    }
+  };
 
   const renderContent = () => {
     switch (activeTab) {
@@ -30,8 +70,27 @@ export const ContentStudio = () => {
       case 'settings':
         return (
           <div className="space-y-8">
-            <PlatformSettings />
-            <ContentSettings />
+            <div className="flex space-x-4 mb-6">
+              <Button
+                variant={activeSettingsTab === 'platform' ? 'default' : 'outline'}
+                onClick={() => setActiveSettingsTab('platform')}
+              >
+                Platform Settings
+              </Button>
+              <Button
+                variant={activeSettingsTab === 'content' ? 'default' : 'outline'}
+                onClick={() => setActiveSettingsTab('content')}
+              >
+                Content Settings
+              </Button>
+              <Button
+                variant={activeSettingsTab === 'advanced' ? 'default' : 'outline'}
+                onClick={() => setActiveSettingsTab('advanced')}
+              >
+                Advanced Settings
+              </Button>
+            </div>
+            {renderSettings()}
           </div>
         );
       default:
