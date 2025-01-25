@@ -9,22 +9,38 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { HistorySection } from "./HistorySection"
 import { TemplatesSection } from "./TemplatesSection"
 import { ScraperSection } from "./ScraperSection"
+import { useToast } from "@/hooks/use-toast"
 
 export const ContentLayout = () => {
   const [content, setContent] = useState("")
   const [saving, setSaving] = useState(false)
+  const [selectedModel, setSelectedModel] = useState("gpt-4o-mini")
+  const [selectedWebsite, setSelectedWebsite] = useState("")
   const isDesktop = useMediaQuery("(min-width: 1024px)")
+  const { toast } = useToast()
 
   const handleSave = async () => {
     setSaving(true)
-    // Simulate save operation
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    setSaving(false)
+    try {
+      // Here you would implement the save functionality
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      toast({
+        title: "Content Saved",
+        description: "Your content has been saved successfully."
+      })
+    } catch (error) {
+      toast({
+        title: "Save Failed",
+        description: "Failed to save content. Please try again.",
+        variant: "destructive"
+      })
+    } finally {
+      setSaving(false)
+    }
   }
 
   const handleControlChange = (type: string, value: number) => {
     console.log(`${type} control changed to ${value}`)
-    // Here you can implement the logic to adjust the content based on controls
   }
 
   return (
@@ -41,8 +57,15 @@ export const ContentLayout = () => {
           </TabsList>
           
           <TabsContent value="create" className="space-y-6">
-            <ContentCreationSection />
-            <ContentControls onControlChange={handleControlChange} />
+            <ContentCreationSection 
+              onModelSelect={setSelectedModel}
+              onWebsiteSelect={setSelectedWebsite}
+            />
+            <ContentControls 
+              onControlChange={handleControlChange}
+              selectedModel={selectedModel}
+              selectedWebsite={selectedWebsite}
+            />
             <ContentEditor 
               content={content}
               onChange={setContent}
@@ -58,7 +81,6 @@ export const ContentLayout = () => {
           <TabsContent value="history">
             <HistorySection onEdit={(contentId) => {
               console.log("Editing content:", contentId)
-              // Here you would implement loading the historical content
             }} />
           </TabsContent>
 
