@@ -1,13 +1,7 @@
 import { useState } from "react"
-import { format } from "date-fns"
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from "@/components/ui/table"
+import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,65 +11,54 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination"
-import { Eye, Edit, Trash2, Search } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { format } from "date-fns"
+import { Eye, Pencil, Trash2, Search } from "lucide-react"
 
-// Mock data for demonstration
-const mockHistory = [
+interface HistoryItem {
+  id: string
+  title: string
+  content: string
+  createdAt: Date
+  wordCount: number
+}
+
+const mockHistory: HistoryItem[] = [
   {
     id: "1",
-    title: "10 Tips for Better Content Writing",
-    content: "Lorem ipsum dolor sit amet...",
-    dateCreated: new Date("2024-03-15"),
-    wordCount: 1250,
+    title: "Introduction to AI",
+    content: "Artificial Intelligence (AI) is transforming...",
+    createdAt: new Date("2024-02-15"),
+    wordCount: 500
   },
   {
     id: "2",
-    title: "The Future of AI in Marketing",
-    content: "Consectetur adipiscing elit...",
-    dateCreated: new Date("2024-03-14"),
-    wordCount: 850,
+    title: "Web Development Best Practices",
+    content: "When building modern web applications...",
+    createdAt: new Date("2024-02-14"),
+    wordCount: 750
   },
   {
     id: "3",
-    title: "Social Media Strategy Guide",
-    content: "Sed do eiusmod tempor...",
-    dateCreated: new Date("2024-03-13"),
-    wordCount: 2000,
+    title: "Digital Marketing Strategy",
+    content: "In today's digital landscape...",
+    createdAt: new Date("2024-02-13"),
+    wordCount: 600
   },
   {
     id: "4",
-    title: "Email Marketing Best Practices",
-    content: "Ut enim ad minim veniam...",
-    dateCreated: new Date("2024-03-12"),
-    wordCount: 1500,
+    title: "SEO Optimization Guide",
+    content: "Search Engine Optimization is crucial...",
+    createdAt: new Date("2024-02-12"),
+    wordCount: 850
   },
   {
     id: "5",
-    title: "SEO Optimization Tips",
-    content: "Quis nostrud exercitation...",
-    dateCreated: new Date("2024-03-11"),
-    wordCount: 1800,
-  },
+    title: "Content Creation Tips",
+    content: "Creating engaging content requires...",
+    createdAt: new Date("2024-02-11"),
+    wordCount: 450
+  }
 ]
 
 interface HistorySectionProps {
@@ -83,156 +66,148 @@ interface HistorySectionProps {
 }
 
 export const HistorySection = ({ onEdit }: HistorySectionProps) => {
-  const [searchQuery, setSearchQuery] = useState("")
+  const [history, setHistory] = useState<HistoryItem[]>(mockHistory)
+  const [searchTerm, setSearchTerm] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
-  const [selectedContent, setSelectedContent] = useState<typeof mockHistory[0] | null>(null)
+  const [selectedItem, setSelectedItem] = useState<string | null>(null)
   const itemsPerPage = 5
 
-  // Filter content based on search query
-  const filteredContent = mockHistory.filter(item =>
-    item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    format(item.dateCreated, "MM/dd/yyyy").includes(searchQuery)
+  const filteredHistory = history.filter(item =>
+    item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    format(item.createdAt, "MM/dd/yyyy").includes(searchTerm)
   )
 
-  // Calculate pagination
-  const totalPages = Math.ceil(filteredContent.length / itemsPerPage)
+  const totalPages = Math.ceil(filteredHistory.length / itemsPerPage)
   const startIndex = (currentPage - 1) * itemsPerPage
-  const paginatedContent = filteredContent.slice(startIndex, startIndex + itemsPerPage)
+  const paginatedHistory = filteredHistory.slice(startIndex, startIndex + itemsPerPage)
 
   const handleDelete = (id: string) => {
-    console.log("Deleting content with id:", id)
-    // Here you would implement the actual delete logic
+    setHistory(history.filter(item => item.id !== id))
+    setSelectedItem(null)
   }
 
   return (
-    <div className="space-y-4">
-      {/* Search Bar */}
-      <div className="relative">
-        <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Search by title or date..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10"
-        />
+    <div className="space-y-6">
+      <div className="flex items-center gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search by title or date..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-9"
+          />
+        </div>
       </div>
 
-      {/* Content Table */}
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Title</TableHead>
-              <TableHead>Date Created</TableHead>
-              <TableHead>Word Count</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {paginatedContent.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={4} className="text-center text-muted-foreground">
-                  No history available
-                </TableCell>
-              </TableRow>
-            ) : (
-              paginatedContent.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell className="font-medium">{item.title}</TableCell>
-                  <TableCell>{format(item.dateCreated, "MM/dd/yyyy")}</TableCell>
-                  <TableCell>{item.wordCount} words</TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setSelectedContent(item)}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => onEdit(item.id)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button variant="ghost" size="icon">
+      <div className="border rounded-lg">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b bg-muted/50">
+                <th className="px-4 py-3 text-left text-sm font-medium">Title</th>
+                <th className="px-4 py-3 text-left text-sm font-medium">Date Created</th>
+                <th className="px-4 py-3 text-left text-sm font-medium">Word Count</th>
+                <th className="px-4 py-3 text-left text-sm font-medium">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {paginatedHistory.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="px-4 py-8 text-center text-muted-foreground">
+                    No history available
+                  </td>
+                </tr>
+              ) : (
+                paginatedHistory.map((item) => (
+                  <tr key={item.id} className="border-b">
+                    <td className="px-4 py-3 text-sm">{item.title}</td>
+                    <td className="px-4 py-3 text-sm">
+                      {format(item.createdAt, "MM/dd/yyyy")}
+                    </td>
+                    <td className="px-4 py-3 text-sm">{item.wordCount} words</td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>{item.title}</DialogTitle>
+                              <DialogDescription>
+                                Created on {format(item.createdAt, "MM/dd/yyyy")}
+                              </DialogDescription>
+                            </DialogHeader>
+                            <div className="mt-4 p-4 bg-muted rounded-lg">
+                              {item.content}
+                            </div>
+                          </DialogContent>
+                        </Dialog>
+                        
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => onEdit(item.id)}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+
+                        <AlertDialog open={selectedItem === item.id} onOpenChange={(open) => setSelectedItem(open ? item.id : null)}>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setSelectedItem(item.id)}
+                          >
                             <Trash2 className="h-4 w-4" />
                           </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Delete Content</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Are you sure you want to delete this content? This action cannot be undone.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => handleDelete(item.id)}>
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete Content</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to delete this content? This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel onClick={() => setSelectedItem(null)}>
+                                Cancel
+                              </AlertDialogCancel>
+                              <AlertDialogAction onClick={() => handleDelete(item.id)}>
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      {/* Pagination */}
-      {filteredContent.length > 0 && (
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious 
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-              />
-            </PaginationItem>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <PaginationItem key={page}>
-                <PaginationLink
-                  onClick={() => setCurrentPage(page)}
-                  isActive={currentPage === page}
-                >
-                  {page}
-                </PaginationLink>
-              </PaginationItem>
-            ))}
-            <PaginationItem>
-              <PaginationNext
-                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+      {totalPages > 1 && (
+        <div className="flex justify-center gap-2">
+          <Button
+            variant="outline"
+            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </Button>
+        </div>
       )}
-
-      {/* View Content Modal */}
-      <Dialog open={!!selectedContent} onOpenChange={() => setSelectedContent(null)}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>{selectedContent?.title}</DialogTitle>
-            <DialogDescription>
-              Created on {selectedContent && format(selectedContent.dateCreated, "MM/dd/yyyy")}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="mt-4 max-h-[60vh] overflow-y-auto">
-            <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-              {selectedContent?.content}
-            </p>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }

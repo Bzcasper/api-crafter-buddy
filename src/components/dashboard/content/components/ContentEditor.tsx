@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { WebsiteEditor } from "@/components/website/editor/WebsiteEditor"
 import { Save, History, FileText } from "lucide-react"
 import { HistorySection } from "./HistorySection"
+import { TemplatesSection } from "./TemplatesSection"
 
 interface ContentEditorProps {
   content: string
@@ -21,6 +22,10 @@ export const ContentEditor = ({
   const handleEditHistory = (contentId: string) => {
     console.log("Editing content with id:", contentId)
     // Here you would implement loading the historical content into the editor
+  }
+
+  const handleUseTemplate = (templateContent: string) => {
+    onChange(templateContent)
   }
 
   return (
@@ -60,9 +65,7 @@ export const ContentEditor = ({
           </TabsContent>
 
           <TabsContent value="templates">
-            <div className="h-[500px] flex items-center justify-center text-muted-foreground">
-              Templates feature coming soon
-            </div>
+            <TemplatesSection onUseTemplate={handleUseTemplate} />
           </TabsContent>
 
           <TabsContent value="history">
