@@ -3,6 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { WebsiteEditor } from "@/components/website/editor/WebsiteEditor"
 import { Save, History, FileText } from "lucide-react"
+import { HistorySection } from "./HistorySection"
 
 interface ContentEditorProps {
   content: string
@@ -17,6 +18,11 @@ export const ContentEditor = ({
   onSave, 
   saving 
 }: ContentEditorProps) => {
+  const handleEditHistory = (contentId: string) => {
+    console.log("Editing content with id:", contentId)
+    // Here you would implement loading the historical content into the editor
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -60,9 +66,7 @@ export const ContentEditor = ({
           </TabsContent>
 
           <TabsContent value="history">
-            <div className="h-[500px] flex items-center justify-center text-muted-foreground">
-              History feature coming soon
-            </div>
+            <HistorySection onEdit={handleEditHistory} />
           </TabsContent>
         </Tabs>
       </CardContent>
