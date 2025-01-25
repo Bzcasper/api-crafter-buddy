@@ -6,12 +6,27 @@ export const contentService = {
     console.log('Generating content with parameters:', params)
     
     try {
-      const { data, error } = await supabase.functions.invoke('generate-content', {
-        body: params
+      // First try with Perplexity
+      const { data: perplexityData, error: perplexityError } = await supabase.functions.invoke('perplexity', {
+        body: {
+          topic: params.topic,
+          content: params.prompt,
+          parameters: params.parameters
+        }
       })
 
-      if (error) throw error
-      return data
+      if (perplexityError) {
+        console.error('Perplexity generation failed, falling back to default:', perplexityError)
+        // Fallback to default content generation
+        const { data, error } = await supabase.functions.invoke('generate-content', {
+          body: params
+        })
+
+        if (error) throw error
+        return data
+      }
+
+      return perplexityData
     } catch (error) {
       console.error('Error generating content:', error)
       throw error

@@ -17,7 +17,7 @@ serve(async (req) => {
       throw new Error('Perplexity API key not configured')
     }
 
-    const { topic, content } = await req.json()
+    const { topic, content, parameters } = await req.json()
     console.log('Generating content for topic:', topic)
 
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
@@ -31,15 +31,15 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: `You are a content generation expert specializing in ${topic}. Generate engaging, SEO-optimized content.`
+            content: `You are a content generation expert specializing in ${topic}. Generate engaging, SEO-optimized content with creativity level ${parameters?.creativity || 50}, length ${parameters?.length || 50}, and tone ${parameters?.tone || 50}.`
           },
           {
             role: 'user',
             content
           }
         ],
-        temperature: 0.7,
-        max_tokens: 2000,
+        temperature: parameters?.creativity ? parameters.creativity / 100 : 0.7,
+        max_tokens: parameters?.length ? parameters.length * 50 : 2000,
         top_p: 0.9,
         return_images: false,
         return_related_questions: true

@@ -6,30 +6,36 @@ export const scraping = {
   async scrapeContent(url: string, options: ScrapeOptions): Promise<ScrapeResult> {
     console.log('Initiating scrape request:', { url, options });
     
-    const { data, error } = await supabase.functions.invoke('scrape', {
-      body: {
-        url,
-        searchQuery: options.search_query,
-        customInstruction: options.instruction,
-        semantic_filter: options.semantic_filter
+    try {
+      // Use Firecrawl through Edge Function
+      const { data, error } = await supabase.functions.invoke('scrape', {
+        body: {
+          url,
+          searchQuery: options.search_query,
+          customInstruction: options.instruction,
+          semantic_filter: options.semantic_filter
+        }
+      });
+
+      if (error) {
+        console.error('Scraping failed:', error);
+        throw new Error('Failed to scrape content: ' + error.message);
       }
-    });
 
-    if (error) {
-      console.error('Scraping failed:', error);
-      throw new Error('Failed to scrape content: ' + error.message);
+      return {
+        markdown: data.content,
+        extracted_content: data.content,
+        metadata: {
+          title: data.title,
+          images: data.images || []
+        },
+        screenshot: data.screenshot,
+        topic_classification: data.topic_classification
+      };
+    } catch (error) {
+      console.error('Error during scrape:', error);
+      throw error;
     }
-
-    return {
-      markdown: data.content,
-      extracted_content: data.content,
-      metadata: {
-        title: data.title,
-        images: data.images || []
-      },
-      screenshot: data.screenshot,
-      topic_classification: data.topic_classification
-    };
   },
 
   async createNoteFromScrape(url: string, options: ScrapeOptions): Promise<Note> {
