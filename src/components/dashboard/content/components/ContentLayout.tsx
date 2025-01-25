@@ -8,6 +8,7 @@ import { useMediaQuery } from "@/hooks/use-media-query"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { HistorySection } from "./HistorySection"
 import { TemplatesSection } from "./TemplatesSection"
+import { ScraperSection } from "./ScraperSection"
 
 export const ContentLayout = () => {
   const [content, setContent] = useState("")
@@ -36,6 +37,7 @@ export const ContentLayout = () => {
             <TabsTrigger value="create">Create Content</TabsTrigger>
             <TabsTrigger value="templates">Templates</TabsTrigger>
             <TabsTrigger value="history">History</TabsTrigger>
+            <TabsTrigger value="scraper">Scraper</TabsTrigger>
           </TabsList>
           
           <TabsContent value="create" className="space-y-6">
@@ -58,6 +60,10 @@ export const ContentLayout = () => {
               console.log("Editing content:", contentId)
               // Here you would implement loading the historical content
             }} />
+          </TabsContent>
+
+          <TabsContent value="scraper">
+            <ScraperSection />
           </TabsContent>
         </Tabs>
 
