@@ -110,6 +110,8 @@ export const ContentControls = ({
       const result = await contentService.generateContent({
         model: selectedModel,
         website: selectedWebsite,
+        topic: "", // Add empty topic since it's now required
+        prompt: "", // Add empty prompt since it's now required
         parameters: { creativity, length, tone },
         platforms: selectedPlatforms.filter(p => p.isActive)
       })
