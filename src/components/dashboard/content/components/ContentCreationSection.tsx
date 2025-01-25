@@ -6,15 +6,6 @@ import { AIParameterControls } from "./ai-controls/AIParameterControls"
 import { ActionButtons } from "./ActionButtons"
 import { supabase } from "@/integrations/supabase/client"
 
-interface Website {
-  id: string
-  name: string
-  url: string
-  status: "connected" | "not_connected"
-  faviconUrl?: string
-  lastSynced?: string
-}
-
 interface ContentCreationSectionProps {
   onModelSelect: (model: string) => void
   onWebsiteSelect: (websiteId: string) => void
@@ -26,47 +17,12 @@ export const ContentCreationSection = ({
 }: ContentCreationSectionProps) => {
   const [selectedModel, setSelectedModel] = useState("gpt-4o-mini")
   const [selectedWebsite, setSelectedWebsite] = useState<string>("")
-  const [websites, setWebsites] = useState<Website[]>([])
   const [loading, setLoading] = useState(true)
   const [creativity, setCreativity] = useState([50])
   const [length, setLength] = useState("medium")
   const [tone, setTone] = useState("professional")
   const [saveSettings, setSaveSettings] = useState(false)
   const { toast } = useToast()
-
-  useEffect(() => {
-    fetchWebsites()
-  }, [])
-
-  const fetchWebsites = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('websites')
-        .select('*')
-      
-      if (error) throw error
-
-      const formattedWebsites: Website[] = data.map(website => ({
-        id: website.id,
-        name: website.title,
-        url: website.domain || '',
-        status: website.status === 'published' ? 'connected' : 'not_connected',
-        faviconUrl: website.favicon_url,
-        lastSynced: website.last_published_at
-      }))
-
-      setWebsites(formattedWebsites)
-    } catch (error) {
-      console.error('Error fetching websites:', error)
-      toast({
-        title: "Error",
-        description: "Failed to fetch websites. Please try again.",
-        variant: "destructive"
-      })
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const handleModelChange = (model: string) => {
     setSelectedModel(model)
@@ -109,7 +65,6 @@ export const ContentCreationSection = ({
         onModelChange={handleModelChange}
       />
       <WebsiteSelector 
-        websites={websites}
         selectedWebsite={selectedWebsite}
         onWebsiteChange={handleWebsiteChange}
         loading={loading}

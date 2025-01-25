@@ -50,15 +50,6 @@ export const ContentLayout = () => {
     }
   }
 
-  const handleControlChange = (type: string, value: number) => {
-    console.log(`${type} control changed to ${value}`)
-  }
-
-  const handleTopicSelect = (topic: string, suggestedContent: string) => {
-    setSelectedTopic(topic)
-    setContent(suggestedContent)
-  }
-
   return (
     <div className="p-4 lg:p-6 max-w-[2000px] mx-auto">
       <ContentHeader />
@@ -75,7 +66,6 @@ export const ContentLayout = () => {
           <TabsContent value="create" className="space-y-6">
             {/* Website Selection */}
             <WebsiteSelector 
-              websites={[]}
               selectedWebsite={selectedWebsite}
               onWebsiteChange={setSelectedWebsite}
             />
@@ -105,7 +95,10 @@ export const ContentLayout = () => {
 
             {/* Topic Selection */}
             <TopicSelector 
-              onTopicSelect={handleTopicSelect}
+              onTopicSelect={(topic, suggestedContent) => {
+                setSelectedTopic(topic)
+                setContent(suggestedContent)
+              }}
             />
 
             {/* Content Editor */}
