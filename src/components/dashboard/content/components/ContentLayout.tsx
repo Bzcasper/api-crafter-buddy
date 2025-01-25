@@ -3,23 +3,31 @@ import { ContentControls } from "../ContentControls"
 import { ContentEditor } from "./ContentEditor"
 import { ContentSidebar } from "./ContentSidebar"
 import { ContentHeader } from "./ContentHeader"
-import { ContentCreationSection } from "./ContentCreationSection"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { HistorySection } from "./HistorySection"
 import { TemplatesSection } from "./TemplatesSection"
 import { ScraperSection } from "./ScraperSection"
 import { useToast } from "@/hooks/use-toast"
-import { PlatformSelector, type Platform } from "./PlatformSelector"
+import { WebsiteSelector } from "./website-controls/WebsiteSelector"
+import { PlatformSelector } from "./PlatformSelector"
+import { AIModelSelector } from "./ai-controls/AIModelSelector"
+import { AIParameterControls } from "./ai-controls/AIParameterControls"
 import { TopicSelector } from "./TopicSelector"
+import type { Platform } from "@/types/content"
 
 export const ContentLayout = () => {
   const [content, setContent] = useState("")
   const [saving, setSaving] = useState(false)
-  const [selectedModel, setSelectedModel] = useState("gpt-4o-mini")
+  const [selectedModel, setSelectedModel] = useState("gpt-4")
   const [selectedWebsite, setSelectedWebsite] = useState("")
   const [selectedPlatforms, setSelectedPlatforms] = useState<Platform[]>([])
   const [selectedTopic, setSelectedTopic] = useState("")
+  const [creativity, setCreativity] = useState([50])
+  const [length, setLength] = useState("medium")
+  const [tone, setTone] = useState("professional")
+  const [saveSettings, setSaveSettings] = useState(false)
+  
   const isDesktop = useMediaQuery("(min-width: 1024px)")
   const { toast } = useToast()
 
@@ -65,17 +73,42 @@ export const ContentLayout = () => {
           </TabsList>
           
           <TabsContent value="create" className="space-y-6">
-            <ContentCreationSection 
-              onModelSelect={setSelectedModel}
-              onWebsiteSelect={setSelectedWebsite}
-            />
-            <PlatformSelector onPlatformChange={setSelectedPlatforms} />
-            <TopicSelector onTopicSelect={handleTopicSelect} />
-            <ContentControls 
-              onControlChange={handleControlChange}
-              selectedModel={selectedModel}
+            {/* Website Selection */}
+            <WebsiteSelector 
+              websites={[]}
               selectedWebsite={selectedWebsite}
+              onWebsiteChange={setSelectedWebsite}
             />
+
+            {/* Platform Selection */}
+            <PlatformSelector 
+              onPlatformChange={setSelectedPlatforms}
+            />
+
+            {/* AI Model and Parameters */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <AIModelSelector
+                selectedModel={selectedModel}
+                onModelChange={setSelectedModel}
+              />
+              <AIParameterControls
+                creativity={creativity}
+                length={length}
+                tone={tone}
+                saveSettings={saveSettings}
+                onCreativityChange={setCreativity}
+                onLengthChange={setLength}
+                onToneChange={setTone}
+                onSaveSettingsChange={setSaveSettings}
+              />
+            </div>
+
+            {/* Topic Selection */}
+            <TopicSelector 
+              onTopicSelect={handleTopicSelect}
+            />
+
+            {/* Content Editor */}
             <ContentEditor 
               content={content}
               onChange={setContent}

@@ -86,6 +86,36 @@ export type Database = {
           },
         ]
       }
+      content_schedule: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          platform: string
+          status: string
+          time: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          platform: string
+          status?: string
+          time: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          platform?: string
+          status?: string
+          time?: string
+          title?: string
+        }
+        Relationships: []
+      }
       deals: {
         Row: {
           close_date: string | null
@@ -375,6 +405,30 @@ export type Database = {
           created_at?: string
           id?: string
           role?: Database["public"]["Enums"]["user_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_settings: {
+        Row: {
+          content_settings: Json | null
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content_settings?: Json | null
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content_settings?: Json | null
+          created_at?: string
+          id?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
