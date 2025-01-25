@@ -1,5 +1,6 @@
 import { ContentSchedule } from "../ContentSchedule"
 import { PerformanceInsights } from "../PerformanceInsights"
+import { Card } from "@/components/ui/card"
 
 export const ContentSidebar = () => {
   return (

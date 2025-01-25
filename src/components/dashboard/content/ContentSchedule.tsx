@@ -22,7 +22,7 @@ export const ContentSchedule = () => {
               {day.posts.map((post, index) => (
                 <div 
                   key={index}
-                  className="bg-pink-500/10 rounded-md p-2 text-pink-500"
+                  className="scheduled-post"
                 >
                   <div className="text-xs font-medium">{post.time}</div>
                   <div className="text-xs">{post.title}</div>

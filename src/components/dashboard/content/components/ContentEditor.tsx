@@ -1,8 +1,9 @@
 import { useState } from "react"
-import { WebsiteEditor } from "@/components/website/editor/WebsiteEditor"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
-import { Save } from "lucide-react"
-import { ContentControls } from "../ContentControls"
+import { WebsiteEditor } from "@/components/website/editor/WebsiteEditor"
+import { Save, History, FileText } from "lucide-react"
 
 interface ContentEditorProps {
   content: string
@@ -17,31 +18,55 @@ export const ContentEditor = ({
   onSave, 
   saving 
 }: ContentEditorProps) => {
-  const handleControlChange = (type: string, value: number) => {
-    console.log(`${type} changed to ${value}`)
-  }
-
   return (
-    <div className="space-y-6">
-      <ContentControls onControlChange={handleControlChange} />
-      
-      <div className="border rounded-lg p-4 min-h-[300px] bg-background">
-        <WebsiteEditor 
-          content={content} 
-          onChange={onChange}
-        />
-      </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Content Editor</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <Tabs defaultValue="editor" className="w-full">
+          <TabsList>
+            <TabsTrigger value="editor">Editor</TabsTrigger>
+            <TabsTrigger value="templates">Templates</TabsTrigger>
+            <TabsTrigger value="history">History</TabsTrigger>
+          </TabsList>
 
-      <div className="flex justify-end">
-        <Button 
-          onClick={onSave}
-          disabled={saving}
-          className="gap-2"
-        >
-          <Save className="h-4 w-4" />
-          Save Changes
-        </Button>
-      </div>
-    </div>
+          <TabsContent value="editor" className="space-y-4">
+            <div className="min-h-[500px] border rounded-lg p-4">
+              <WebsiteEditor 
+                content={content} 
+                onChange={onChange}
+              />
+            </div>
+
+            <div className="flex justify-between items-center">
+              <div className="text-sm text-muted-foreground">
+                {content.length} characters
+              </div>
+              <Button 
+                onClick={onSave}
+                disabled={saving}
+                className="gap-2"
+              >
+                <Save className="h-4 w-4" />
+                {saving ? "Saving..." : "Save Changes"}
+              </Button>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="templates">
+            <div className="h-[500px] flex items-center justify-center text-muted-foreground">
+              Templates feature coming soon
+            </div>
+          </TabsContent>
+
+          <TabsContent value="history">
+            <div className="h-[500px] flex items-center justify-center text-muted-foreground">
+              History feature coming soon
+            </div>
+          </TabsContent>
+        </Tabs>
+      </CardContent>
+    </Card>
   )
 }
