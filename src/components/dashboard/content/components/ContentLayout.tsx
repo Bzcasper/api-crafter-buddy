@@ -5,6 +5,9 @@ import { ContentSidebar } from "./ContentSidebar"
 import { ContentHeader } from "./ContentHeader"
 import { ContentCreationSection } from "./ContentCreationSection"
 import { useMediaQuery } from "@/hooks/use-media-query"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { HistorySection } from "./HistorySection"
+import { TemplatesSection } from "./TemplatesSection"
 
 export const ContentLayout = () => {
   const [content, setContent] = useState("")
@@ -28,16 +31,36 @@ export const ContentLayout = () => {
       <ContentHeader />
       
       <div className="flex flex-col gap-6 mt-6">
-        <div className="w-full space-y-6">
-          <ContentCreationSection />
-          <ContentControls onControlChange={handleControlChange} />
-          <ContentEditor 
-            content={content}
-            onChange={setContent}
-            onSave={handleSave}
-            saving={saving}
-          />
-        </div>
+        <Tabs defaultValue="create" className="w-full">
+          <TabsList>
+            <TabsTrigger value="create">Create Content</TabsTrigger>
+            <TabsTrigger value="templates">Templates</TabsTrigger>
+            <TabsTrigger value="history">History</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="create" className="space-y-6">
+            <ContentCreationSection />
+            <ContentControls onControlChange={handleControlChange} />
+            <ContentEditor 
+              content={content}
+              onChange={setContent}
+              onSave={handleSave}
+              saving={saving}
+            />
+          </TabsContent>
+
+          <TabsContent value="templates">
+            <TemplatesSection onUseTemplate={(templateContent) => setContent(templateContent)} />
+          </TabsContent>
+
+          <TabsContent value="history">
+            <HistorySection onEdit={(contentId) => {
+              console.log("Editing content:", contentId)
+              // Here you would implement loading the historical content
+            }} />
+          </TabsContent>
+        </Tabs>
+
         <div className="w-full">
           <ContentSidebar />
         </div>

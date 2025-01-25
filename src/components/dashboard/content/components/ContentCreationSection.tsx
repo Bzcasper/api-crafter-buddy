@@ -64,36 +64,31 @@ export const ContentCreationSection = () => {
   }
 
   return (
-    <div className="grid gap-6 md:grid-cols-2">
-      <div className="space-y-6">
-        <AIModelSelector 
-          selectedModel={selectedModel}
-          onModelChange={setSelectedModel}
-        />
-        <WebsiteSelector 
-          websites={mockWebsites}
-          selectedWebsite={selectedWebsite}
-          onWebsiteChange={setSelectedWebsite}
-        />
-      </div>
-
-      <div className="space-y-6">
-        <AIParameterControls 
-          creativity={creativity}
-          length={length}
-          tone={tone}
-          saveSettings={saveSettings}
-          onCreativityChange={setCreativity}
-          onLengthChange={setLength}
-          onToneChange={setTone}
-          onSaveSettingsChange={setSaveSettings}
-        />
-        <ActionButtons 
-          onGenerate={handleGenerate}
-          onPreview={handlePreview}
-          onReset={handleReset}
-        />
-      </div>
+    <div className="space-y-6">
+      <AIModelSelector 
+        selectedModel={selectedModel}
+        onModelChange={setSelectedModel}
+      />
+      <WebsiteSelector 
+        websites={mockWebsites}
+        selectedWebsite={selectedWebsite}
+        onWebsiteChange={setSelectedWebsite}
+      />
+      <AIParameterControls 
+        creativity={creativity}
+        length={length}
+        tone={tone}
+        saveSettings={saveSettings}
+        onCreativityChange={setCreativity}
+        onLengthChange={setLength}
+        onToneChange={setTone}
+        onSaveSettingsChange={setSaveSettings}
+      />
+      <ActionButtons 
+        onGenerate={handleGenerate}
+        onPreview={handlePreview}
+        onReset={handleReset}
+      />
     </div>
   )
 }
