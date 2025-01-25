@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
-import "mapbox-gl/dist/mapbox-css";
+import "mapbox-gl/dist/mapbox-gl.css";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { House, DollarSign } from "lucide-react";
 
 // Initialize mapboxgl access token
 const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
