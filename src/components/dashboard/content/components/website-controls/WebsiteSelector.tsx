@@ -40,10 +40,13 @@ export const WebsiteSelector = ({
       if (websitesData) {
         const typedWebsites: Website[] = websitesData.map(site => ({
           ...site,
-          settings: site.settings as Record<string, any>,
-          theme_settings: site.theme_settings as Record<string, any>,
-          status: site.status as Website['status']
-        }))
+          theme_settings: site.theme_settings || {
+            fonts: { body: "Inter", heading: "Inter" },
+            colors: { accent: "#0ea5e9", primary: "#0f172a", secondary: "#64748b" },
+            layout: "default"
+          }
+        })) as Website[]
+        
         setWebsites(typedWebsites)
         if (typedWebsites.length === 1 && !selectedWebsite) {
           onWebsiteChange(typedWebsites[0].id)

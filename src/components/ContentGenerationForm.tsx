@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
 import { supabase } from "@/integrations/supabase/client";
-import type { ContentGenerationParams } from "@/types/content";
+import type { ContentGenerationParams, Platform } from "@/types/content";
 
 export const ContentGenerationForm = () => {
   const [topic, setTopic] = useState("");
@@ -20,6 +20,12 @@ export const ContentGenerationForm = () => {
   const [length, setLength] = useState(50);
   const [tone, setTone] = useState(50);
   const { toast } = useToast();
+
+  const defaultPlatforms: Platform[] = [
+    { id: "facebook", name: "Facebook", isActive: true },
+    { id: "twitter", name: "Twitter", isActive: true },
+    { id: "instagram", name: "Instagram", isActive: true }
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +42,7 @@ export const ContentGenerationForm = () => {
           length,
           tone
         },
-        platforms: ["facebook", "twitter", "instagram"]
+        platforms: defaultPlatforms.filter(p => p.isActive)
       };
 
       const { data, error } = await supabase.functions.invoke('generate-content', {
