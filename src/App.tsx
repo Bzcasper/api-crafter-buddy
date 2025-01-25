@@ -76,6 +76,7 @@ const App = () => (
           >
             <Route index element={<DashboardHome />} />
             <Route path="website-management" element={<WebsiteManagement />} />
+            <Route path="websites" element={<WebsiteManagement />} />
             <Route path="websites/new" element={<WebsiteCreationForm />} />
             <Route path="analytics" element={<Analytics />} />
             <Route path="content" element={<ContentStudio />} />

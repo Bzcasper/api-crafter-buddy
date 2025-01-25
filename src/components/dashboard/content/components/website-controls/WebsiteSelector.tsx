@@ -1,35 +1,63 @@
+import { useEffect, useState } from "react"
 import { Globe, ExternalLink, Plus } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { useNavigate } from "react-router-dom"
-
-interface Website {
-  id: string
-  name: string
-  url: string
-  status: "connected" | "not_connected"
-  faviconUrl?: string
-  lastSynced?: string
-}
+import { supabase } from "@/integrations/supabase/client"
+import { useToast } from "@/hooks/use-toast"
+import type { Website } from "@/types/content"
 
 interface WebsiteSelectorProps {
-  websites: Website[]
   selectedWebsite: string
   onWebsiteChange: (value: string) => void
   loading?: boolean
 }
 
 export const WebsiteSelector = ({ 
-  websites, 
   selectedWebsite, 
   onWebsiteChange,
   loading = false 
 }: WebsiteSelectorProps) => {
   const navigate = useNavigate()
+  const { toast } = useToast()
+  const [websites, setWebsites] = useState<Website[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    fetchWebsites()
+  }, [])
+
+  const fetchWebsites = async () => {
+    try {
+      const { data: websites, error } = await supabase
+        .from('websites')
+        .select('*')
+        .eq('created_by', (await supabase.auth.getUser()).data.user?.id)
+
+      if (error) throw error
+
+      if (websites) {
+        setWebsites(websites)
+        // If there's only one website, select it automatically
+        if (websites.length === 1 && !selectedWebsite) {
+          onWebsiteChange(websites[0].id)
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching websites:', error)
+      toast({
+        title: "Error",
+        description: "Failed to fetch websites. Please try again.",
+        variant: "destructive"
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const handleManageWebsites = () => {
-    navigate("/dashboard/websites")
+    navigate("/dashboard/website-management")
   }
 
   return (
@@ -51,7 +79,7 @@ export const WebsiteSelector = ({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {loading ? (
+        {isLoading ? (
           <div className="text-center text-muted-foreground">
             Loading websites...
           </div>
@@ -64,25 +92,25 @@ export const WebsiteSelector = ({
               {websites.map((website) => (
                 <SelectItem key={website.id} value={website.id}>
                   <div className="flex items-center gap-3">
-                    {website.faviconUrl && (
+                    {website.favicon_url && (
                       <img 
-                        src={website.faviconUrl} 
+                        src={website.favicon_url} 
                         alt="" 
                         className="w-4 h-4"
                       />
                     )}
                     <div className="flex-1">
                       <div className="flex items-center justify-between w-full">
-                        <span>{website.name}</span>
+                        <span>{website.title}</span>
                         <span className={`text-xs ${
-                          website.status === "connected" ? "text-green-500" : "text-yellow-500"
+                          website.status === "published" ? "text-green-500" : "text-yellow-500"
                         }`}>
                           {website.status}
                         </span>
                       </div>
-                      {website.lastSynced && (
+                      {website.domain && (
                         <span className="text-xs text-muted-foreground">
-                          Last synced: {website.lastSynced}
+                          {website.domain}
                         </span>
                       )}
                     </div>
@@ -98,7 +126,7 @@ export const WebsiteSelector = ({
             </p>
             <Button 
               variant="outline" 
-              onClick={handleManageWebsites}
+              onClick={() => navigate("/dashboard/websites/new")}
               className="w-full gap-2"
             >
               <Plus className="h-4 w-4" />
