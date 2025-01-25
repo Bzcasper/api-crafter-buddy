@@ -1,45 +1,53 @@
-export interface ContentGenerationParams {
+export type Platform = {
+  id: string;
+  name: string;
+  isActive: boolean;
+};
+
+export type ContentGenerationParams = {
   model: string;
-  website: string;
+  topic: string;
+  prompt: string;
   parameters: {
     creativity: number;
     length: number;
     tone: number;
   };
-  platforms: Platform[];
-  topic?: string;
-  content?: string;
-}
+  platforms: string[];
+};
 
-export interface Platform {
-  id: string;
-  name: string;
-  icon?: string;
-  isActive: boolean;
-}
-
-export interface Website {
+export type Website = {
   id: string;
   title: string;
-  domain?: string | null;
+  domain?: string;
   template: string;
-  settings: Record<string, any>;
-  status: "draft" | "published" | "archived";
+  settings?: Record<string, any>;
+  status?: string;
   created_at: string;
   updated_at: string;
-  created_by: string;
-  analytics_id?: string | null;
-  favicon_url?: string | null;
-  last_published_at?: string | null;
-  theme_settings: Record<string, any>;
-}
+  last_published_at?: string;
+  analytics_id?: string;
+  favicon_url?: string;
+  theme_settings?: {
+    fonts: {
+      body: string;
+      heading: string;
+    };
+    colors: {
+      accent: string;
+      primary: string;
+      secondary: string;
+    };
+    layout: string;
+  };
+};
 
-export interface ContentScheduleEntry {
+export type ContentScheduleEntry = {
   id: string;
   title: string;
   time: string;
   platform: string;
-  status: "published" | "scheduled" | "failed";
+  status: 'scheduled' | 'published' | 'failed';
   created_at: string;
   created_by: string;
-}
+};
