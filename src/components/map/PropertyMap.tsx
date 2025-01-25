@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useToast } from "@/components/ui/use-toast";
@@ -12,14 +12,13 @@ mapboxgl.accessToken = mapboxToken;
 
 export const PropertyMap = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
+  const [map, setMap] = useState<mapboxgl.Map | null>(null);
   const { toast } = useToast();
 
   const defaultCoordinates: [number, number] = [-118.2437, 34.0522]; // Los Angeles
 
   useEffect(() => {
-    // Prevent re-initialization if map exists
-    if (!mapContainer.current || map.current) return;
+    if (!mapContainer.current || map) return;
 
     if (!mapboxToken) {
       toast({
@@ -30,66 +29,62 @@ export const PropertyMap = () => {
       return;
     }
 
-    const initializeMap = (coords: [number, number]) => {
-      try {
-        if (!mapContainer.current) return;
+    try {
+      // Create new map instance
+      const newMap = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: "mapbox://styles/mapbox/light-v11",
+        center: defaultCoordinates,
+        zoom: 12
+      });
 
-        // Create new map instance
-        const newMap = new mapboxgl.Map({
-          container: mapContainer.current,
-          style: "mapbox://styles/mapbox/light-v11",
-          center: coords,
-          zoom: 12
-        });
+      // Add navigation control
+      newMap.addControl(new mapboxgl.NavigationControl(), "top-right");
 
-        // Add navigation control
-        newMap.addControl(new mapboxgl.NavigationControl(), "top-right");
+      // Add marker when map loads
+      newMap.on("load", () => {
+        new mapboxgl.Marker()
+          .setLngLat(defaultCoordinates)
+          .addTo(newMap);
+      });
 
-        // Add marker when map loads
-        newMap.on("load", () => {
+      setMap(newMap);
+
+      // Get user location if available
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          newMap.setCenter([longitude, latitude]);
           new mapboxgl.Marker()
-            .setLngLat(coords)
+            .setLngLat([longitude, latitude])
             .addTo(newMap);
-        });
-
-        // Store map instance
-        map.current = newMap;
-
-      } catch (error) {
-        console.error("Error initializing map:", error);
-        toast({
-          title: "Map Error",
-          description: "Could not initialize the map. Please try again later.",
-          variant: "destructive"
-        });
-      }
-    };
-
-    // Request user location
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        initializeMap([longitude, latitude]);
-      },
-      (error) => {
-        console.error("Error getting location:", error);
-        toast({
-          title: "Location Error",
-          description: "Could not get your location. Using default location.",
-          variant: "destructive"
-        });
-        initializeMap(defaultCoordinates);
-      }
-    );
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+          toast({
+            title: "Location Error",
+            description: "Could not get your location. Using default location.",
+            variant: "destructive"
+          });
+        }
+      );
+    } catch (error) {
+      console.error("Error initializing map:", error);
+      toast({
+        title: "Map Error",
+        description: "Could not initialize the map. Please try again later.",
+        variant: "destructive"
+      });
+    }
 
     // Cleanup function
     return () => {
-      if (map.current) {
-        map.current.remove();
-        map.current = null;
+      if (map) {
+        map.remove();
+        setMap(null);
       }
     };
-  }, [toast]);
+  }, [map, toast]);
 
   return (
     <div ref={mapContainer} className="w-full h-[500px] rounded-lg border" />
