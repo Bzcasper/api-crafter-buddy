@@ -30,10 +30,10 @@ export const PropertyMap = () => {
     }
 
     try {
-      // Create new map instance
+      // Create new map instance with a more colorful style
       const newMap = new mapboxgl.Map({
         container: mapContainer.current,
-        style: "mapbox://styles/mapbox/light-v11",
+        style: "mapbox://styles/mapbox/streets-v12", // Changed from light-v11 to streets-v12 for more color
         center: defaultCoordinates,
         zoom: 12
       });
@@ -43,7 +43,9 @@ export const PropertyMap = () => {
 
       // Add marker when map loads
       newMap.on("load", () => {
-        new mapboxgl.Marker()
+        new mapboxgl.Marker({
+          color: "#FF79C6" // Using a color from your Dracula theme
+        })
           .setLngLat(defaultCoordinates)
           .addTo(newMap);
       });
@@ -55,7 +57,9 @@ export const PropertyMap = () => {
         (position) => {
           const { latitude, longitude } = position.coords;
           newMap.setCenter([longitude, latitude]);
-          new mapboxgl.Marker()
+          new mapboxgl.Marker({
+            color: "#FF79C6" // Using a color from your Dracula theme
+          })
             .setLngLat([longitude, latitude])
             .addTo(newMap);
         },
