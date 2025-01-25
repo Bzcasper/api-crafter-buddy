@@ -1,35 +1,22 @@
 import { useState } from "react"
-import { ContentControls } from "../ContentControls"
-import { ContentEditor } from "./ContentEditor"
-import { ContentSidebar } from "./ContentSidebar"
-import { ContentHeader } from "./ContentHeader"
-import { useMediaQuery } from "@/hooks/use-media-query"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { HistorySection } from "./HistorySection"
-import { TemplatesSection } from "./TemplatesSection"
-import { ScraperSection } from "./ScraperSection"
-import { useToast } from "@/hooks/use-toast"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import { WebsiteSelector } from "./website-controls/WebsiteSelector"
-import { PlatformSelector } from "./PlatformSelector"
 import { AIModelSelector } from "./ai-controls/AIModelSelector"
-import { AIParameterControls } from "./ai-controls/AIParameterControls"
-import { TopicSelector } from "./TopicSelector"
-import type { Platform } from "@/types/content"
+import { CreativityControl } from "./ai-controls/CreativityControl"
+import { TopicGenerator } from "./TopicGenerator"
+import { ContentPreview } from "./ContentPreview"
+import { ContentScheduler } from "./ContentScheduler"
+import { PerformanceMetrics } from "./PerformanceMetrics"
+import { Save, Wand2, Clock } from "lucide-react"
 
 export const ContentLayout = () => {
+  const [selectedModel, setSelectedModel] = useState("gpt-4o")
+  const [selectedWebsite, setSelectedWebsite] = useState("")
+  const [creativity, setCreativity] = useState([50])
   const [content, setContent] = useState("")
   const [saving, setSaving] = useState(false)
-  const [selectedModel, setSelectedModel] = useState("gpt-4")
-  const [selectedWebsite, setSelectedWebsite] = useState("")
-  const [selectedPlatforms, setSelectedPlatforms] = useState<Platform[]>([])
-  const [selectedTopic, setSelectedTopic] = useState("")
-  const [creativity, setCreativity] = useState([50])
-  const [length, setLength] = useState("medium")
-  const [tone, setTone] = useState("professional")
-  const [saveSettings, setSaveSettings] = useState(false)
-  
-  const isDesktop = useMediaQuery("(min-width: 1024px)")
-  const { toast } = useToast()
 
   const handleSave = async () => {
     setSaving(true)
@@ -51,82 +38,88 @@ export const ContentLayout = () => {
   }
 
   return (
-    <div className="p-4 lg:p-6 max-w-[2000px] mx-auto">
-      <ContentHeader />
-      
-      <div className="flex flex-col gap-6 mt-6">
-        <Tabs defaultValue="create" className="w-full">
-          <TabsList>
-            <TabsTrigger value="create">Create Content</TabsTrigger>
-            <TabsTrigger value="templates">Templates</TabsTrigger>
-            <TabsTrigger value="history">History</TabsTrigger>
-            <TabsTrigger value="scraper">Scraper</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="create" className="space-y-6">
-            {/* Website Selection */}
-            <WebsiteSelector 
-              selectedWebsite={selectedWebsite}
-              onWebsiteChange={setSelectedWebsite}
+    <div className="p-6 space-y-6 max-w-[1200px] mx-auto">
+      <h1 className="text-2xl font-bold">Create Content</h1>
+
+      {/* Website Selection */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Website Selection</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <WebsiteSelector
+            selectedWebsite={selectedWebsite}
+            onWebsiteChange={setSelectedWebsite}
+          />
+          <div className="flex gap-8 mt-4 text-sm text-muted-foreground">
+            <div>Posts: 128</div>
+            <div>Views: 45.2K</div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* AI Model Selection */}
+      <Card>
+        <CardHeader>
+          <CardTitle>AI Model Selection</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid md:grid-cols-2 gap-6">
+            <AIModelSelector
+              selectedModel={selectedModel}
+              onModelChange={setSelectedModel}
             />
-
-            {/* Platform Selection */}
-            <PlatformSelector 
-              onPlatformChange={setSelectedPlatforms}
+            <CreativityControl
+              value={creativity}
+              onChange={setCreativity}
             />
+          </div>
+        </CardContent>
+      </Card>
 
-            {/* AI Model and Parameters */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <AIModelSelector
-                selectedModel={selectedModel}
-                onModelChange={setSelectedModel}
-              />
-              <AIParameterControls
-                creativity={creativity}
-                length={length}
-                tone={tone}
-                saveSettings={saveSettings}
-                onCreativityChange={setCreativity}
-                onLengthChange={setLength}
-                onToneChange={setTone}
-                onSaveSettingsChange={setSaveSettings}
-              />
-            </div>
+      {/* Topic Generation */}
+      <TopicGenerator />
 
-            {/* Topic Selection */}
-            <TopicSelector 
-              onTopicSelect={(topic, suggestedContent) => {
-                setSelectedTopic(topic)
-                setContent(suggestedContent)
-              }}
-            />
+      {/* Content Preview and Platform Previews */}
+      <div className="grid md:grid-cols-3 gap-6">
+        <div className="md:col-span-2">
+          <ContentPreview content={content} onChange={setContent} />
+        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Platform Previews</CardTitle>
+          </CardHeader>
+          <CardContent className="h-[300px] bg-muted/10 rounded-lg">
+            {/* Platform preview content will go here */}
+          </CardContent>
+        </Card>
+      </div>
 
-            {/* Content Editor */}
-            <ContentEditor 
-              content={content}
-              onChange={setContent}
-              onSave={handleSave}
-              saving={saving}
-            />
-          </TabsContent>
+      {/* Content Schedule */}
+      <ContentScheduler />
 
-          <TabsContent value="templates">
-            <TemplatesSection onUseTemplate={(templateContent) => setContent(templateContent)} />
-          </TabsContent>
+      {/* Performance Insights */}
+      <PerformanceMetrics />
 
-          <TabsContent value="history">
-            <HistorySection onEdit={(contentId) => {
-              console.log("Editing content:", contentId)
-            }} />
-          </TabsContent>
-
-          <TabsContent value="scraper">
-            <ScraperSection />
-          </TabsContent>
-        </Tabs>
-
-        <div className="w-full">
-          <ContentSidebar />
+      {/* Action Buttons */}
+      <div className="flex justify-between items-center pt-4">
+        <Button
+          variant="outline"
+          onClick={handleSave}
+          disabled={saving}
+        >
+          <Save className="w-4 h-4 mr-2" />
+          Save Draft
+        </Button>
+        <div className="space-x-4">
+          <Button onClick={() => console.log("Generate")}>
+            <Wand2 className="w-4 h-4 mr-2" />
+            Generate
+          </Button>
+          <Button variant="secondary">
+            <Clock className="w-4 h-4 mr-2" />
+            Schedule
+          </Button>
         </div>
       </div>
     </div>
