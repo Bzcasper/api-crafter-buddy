@@ -43,3 +43,13 @@ export type Website = {
   };
   created_by: string;
 };
+
+export type ContentScheduleEntry = {
+  id: string;
+  title: string;
+  time: string;
+  platform: string;
+  status: 'scheduled' | 'published' | 'failed';
+  created_at: string;
+  created_by: string;
+};
