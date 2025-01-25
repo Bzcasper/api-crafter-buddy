@@ -27,15 +27,10 @@ export const ContentLayout = () => {
     <div className="p-4 lg:p-6 max-w-[2000px] mx-auto">
       <ContentHeader />
       
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 mt-4 lg:mt-6">
-        {/* Left Column - Controls */}
-        <div className="lg:col-span-3 order-2 lg:order-1">
-          <ContentControls onControlChange={handleControlChange} />
-        </div>
-
-        {/* Middle Column - Editor and Creation Section */}
-        <div className="lg:col-span-6 order-1 lg:order-2 space-y-6">
+      <div className="flex flex-col gap-6 mt-6">
+        <div className="w-full space-y-6">
           <ContentCreationSection />
+          <ContentControls onControlChange={handleControlChange} />
           <ContentEditor 
             content={content}
             onChange={setContent}
@@ -43,9 +38,7 @@ export const ContentLayout = () => {
             saving={saving}
           />
         </div>
-
-        {/* Right Column - Sidebar */}
-        <div className="lg:col-span-3 order-3">
+        <div className="w-full">
           <ContentSidebar />
         </div>
       </div>
