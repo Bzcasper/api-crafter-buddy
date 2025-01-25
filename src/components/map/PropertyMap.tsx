@@ -12,13 +12,14 @@ mapboxgl.accessToken = mapboxToken;
 
 export const PropertyMap = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
-  const mapInstance = useRef<mapboxgl.Map | null>(null);
+  const map = useRef<mapboxgl.Map | null>(null);
   const { toast } = useToast();
 
   const defaultCoordinates: [number, number] = [-118.2437, 34.0522]; // Los Angeles
 
   useEffect(() => {
-    if (!mapContainer.current || mapInstance.current) return;
+    // Prevent re-initialization if map exists
+    if (!mapContainer.current || map.current) return;
 
     if (!mapboxToken) {
       toast({
@@ -32,11 +33,9 @@ export const PropertyMap = () => {
     const initializeMap = (coords: [number, number]) => {
       try {
         if (!mapContainer.current) return;
-        
-        console.log("Initializing map with token:", mapboxToken);
-        
-        // Initialize map
-        mapInstance.current = new mapboxgl.Map({
+
+        // Create new map instance
+        const newMap = new mapboxgl.Map({
           container: mapContainer.current,
           style: "mapbox://styles/mapbox/light-v11",
           center: coords,
@@ -44,16 +43,18 @@ export const PropertyMap = () => {
         });
 
         // Add navigation control
-        mapInstance.current.addControl(new mapboxgl.NavigationControl(), "top-right");
+        newMap.addControl(new mapboxgl.NavigationControl(), "top-right");
 
-        // Add marker
-        mapInstance.current.on("load", () => {
+        // Add marker when map loads
+        newMap.on("load", () => {
           new mapboxgl.Marker()
             .setLngLat(coords)
-            .addTo(mapInstance.current!);
+            .addTo(newMap);
         });
 
-        console.log("Map initialized successfully");
+        // Store map instance
+        map.current = newMap;
+
       } catch (error) {
         console.error("Error initializing map:", error);
         toast({
@@ -83,9 +84,9 @@ export const PropertyMap = () => {
 
     // Cleanup function
     return () => {
-      if (mapInstance.current) {
-        mapInstance.current.remove();
-        mapInstance.current = null;
+      if (map.current) {
+        map.current.remove();
+        map.current = null;
       }
     };
   }, [toast]);
