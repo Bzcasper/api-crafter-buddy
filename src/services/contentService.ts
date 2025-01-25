@@ -1,5 +1,5 @@
 import { supabase } from "@/integrations/supabase/client"
-import { ContentGenerationParams, WebsiteData, ContentScheduleEntry } from "@/types/content"
+import { ContentGenerationParams, Website, ContentScheduleEntry } from "@/types/content"
 import { toast } from "@/hooks/use-toast"
 
 export const contentService = {
@@ -19,17 +19,20 @@ export const contentService = {
     }
   },
 
-  async fetchWebsites(): Promise<WebsiteData[]> {
+  async fetchWebsites(): Promise<Website[]> {
     console.log('Fetching websites')
     
     try {
       const { data, error } = await supabase
         .from('websites')
-        .select('id, title, domain, status, favicon_url')
+        .select('*')
         .order('created_at', { ascending: false })
 
       if (error) throw error
-      return data || []
+      return (data || []).map(site => ({
+        ...site,
+        status: site.status as "draft" | "published" | "archived"
+      }))
     } catch (error) {
       console.error('Error fetching websites:', error)
       throw error
@@ -46,7 +49,10 @@ export const contentService = {
         .order('time', { ascending: true })
 
       if (error) throw error
-      return data || []
+      return (data || []).map(entry => ({
+        ...entry,
+        status: entry.status as "published" | "scheduled" | "failed"
+      }))
     } catch (error) {
       console.error('Error fetching schedule:', error)
       throw error

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Globe, ExternalLink, Plus } from "lucide-react"
+import { Globe, Plus } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
@@ -8,20 +8,22 @@ import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
 import type { Website } from "@/types/content"
 
-interface WebsiteSelectorProps {
+export interface WebsiteSelectorProps {
   selectedWebsite: string
   onWebsiteChange: (value: string) => void
   loading?: boolean
+  websites?: Website[]
 }
 
 export const WebsiteSelector = ({ 
   selectedWebsite, 
   onWebsiteChange,
-  loading = false 
+  loading = false,
+  websites: initialWebsites = []
 }: WebsiteSelectorProps) => {
   const navigate = useNavigate()
   const { toast } = useToast()
-  const [websites, setWebsites] = useState<Website[]>([])
+  const [websites, setWebsites] = useState<Website[]>(initialWebsites)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -30,18 +32,21 @@ export const WebsiteSelector = ({
 
   const fetchWebsites = async () => {
     try {
-      const { data: websites, error } = await supabase
+      const { data: websitesData, error } = await supabase
         .from('websites')
         .select('*')
         .eq('created_by', (await supabase.auth.getUser()).data.user?.id)
 
       if (error) throw error
 
-      if (websites) {
-        setWebsites(websites)
-        // If there's only one website, select it automatically
-        if (websites.length === 1 && !selectedWebsite) {
-          onWebsiteChange(websites[0].id)
+      if (websitesData) {
+        const typedWebsites: Website[] = websitesData.map(site => ({
+          ...site,
+          status: site.status as "draft" | "published" | "archived"
+        }))
+        setWebsites(typedWebsites)
+        if (typedWebsites.length === 1 && !selectedWebsite) {
+          onWebsiteChange(typedWebsites[0].id)
         }
       }
     } catch (error) {

@@ -22,7 +22,7 @@ export interface Website {
   id: string;
   title: string;
   domain?: string;
-  status: 'draft' | 'published' | 'archived';
+  status: "draft" | "published" | "archived";
   favicon_url?: string;
   created_at: string;
   updated_at: string;
@@ -30,14 +30,18 @@ export interface Website {
   template: string;
   settings?: Record<string, any>;
   theme_settings?: Record<string, any>;
+  analytics_id?: string;
+  last_published_at?: string;
 }
+
+export interface WebsiteData extends Website {}
 
 export interface ContentScheduleEntry {
   id: string;
   title: string;
   time: string;
   platform: string;
-  status: 'scheduled' | 'published' | 'failed';
+  status: "published" | "scheduled" | "failed";
   created_at: string;
   created_by: string;
 }

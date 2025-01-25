@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { contentService } from "@/services/contentService";
 import { Progress } from "@/components/ui/progress";
+import type { ContentGenerationParams } from "@/types/content";
 
 export const ContentGenerationForm = () => {
   const [topic, setTopic] = useState("");
@@ -20,18 +21,25 @@ export const ContentGenerationForm = () => {
     setProgress(25);
 
     try {
-      const generatedContent = await contentService.generateContent({
+      const params: ContentGenerationParams = {
+        model: "gpt-4o-mini",
+        website: "default",
+        parameters: {
+          creativity: 50,
+          length: 50,
+          tone: 50
+        },
+        platforms: [],
         topic,
         content: prompt
-      });
+      };
 
+      const generatedContent = await contentService.generateContent(params);
       setProgress(75);
 
-      await contentService.saveGeneratedContent({
-        title: topic,
-        text: generatedContent.choices[0].message.content,
-        topic,
-        tags: ['generated', topic.toLowerCase()]
+      await contentService.generateContent({
+        ...params,
+        content: generatedContent.choices[0].message.content
       });
 
       setProgress(100);
