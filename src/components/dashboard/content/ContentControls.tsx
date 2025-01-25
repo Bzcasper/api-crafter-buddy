@@ -9,11 +9,11 @@ interface ContentControlsProps {
 
 export const ContentControls = ({ onControlChange }: ContentControlsProps) => {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Content Controls</CardTitle>
+    <Card className="w-full">
+      <CardHeader className="space-y-1">
+        <CardTitle className="text-xl">Content Controls</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-4">
         <div className="space-y-2">
           <label className="text-sm font-medium text-muted-foreground">Creativity Level</label>
           <Slider 
@@ -50,13 +50,13 @@ export const ContentControls = ({ onControlChange }: ContentControlsProps) => {
         <div className="space-y-2">
           <label className="text-sm font-medium text-muted-foreground">Style Presets</label>
           <div className="flex flex-wrap gap-2">
-            <Button variant="default" size="sm" className="bg-pink-500 hover:bg-pink-600">Professional</Button>
-            <Button variant="outline" size="sm">Casual</Button>
-            <Button variant="outline" size="sm">Fun</Button>
+            <Button variant="default" size="sm" className="bg-pink-500 hover:bg-pink-600 flex-1 min-w-[100px]">Professional</Button>
+            <Button variant="outline" size="sm" className="flex-1 min-w-[100px]">Casual</Button>
+            <Button variant="outline" size="sm" className="flex-1 min-w-[100px]">Fun</Button>
           </div>
         </div>
 
-        <Button className="w-full gap-2" size="lg">
+        <Button className="w-full gap-2 mt-4" size="lg">
           <Wand2 className="w-4 h-4" />
           Generate Content
         </Button>
