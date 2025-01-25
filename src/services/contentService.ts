@@ -1,46 +1,77 @@
-import { supabase } from "@/integrations/supabase/client";
-
-export interface ContentGenerationParams {
-  topic: string;
-  content: string;
-}
+import { supabase } from "@/integrations/supabase/client"
+import { ContentGenerationParams, WebsiteData, ContentScheduleEntry } from "@/types/content"
+import { toast } from "@/hooks/use-toast"
 
 export const contentService = {
-  async generateContent({ topic, content }: ContentGenerationParams) {
-    console.log('Generating content with Perplexity:', { topic });
+  async generateContent(params: ContentGenerationParams) {
+    console.log('Generating content with parameters:', params)
     
-    const { data, error } = await supabase.functions.invoke('perplexity', {
-      body: { topic, content }
-    });
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-content', {
+        body: params
+      })
 
-    if (error) {
-      console.error('Error generating content:', error);
-      throw error;
+      if (error) throw error
+      return data
+    } catch (error) {
+      console.error('Error generating content:', error)
+      throw error
     }
-
-    return data;
   },
 
-  async saveGeneratedContent(content: any) {
-    console.log('Saving generated content');
+  async fetchWebsites(): Promise<WebsiteData[]> {
+    console.log('Fetching websites')
     
-    const { data, error } = await supabase
-      .from('notes')
-      .insert([{
-        title: content.title || 'Generated Content',
-        content: content.text,
-        tags: content.tags || [],
-        status: 'completed',
-        topic_classification: content.topic
-      }])
-      .select()
-      .single();
+    try {
+      const { data, error } = await supabase
+        .from('websites')
+        .select('id, title, domain, status, favicon_url')
+        .order('created_at', { ascending: false })
 
-    if (error) {
-      console.error('Error saving content:', error);
-      throw error;
+      if (error) throw error
+      return data || []
+    } catch (error) {
+      console.error('Error fetching websites:', error)
+      throw error
     }
+  },
 
-    return data;
+  async fetchSchedule(): Promise<ContentScheduleEntry[]> {
+    console.log('Fetching content schedule')
+    
+    try {
+      const { data, error } = await supabase
+        .from('content_schedule')
+        .select('*')
+        .order('time', { ascending: true })
+
+      if (error) throw error
+      return data || []
+    } catch (error) {
+      console.error('Error fetching schedule:', error)
+      throw error
+    }
+  },
+
+  async saveSettings(userId: string, settings: any) {
+    console.log('Saving user settings:', settings)
+    
+    try {
+      const { error } = await supabase
+        .from('user_settings')
+        .upsert({
+          user_id: userId,
+          content_settings: settings
+        })
+
+      if (error) throw error
+      toast({
+        title: "Settings Saved",
+        description: "Your preferences have been updated successfully."
+      })
+    } catch (error) {
+      console.error('Error saving settings:', error)
+      throw error
+    }
   }
-};
+}

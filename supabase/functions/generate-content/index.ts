@@ -12,13 +12,17 @@ serve(async (req) => {
   }
 
   try {
-    const { model, website, parameters } = await req.json()
-    console.log('Generating content with parameters:', { model, website, parameters })
+    const { model, website, parameters, platforms } = await req.json()
+    console.log('Generating content with parameters:', { model, website, parameters, platforms })
 
     const openAIApiKey = Deno.env.get('OPENAI_API_KEY')
     if (!openAIApiKey) {
       throw new Error('OpenAI API key not configured')
     }
+
+    const platformPrompts = platforms.map(p => 
+      `For ${p.name}, consider its specific content format and audience preferences.`
+    ).join(' ')
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -34,7 +38,8 @@ serve(async (req) => {
             content: `You are a content generation expert. Generate content with:
               - Creativity level: ${parameters.creativity}/100
               - Content length: ${parameters.length}/100 (higher means longer content)
-              - Tone level: ${parameters.tone}/100 (higher means more formal/professional)`
+              - Tone level: ${parameters.tone}/100 (higher means more formal/professional)
+              ${platformPrompts}`
           },
           {
             role: 'user',
