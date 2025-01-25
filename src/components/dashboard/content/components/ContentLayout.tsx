@@ -3,6 +3,7 @@ import { ContentControls } from "../ContentControls"
 import { ContentEditor } from "./ContentEditor"
 import { ContentSidebar } from "./ContentSidebar"
 import { ContentHeader } from "./ContentHeader"
+import { ContentCreationSection } from "./ContentCreationSection"
 import { useMediaQuery } from "@/hooks/use-media-query"
 
 export const ContentLayout = () => {
@@ -32,8 +33,9 @@ export const ContentLayout = () => {
           <ContentControls onControlChange={handleControlChange} />
         </div>
 
-        {/* Middle Column - Editor */}
-        <div className="lg:col-span-6 order-1 lg:order-2">
+        {/* Middle Column - Editor and Creation Section */}
+        <div className="lg:col-span-6 order-1 lg:order-2 space-y-6">
+          <ContentCreationSection />
           <ContentEditor 
             content={content}
             onChange={setContent}
