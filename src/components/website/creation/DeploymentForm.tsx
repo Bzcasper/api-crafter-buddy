@@ -26,12 +26,14 @@ export const DeploymentForm = () => {
         return
       }
 
+      console.log('Creating GitHub repository:', repoName)
       const { data, error } = await supabase.functions.invoke('github-create-repo', {
         body: { repoName }
       })
 
       if (error) throw error
 
+      console.log('GitHub repository created:', data)
       toast({
         title: "Success",
         description: "GitHub repository created successfully!"
@@ -64,16 +66,21 @@ export const DeploymentForm = () => {
         return
       }
 
+      console.log('Creating Netlify site:', siteName)
       const { data, error } = await supabase.functions.invoke('netlify-create-site', {
         body: { siteName }
       })
 
       if (error) throw error
 
+      console.log('Netlify site created:', data)
       toast({
         title: "Success",
         description: "Netlify site created successfully!"
       })
+
+      // Create the website in our database after successful deployment
+      await handleSubmit()
 
       return data
     } catch (error) {
@@ -102,6 +109,12 @@ export const DeploymentForm = () => {
         return
       }
 
+      console.log('Creating website with details:', {
+        title: state.title,
+        domain: state.domain,
+        template: state.selectedTemplate
+      })
+
       let faviconUrl = null
       if (state.favicon) {
         faviconUrl = await uploadFavicon(state.favicon)
@@ -124,13 +137,14 @@ export const DeploymentForm = () => {
         userId: session.user.id
       })
 
+      console.log('Website created successfully')
       toast({
         title: "Website Created",
         description: "Your website has been created successfully."
       })
 
-      // Reset form by refreshing the page
-      window.location.reload()
+      // Redirect to website management
+      window.location.href = '/dashboard/website-management'
     } catch (error) {
       console.error('Error creating website:', error)
       toast({
@@ -150,9 +164,6 @@ export const DeploymentForm = () => {
       <div className="flex justify-between">
         <Button variant="outline" onClick={() => setStep('details')}>
           Back to Details
-        </Button>
-        <Button onClick={handleSubmit}>
-          Create Website
         </Button>
       </div>
     </div>

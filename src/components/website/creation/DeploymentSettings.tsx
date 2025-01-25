@@ -4,17 +4,18 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Github, Globe } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
-import { supabase } from "@/integrations/supabase/client"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 interface DeploymentSettingsProps {
   onGitHubConnect: (repoName: string) => Promise<void>;
-  onNetlifyConnect?: (siteName: string) => Promise<void>;
+  onNetlifyConnect: (siteName: string) => Promise<void>;
 }
 
 export const DeploymentSettings = ({ onGitHubConnect, onNetlifyConnect }: DeploymentSettingsProps) => {
   const [repoName, setRepoName] = useState("")
   const [siteName, setSiteName] = useState("")
   const [isDeploying, setIsDeploying] = useState(false)
+  const [deploymentStep, setDeploymentStep] = useState<'github' | 'netlify' | 'complete'>('github')
   const { toast } = useToast()
 
   const handleGitHubConnect = async () => {
@@ -34,6 +35,7 @@ export const DeploymentSettings = ({ onGitHubConnect, onNetlifyConnect }: Deploy
         title: "Success",
         description: "GitHub repository created successfully!"
       })
+      setDeploymentStep('netlify')
     } catch (error) {
       console.error('Error connecting to GitHub:', error)
       toast({
@@ -58,13 +60,12 @@ export const DeploymentSettings = ({ onGitHubConnect, onNetlifyConnect }: Deploy
 
     setIsDeploying(true)
     try {
-      if (onNetlifyConnect) {
-        await onNetlifyConnect(siteName)
-        toast({
-          title: "Success",
-          description: "Netlify site created successfully!"
-        })
-      }
+      await onNetlifyConnect(siteName)
+      toast({
+        title: "Success",
+        description: "Netlify site created and connected successfully!"
+      })
+      setDeploymentStep('complete')
     } catch (error) {
       console.error('Error connecting to Netlify:', error)
       toast({
@@ -79,53 +80,73 @@ export const DeploymentSettings = ({ onGitHubConnect, onNetlifyConnect }: Deploy
 
   return (
     <div className="space-y-6">
-      <div className="space-y-2">
-        <Label htmlFor="github-repo">GitHub Repository Name</Label>
-        <div className="flex gap-2">
-          <Input
-            id="github-repo"
-            value={repoName}
-            onChange={(e) => setRepoName(e.target.value)}
-            placeholder="my-website"
-            disabled={isDeploying}
-          />
-          <Button 
-            onClick={handleGitHubConnect} 
-            disabled={isDeploying}
-            className="flex items-center gap-2"
-          >
-            <Github className="h-4 w-4" />
-            Connect
-          </Button>
+      {deploymentStep === 'github' && (
+        <div className="space-y-4">
+          <Alert>
+            <AlertDescription>
+              First, let's create a GitHub repository for your website
+            </AlertDescription>
+          </Alert>
+          <div className="space-y-2">
+            <Label htmlFor="github-repo">GitHub Repository Name</Label>
+            <div className="flex gap-2">
+              <Input
+                id="github-repo"
+                value={repoName}
+                onChange={(e) => setRepoName(e.target.value)}
+                placeholder="my-website"
+                disabled={isDeploying}
+              />
+              <Button 
+                onClick={handleGitHubConnect} 
+                disabled={isDeploying}
+                className="flex items-center gap-2"
+              >
+                <Github className="h-4 w-4" />
+                Connect
+              </Button>
+            </div>
+          </div>
         </div>
-        <p className="text-sm text-muted-foreground">
-          Enter a name for your new GitHub repository. We'll create it for you.
-        </p>
-      </div>
+      )}
 
-      <div className="space-y-2">
-        <Label htmlFor="netlify-site">Netlify Site Name</Label>
-        <div className="flex gap-2">
-          <Input
-            id="netlify-site"
-            value={siteName}
-            onChange={(e) => setSiteName(e.target.value)}
-            placeholder="my-website"
-            disabled={isDeploying}
-          />
-          <Button 
-            onClick={handleNetlifyConnect}
-            disabled={isDeploying || !onNetlifyConnect}
-            className="flex items-center gap-2"
-          >
-            <Globe className="h-4 w-4" />
-            Deploy
-          </Button>
+      {deploymentStep === 'netlify' && (
+        <div className="space-y-4">
+          <Alert>
+            <AlertDescription>
+              Great! Now let's set up your Netlify deployment
+            </AlertDescription>
+          </Alert>
+          <div className="space-y-2">
+            <Label htmlFor="netlify-site">Netlify Site Name</Label>
+            <div className="flex gap-2">
+              <Input
+                id="netlify-site"
+                value={siteName}
+                onChange={(e) => setSiteName(e.target.value)}
+                placeholder="my-website"
+                disabled={isDeploying}
+              />
+              <Button 
+                onClick={handleNetlifyConnect}
+                disabled={isDeploying}
+                className="flex items-center gap-2"
+              >
+                <Globe className="h-4 w-4" />
+                Deploy
+              </Button>
+            </div>
+          </div>
         </div>
-        <p className="text-sm text-muted-foreground">
-          Choose a name for your Netlify site. This will be part of your site's URL.
-        </p>
-      </div>
+      )}
+
+      {deploymentStep === 'complete' && (
+        <Alert>
+          <AlertDescription className="text-green-600">
+            🎉 Congratulations! Your website is now connected to GitHub and Netlify
+          </AlertDescription>
+        </Alert>
+      )}
     </div>
   )
 }
