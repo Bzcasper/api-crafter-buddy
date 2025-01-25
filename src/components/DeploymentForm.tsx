@@ -1,0 +1,132 @@
+// src/components/DeploymentForm.tsx
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { DeploymentSettings } from "./DeploymentSettings";
+import { useWebsiteCreation } from "./WebsiteCreationContext";
+import { useAuth } from "@/hooks/useAuth";
+import { useDeployment } from "@/hooks/useDeployment";
+import { Spinner } from "@/components/ui/spinner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
+import { Trash2, Edit2 } from "lucide-react";
+import { useState, useCallback } from "react";
+import { useRouter } from "next/router";
+
+export const DeploymentForm: React.FC = () => {
+  const { state, setStep } = useWebsiteCreation();
+  const { userId, isLoading: isAuthLoading, error: authError } = useAuth();
+  const { isDeploying, deployToGitHub, deployToNetlify, createNewWebsite } = useDeployment();
+  const { toast } = useToast();
+  const router = useRouter();
+
+  const [repoName, setRepoName] = useState<string>("");
+  const [siteName, setSiteName] = useState<string>("");
+
+  if (state.step !== "deployment") return null;
+
+  const handleGitHubConnect = useCallback(async () => {
+    if (!repoName.trim()) {
+      toast({
+        title: "Repository Name Required",
+        description: "Please enter a repository name to proceed.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      await deployToGitHub(repoName.trim());
+      setRepoName(""); // Reset the input after successful deployment
+    } catch (error) {
+      // Error handled within the hook
+    }
+  }, [deployToGitHub, repoName, toast]);
+
+  const handleNetlifyConnect = useCallback(async () => {
+    if (!siteName.trim()) {
+      toast({
+        title: "Site Name Required",
+        description: "Please enter a site name to proceed.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      await deployToNetlify(siteName.trim(), state);
+      setSiteName(""); // Reset the input after successful deployment
+    } catch (error) {
+      // Error handled within the hook
+    }
+  }, [deployToNetlify, siteName, state, toast]);
+
+  const handleSubmit = useCallback(async () => {
+    if (!userId) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to create a website.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      await createNewWebsite(state);
+      // Redirect to website management using Next.js router
+      await router.push("/dashboard/website-management");
+    } catch (error) {
+      // Error handled within the hook
+    }
+  }, [createNewWebsite, state, toast, userId, router]);
+
+  const isDisabled = isDeploying || isAuthLoading;
+
+  return (
+    <div className="space-y-6">
+      <DeploymentSettings
+        onGitHubConnect={handleGitHubConnect}
+        onNetlifyConnect={handleNetlifyConnect}
+        repoName={repoName}
+        setRepoName={setRepoName}
+        siteName={siteName}
+        setSiteName={setSiteName}
+        isDeploying={isDeploying}
+      />
+
+      {/* Deployment Feedback */}
+      {isDeploying && (
+        <div className="flex items-center space-x-2">
+          <Spinner />
+          <span>Deploying your website...</span>
+        </div>
+      )}
+
+      {/* Authentication Error */}
+      {authError && (
+        <div className="flex items-center text-red-500 space-x-2">
+          <Trash2 className="h-5 w-5" />
+          <span>{authError}</span>
+        </div>
+      )}
+
+      {/* Action Buttons */}
+      <div className="flex justify-between items-center">
+        <Button
+          variant="outline"
+          onClick={() => setStep("details")}
+          disabled={isDeploying}
+          aria-label="Back to Details"
+        >
+          Back to Details
+        </Button>
+        <Button
+          onClick={handleSubmit}
+          disabled={isDeploying || isAuthLoading || !userId}
+          aria-label="Create Website"
+        >
+          {isDeploying ? <Spinner className="mr-2 h-4 w-4" /> : null}
+          Create Website
+        </Button>
+      </div>
+    </div>
+  );
+};

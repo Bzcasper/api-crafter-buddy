@@ -53,3 +53,12 @@ export type ContentScheduleEntry = {
   created_at: string;
   created_by: string;
 };
+// src/types/content.ts
+export interface DeploymentSettingsType {
+  title: string;
+  domain: string;
+  selectedTemplate: string;
+  favicon: File | null;
+  primaryColor: string;
+  font: string;
+}
