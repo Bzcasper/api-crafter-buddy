@@ -46,7 +46,7 @@ export const ContentCreationSection = ({
       
       if (error) throw error
 
-      const formattedWebsites = data.map(website => ({
+      const formattedWebsites: Website[] = data.map(website => ({
         id: website.id,
         name: website.title,
         url: website.domain || '',

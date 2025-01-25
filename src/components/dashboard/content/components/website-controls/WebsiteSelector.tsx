@@ -17,9 +17,15 @@ interface WebsiteSelectorProps {
   websites: Website[]
   selectedWebsite: string
   onWebsiteChange: (value: string) => void
+  loading?: boolean
 }
 
-export const WebsiteSelector = ({ websites, selectedWebsite, onWebsiteChange }: WebsiteSelectorProps) => {
+export const WebsiteSelector = ({ 
+  websites, 
+  selectedWebsite, 
+  onWebsiteChange,
+  loading = false 
+}: WebsiteSelectorProps) => {
   const navigate = useNavigate()
 
   const handleManageWebsites = () => {
@@ -45,7 +51,11 @@ export const WebsiteSelector = ({ websites, selectedWebsite, onWebsiteChange }: 
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {websites.length > 0 ? (
+        {loading ? (
+          <div className="text-center text-muted-foreground">
+            Loading websites...
+          </div>
+        ) : websites.length > 0 ? (
           <Select value={selectedWebsite} onValueChange={onWebsiteChange}>
             <SelectTrigger>
               <SelectValue placeholder="Select Website" />
