@@ -4,7 +4,11 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { useToast } from "@/components/ui/use-toast";
 
 // Initialize mapboxgl access token
-mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN || "";
+const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
+if (!mapboxToken) {
+  console.error("Mapbox token is not set in environment variables");
+}
+mapboxgl.accessToken = mapboxToken;
 
 export const PropertyMap = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
@@ -16,9 +20,20 @@ export const PropertyMap = () => {
   useEffect(() => {
     if (!mapContainer.current || mapInstance.current) return;
 
+    if (!mapboxToken) {
+      toast({
+        title: "Configuration Error",
+        description: "Mapbox token is not configured. Please check your environment variables.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     const initializeMap = (coords: [number, number]) => {
       try {
         if (!mapContainer.current) return;
+        
+        console.log("Initializing map with token:", mapboxToken);
         
         // Initialize map
         mapInstance.current = new mapboxgl.Map({
