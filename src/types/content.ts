@@ -6,7 +6,8 @@ export type Platform = {
 
 export type ContentGenerationParams = {
   model: string;
-  website: string;
+  topic: string;
+  prompt: string;
   parameters: {
     creativity: number;
     length: number;
