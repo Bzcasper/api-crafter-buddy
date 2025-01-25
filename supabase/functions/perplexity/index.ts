@@ -1,24 +1,24 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import "https://deno.land/x/xhr@0.1.0/mod.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: corsHeaders })
   }
 
   try {
-    const apiKey = Deno.env.get('PERPLEXITY_API_KEY');
+    const apiKey = Deno.env.get('PERPLEXITY_API_KEY')
     if (!apiKey) {
-      throw new Error('Perplexity API key not configured');
+      throw new Error('Perplexity API key not configured')
     }
 
-    const { content, topic } = await req.json();
-    console.log('Generating content for topic:', topic);
+    const { topic, content } = await req.json()
+    console.log('Generating content for topic:', topic)
 
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
@@ -44,26 +44,26 @@ serve(async (req) => {
         return_images: false,
         return_related_questions: true
       }),
-    });
+    })
 
     if (!response.ok) {
-      throw new Error(`Perplexity API error: ${response.statusText}`);
+      throw new Error(`Perplexity API error: ${response.statusText}`)
     }
 
-    const data = await response.json();
-    console.log('Successfully generated content');
+    const data = await response.json()
+    console.log('Successfully generated content')
 
     return new Response(JSON.stringify(data), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    })
   } catch (error) {
-    console.error('Error in perplexity function:', error);
+    console.error('Error in perplexity function:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
       { 
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
-    );
+    )
   }
-});
+})

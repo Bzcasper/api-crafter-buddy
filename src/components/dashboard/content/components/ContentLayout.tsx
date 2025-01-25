@@ -10,19 +10,22 @@ import { HistorySection } from "./HistorySection"
 import { TemplatesSection } from "./TemplatesSection"
 import { ScraperSection } from "./ScraperSection"
 import { useToast } from "@/hooks/use-toast"
+import { PlatformSelector, type Platform } from "./PlatformSelector"
+import { TopicSelector } from "./TopicSelector"
 
 export const ContentLayout = () => {
   const [content, setContent] = useState("")
   const [saving, setSaving] = useState(false)
   const [selectedModel, setSelectedModel] = useState("gpt-4o-mini")
   const [selectedWebsite, setSelectedWebsite] = useState("")
+  const [selectedPlatforms, setSelectedPlatforms] = useState<Platform[]>([])
+  const [selectedTopic, setSelectedTopic] = useState("")
   const isDesktop = useMediaQuery("(min-width: 1024px)")
   const { toast } = useToast()
 
   const handleSave = async () => {
     setSaving(true)
     try {
-      // Here you would implement the save functionality
       await new Promise(resolve => setTimeout(resolve, 1000))
       toast({
         title: "Content Saved",
@@ -43,6 +46,11 @@ export const ContentLayout = () => {
     console.log(`${type} control changed to ${value}`)
   }
 
+  const handleTopicSelect = (topic: string, suggestedContent: string) => {
+    setSelectedTopic(topic)
+    setContent(suggestedContent)
+  }
+
   return (
     <div className="p-4 lg:p-6 max-w-[2000px] mx-auto">
       <ContentHeader />
@@ -61,6 +69,8 @@ export const ContentLayout = () => {
               onModelSelect={setSelectedModel}
               onWebsiteSelect={setSelectedWebsite}
             />
+            <PlatformSelector onPlatformChange={setSelectedPlatforms} />
+            <TopicSelector onTopicSelect={handleTopicSelect} />
             <ContentControls 
               onControlChange={handleControlChange}
               selectedModel={selectedModel}
