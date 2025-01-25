@@ -280,6 +280,54 @@ export type Database = {
         }
         Relationships: []
       }
+      property_listings: {
+        Row: {
+          address: string
+          auction_date: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          image_url: string | null
+          latitude: number
+          longitude: number
+          price: number
+          status: string
+          title: string
+          type: Database["public"]["Enums"]["property_type"]
+        }
+        Insert: {
+          address: string
+          auction_date?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          latitude: number
+          longitude: number
+          price: number
+          status?: string
+          title: string
+          type: Database["public"]["Enums"]["property_type"]
+        }
+        Update: {
+          address?: string
+          auction_date?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          latitude?: number
+          longitude?: number
+          price?: number
+          status?: string
+          title?: string
+          type?: Database["public"]["Enums"]["property_type"]
+        }
+        Relationships: []
+      }
       scraping_templates: {
         Row: {
           created_at: string
@@ -513,6 +561,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      property_type: "tax_lien" | "new_listing"
       user_role: "admin" | "manager" | "user"
     }
     CompositeTypes: {
