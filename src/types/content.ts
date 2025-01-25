@@ -22,14 +22,14 @@ export type Website = {
   title: string;
   domain?: string | null;
   template: string;
-  settings?: Record<string, any>;
+  settings: Record<string, any>;
   status?: string;
   created_at: string;
   updated_at: string;
   last_published_at?: string | null;
   analytics_id?: string | null;
   favicon_url?: string | null;
-  theme_settings?: {
+  theme_settings: {
     fonts: {
       body: string;
       heading: string;
@@ -41,15 +41,5 @@ export type Website = {
     };
     layout: string;
   };
-  created_by: string;
-};
-
-export type ContentScheduleEntry = {
-  id: string;
-  title: string;
-  time: string;
-  platform: string;
-  status: 'scheduled' | 'published' | 'failed';
-  created_at: string;
   created_by: string;
 };

@@ -48,9 +48,17 @@ export const ContentGenerationForm = () => {
 
       if (websitesData) {
         console.log('Websites fetched:', websitesData);
-        setWebsites(websitesData);
-        if (websitesData.length > 0) {
-          setSelectedWebsite(websitesData[0].id);
+        // Parse the JSON data before setting it to state
+        const parsedWebsites: Website[] = websitesData.map(site => ({
+          ...site,
+          settings: typeof site.settings === 'string' ? JSON.parse(site.settings) : site.settings,
+          theme_settings: typeof site.theme_settings === 'string' 
+            ? JSON.parse(site.theme_settings) 
+            : site.theme_settings
+        }));
+        setWebsites(parsedWebsites);
+        if (parsedWebsites.length > 0) {
+          setSelectedWebsite(parsedWebsites[0].id);
         }
       }
     } catch (error) {
