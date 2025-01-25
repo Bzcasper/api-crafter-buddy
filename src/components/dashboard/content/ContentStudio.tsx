@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
-import { WebsiteSection } from "./components/sections/WebsiteSection"
-import { AIEngineSection } from "./components/sections/AIEngineSection"
+import { WebsiteSelection } from "./components/WebsiteSelection"
+import { AIModelSelection } from "./components/AIModelSelection"
 import { TopicSection } from "./components/sections/TopicSection"
 import { PreviewSection } from "./components/sections/PreviewSection"
 import { SchedulingSection } from "./components/sections/SchedulingSection"
@@ -32,26 +32,13 @@ export const ContentStudio = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-8 space-y-6">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl font-bold">AI Content Studio</h1>
-          <div className="flex gap-4">
-            <Button variant="outline">Preview</Button>
-            <Button variant="default">Generate</Button>
-            <Button variant="default" className="bg-pink-500 hover:bg-pink-600">
-              Schedule
-            </Button>
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          <WebsiteSection />
-          <AIEngineSection />
-          <TopicSection />
-          <PreviewSection />
-          <SchedulingSection />
-          <AnalyticsSection />
-        </div>
+      <div className="flex-1 p-8 space-y-8">
+        <WebsiteSelection />
+        <AIModelSelection />
+        <TopicSection />
+        <PreviewSection />
+        <SchedulingSection />
+        <AnalyticsSection />
       </div>
     </div>
   )
