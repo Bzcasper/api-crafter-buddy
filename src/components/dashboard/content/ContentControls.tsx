@@ -86,15 +86,17 @@ export const ContentControls = ({
         }
       })
 
-      if (error) throw error
+      if (error) {
+        console.error('Error from edge function:', error)
+        throw error
+      }
 
+      console.log('Generated content:', data)
+      
       toast({
         title: "Content Generated",
         description: "Your content has been generated successfully."
       })
-
-      // Here you would typically update the editor with the generated content
-      console.log('Generated content:', data)
 
     } catch (error) {
       console.error('Error generating content:', error)

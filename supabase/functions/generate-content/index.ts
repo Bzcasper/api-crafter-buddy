@@ -31,14 +31,14 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: `You are a content generation expert. Generate content for a ${website?.type || 'website'} 
-                     with creativity level ${parameters?.creativity || 50}, 
-                     tone ${parameters?.tone || 'professional'}, 
-                     and length ${parameters?.length || 'medium'}.`
+            content: `You are a content generation expert. Generate content with:
+              - Creativity level: ${parameters.creativity}/100
+              - Content length: ${parameters.length}/100 (higher means longer content)
+              - Tone level: ${parameters.tone}/100 (higher means more formal/professional)`
           },
           {
             role: 'user',
-            content: 'Generate engaging content based on the parameters provided.'
+            content: `Generate engaging content for website: ${website}`
           }
         ],
       }),
