@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useToast } from "@/components/ui/use-toast";
-import { initializeMap } from "./utils/mapConfig";
+import { initializeMap, mapboxToken } from "./utils/mapConfig";
 import { PropertyMarker } from "./components/PropertyMarker";
 import { usePropertyListings } from "./hooks/usePropertyListings";
 import { MapOverlay } from "./components/MapOverlay";

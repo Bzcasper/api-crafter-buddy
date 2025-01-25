@@ -3,6 +3,8 @@ import mapboxgl from "mapbox-gl";
 export const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
 export const initializeMap = (container: HTMLDivElement, defaultCoordinates: [number, number]): mapboxgl.Map => {
+  mapboxgl.accessToken = mapboxToken;
+  
   const map = new mapboxgl.Map({
     container,
     style: "mapbox://styles/mapbox/streets-v12",
