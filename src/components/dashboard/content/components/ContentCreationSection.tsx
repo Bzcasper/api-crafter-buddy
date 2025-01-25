@@ -6,9 +6,28 @@ import { AIParameterControls } from "./ai-controls/AIParameterControls"
 import { ActionButtons } from "./ActionButtons"
 
 const mockWebsites = [
-  { id: "1", name: "Corporate Blog", url: "blog.example.com", status: "connected" as const },
-  { id: "2", name: "Product Site", url: "products.example.com", status: "connected" as const },
-  { id: "3", name: "Landing Page", url: "landing.example.com", status: "not_connected" as const },
+  { 
+    id: "1", 
+    name: "Corporate Blog", 
+    url: "blog.example.com", 
+    status: "connected" as const,
+    faviconUrl: "/favicon.ico",
+    lastSynced: "2 hours ago"
+  },
+  { 
+    id: "2", 
+    name: "Product Site", 
+    url: "products.example.com", 
+    status: "connected" as const,
+    faviconUrl: "/favicon.ico",
+    lastSynced: "1 day ago"
+  },
+  { 
+    id: "3", 
+    name: "Landing Page", 
+    url: "landing.example.com", 
+    status: "not_connected" as const 
+  },
 ]
 
 export const ContentCreationSection = () => {
