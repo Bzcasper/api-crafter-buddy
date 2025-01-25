@@ -8,38 +8,52 @@ mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN || "";
 
 export const PropertyMap = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
+  const mapInstance = useRef<mapboxgl.Map | null>(null);
   const { toast } = useToast();
 
   const defaultCoordinates: [number, number] = [-118.2437, 34.0522]; // Los Angeles
 
   useEffect(() => {
-    if (!mapContainer.current || map.current) return;
+    if (!mapContainer.current || mapInstance.current) return;
+
+    const initializeMap = (coords: [number, number]) => {
+      try {
+        if (!mapContainer.current) return;
+        
+        // Initialize map
+        mapInstance.current = new mapboxgl.Map({
+          container: mapContainer.current,
+          style: "mapbox://styles/mapbox/light-v11",
+          center: coords,
+          zoom: 12
+        });
+
+        // Add navigation control
+        mapInstance.current.addControl(new mapboxgl.NavigationControl(), "top-right");
+
+        // Add marker
+        mapInstance.current.on("load", () => {
+          new mapboxgl.Marker()
+            .setLngLat(coords)
+            .addTo(mapInstance.current!);
+        });
+
+        console.log("Map initialized successfully");
+      } catch (error) {
+        console.error("Error initializing map:", error);
+        toast({
+          title: "Map Error",
+          description: "Could not initialize the map. Please try again later.",
+          variant: "destructive"
+        });
+      }
+    };
 
     // Request user location
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-
-        // Initialize map
-        map.current = new mapboxgl.Map({
-          container: mapContainer.current!,
-          style: "mapbox://styles/mapbox/light-v11",
-          center: [longitude, latitude],
-          zoom: 12
-        });
-
-        // Add navigation control
-        map.current.addControl(new mapboxgl.NavigationControl(), "top-right");
-
-        // Add marker for user location
-        map.current.on("load", () => {
-          new mapboxgl.Marker()
-            .setLngLat([longitude, latitude])
-            .addTo(map.current!);
-        });
-
-        console.log("Map initialized successfully");
+        initializeMap([longitude, latitude]);
       },
       (error) => {
         console.error("Error getting location:", error);
@@ -48,24 +62,15 @@ export const PropertyMap = () => {
           description: "Could not get your location. Using default location.",
           variant: "destructive"
         });
-
-        // Initialize map with default location
-        map.current = new mapboxgl.Map({
-          container: mapContainer.current!,
-          style: "mapbox://styles/mapbox/light-v11",
-          center: defaultCoordinates,
-          zoom: 12
-        });
-
-        map.current.addControl(new mapboxgl.NavigationControl(), "top-right");
+        initializeMap(defaultCoordinates);
       }
     );
 
     // Cleanup function
     return () => {
-      if (map.current) {
-        map.current.remove();
-        map.current = null;
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
       }
     };
   }, [toast]);
