@@ -32,8 +32,6 @@ export const ContentGenerator = () => {
           </TabsList>
 
           <TabsContent value="generator" className="space-y-6">
-            <ContentControls onControlChange={handleControlChange} />
-            
             <div className="space-y-2">
               <h3 className="text-lg font-semibold">Generated Content</h3>
               <div className="min-h-[300px] p-4 rounded-lg border bg-background">

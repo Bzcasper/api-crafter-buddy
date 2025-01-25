@@ -1,20 +1,10 @@
+import { useState } from "react"
 import { ContentControls } from "../ContentControls"
-import { ContentEditor } from "./ContentEditor"
+import { ContentGenerator } from "./ContentGenerator"
 import { ContentSidebar } from "./ContentSidebar"
 import { ContentHeader } from "./ContentHeader"
-import { useState } from "react"
 
 export const ContentLayout = () => {
-  const [content, setContent] = useState("")
-  const [saving, setSaving] = useState(false)
-
-  const handleSave = async () => {
-    setSaving(true)
-    // Simulate save operation
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    setSaving(false)
-  }
-
   const handleControlChange = (type: string, value: number) => {
     console.log(`${type} control changed to ${value}`)
     // Here you can implement the logic to adjust the content based on controls
@@ -30,14 +20,9 @@ export const ContentLayout = () => {
           <ContentControls onControlChange={handleControlChange} />
         </div>
 
-        {/* Middle Column - Editor */}
+        {/* Middle Column - Generator */}
         <div className="lg:col-span-6">
-          <ContentEditor 
-            content={content}
-            onChange={setContent}
-            onSave={handleSave}
-            saving={saving}
-          />
+          <ContentGenerator />
         </div>
 
         {/* Right Column - Sidebar */}
