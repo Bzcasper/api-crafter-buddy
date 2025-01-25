@@ -1,6 +1,5 @@
 import { supabase } from "@/integrations/supabase/client"
 import { ContentGenerationParams, Website, ContentScheduleEntry } from "@/types/content"
-import { toast } from "@/hooks/use-toast"
 
 export const contentService = {
   async generateContent(params: ContentGenerationParams) {
@@ -29,9 +28,12 @@ export const contentService = {
         .order('created_at', { ascending: false })
 
       if (error) throw error
+      
       return (data || []).map(site => ({
         ...site,
-        status: site.status as "draft" | "published" | "archived"
+        settings: site.settings as Record<string, any>,
+        theme_settings: site.theme_settings as Record<string, any>,
+        status: site.status as Website['status']
       }))
     } catch (error) {
       console.error('Error fetching websites:', error)
@@ -49,34 +51,13 @@ export const contentService = {
         .order('time', { ascending: true })
 
       if (error) throw error
+      
       return (data || []).map(entry => ({
         ...entry,
-        status: entry.status as "published" | "scheduled" | "failed"
+        status: entry.status as ContentScheduleEntry['status']
       }))
     } catch (error) {
       console.error('Error fetching schedule:', error)
-      throw error
-    }
-  },
-
-  async saveSettings(userId: string, settings: any) {
-    console.log('Saving user settings:', settings)
-    
-    try {
-      const { error } = await supabase
-        .from('user_settings')
-        .upsert({
-          user_id: userId,
-          content_settings: settings
-        })
-
-      if (error) throw error
-      toast({
-        title: "Settings Saved",
-        description: "Your preferences have been updated successfully."
-      })
-    } catch (error) {
-      console.error('Error saving settings:', error)
       throw error
     }
   }

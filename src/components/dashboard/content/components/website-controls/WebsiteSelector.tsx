@@ -12,18 +12,16 @@ export interface WebsiteSelectorProps {
   selectedWebsite: string
   onWebsiteChange: (value: string) => void
   loading?: boolean
-  websites?: Website[]
 }
 
 export const WebsiteSelector = ({ 
   selectedWebsite, 
   onWebsiteChange,
   loading = false,
-  websites: initialWebsites = []
 }: WebsiteSelectorProps) => {
   const navigate = useNavigate()
   const { toast } = useToast()
-  const [websites, setWebsites] = useState<Website[]>(initialWebsites)
+  const [websites, setWebsites] = useState<Website[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -42,7 +40,9 @@ export const WebsiteSelector = ({
       if (websitesData) {
         const typedWebsites: Website[] = websitesData.map(site => ({
           ...site,
-          status: site.status as "draft" | "published" | "archived"
+          settings: site.settings as Record<string, any>,
+          theme_settings: site.theme_settings as Record<string, any>,
+          status: site.status as Website['status']
         }))
         setWebsites(typedWebsites)
         if (typedWebsites.length === 1 && !selectedWebsite) {

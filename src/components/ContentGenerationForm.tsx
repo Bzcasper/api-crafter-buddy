@@ -35,13 +35,6 @@ export const ContentGenerationForm = () => {
       };
 
       const generatedContent = await contentService.generateContent(params);
-      setProgress(75);
-
-      await contentService.generateContent({
-        ...params,
-        content: generatedContent.choices[0].message.content
-      });
-
       setProgress(100);
 
       toast({

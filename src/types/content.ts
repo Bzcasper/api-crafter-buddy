@@ -21,20 +21,18 @@ export interface Platform {
 export interface Website {
   id: string;
   title: string;
-  domain?: string;
+  domain?: string | null;
+  template: string;
+  settings: Record<string, any>;
   status: "draft" | "published" | "archived";
-  favicon_url?: string;
   created_at: string;
   updated_at: string;
   created_by: string;
-  template: string;
-  settings?: Record<string, any>;
-  theme_settings?: Record<string, any>;
-  analytics_id?: string;
-  last_published_at?: string;
+  analytics_id?: string | null;
+  favicon_url?: string | null;
+  last_published_at?: string | null;
+  theme_settings: Record<string, any>;
 }
-
-export interface WebsiteData extends Website {}
 
 export interface ContentScheduleEntry {
   id: string;
