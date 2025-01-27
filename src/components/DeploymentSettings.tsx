@@ -1,10 +1,9 @@
-// src/components/DeploymentSettings.tsx
 import { FC, ChangeEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { GitHub, Netlify } from "lucide-react";
+import { Github, Globe } from "lucide-react";
 
 interface DeploymentSettingsProps {
   onGitHubConnect: () => void;
@@ -39,7 +38,7 @@ export const DeploymentSettings: FC<DeploymentSettingsProps> = ({
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <GitHub className="h-5 w-5" />
+            <Github className="h-5 w-5" />
             Deploy to GitHub
           </CardTitle>
         </CardHeader>
@@ -71,7 +70,7 @@ export const DeploymentSettings: FC<DeploymentSettingsProps> = ({
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Netlify className="h-5 w-5" />
+            <Globe className="h-5 w-5" />
             Deploy to Netlify
           </CardTitle>
         </CardHeader>

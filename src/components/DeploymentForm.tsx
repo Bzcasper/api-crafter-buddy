@@ -1,4 +1,3 @@
-// src/components/DeploymentForm.tsx
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { DeploymentSettings } from "./DeploymentSettings";
@@ -6,17 +5,14 @@ import { useWebsiteCreation } from "./WebsiteCreationContext";
 import { useAuth } from "@/hooks/useAuth";
 import { useDeployment } from "@/hooks/useDeployment";
 import { Spinner } from "@/components/ui/spinner";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
-import { Trash2, Edit2 } from "lucide-react";
-import { useState, useCallback } from "react";
-import { useRouter } from "next/router";
+import { useNavigate } from "react-router-dom";
 
 export const DeploymentForm: React.FC = () => {
   const { state, setStep } = useWebsiteCreation();
   const { userId, isLoading: isAuthLoading, error: authError } = useAuth();
   const { isDeploying, deployToGitHub, deployToNetlify, createNewWebsite } = useDeployment();
   const { toast } = useToast();
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const [repoName, setRepoName] = useState<string>("");
   const [siteName, setSiteName] = useState<string>("");
@@ -72,11 +68,11 @@ export const DeploymentForm: React.FC = () => {
     try {
       await createNewWebsite(state);
       // Redirect to website management using Next.js router
-      await router.push("/dashboard/website-management");
+      navigate("/dashboard/website-management");
     } catch (error) {
       // Error handled within the hook
     }
-  }, [createNewWebsite, state, toast, userId, router]);
+  }, [createNewWebsite, state, toast, userId, navigate]);
 
   const isDisabled = isDeploying || isAuthLoading;
 

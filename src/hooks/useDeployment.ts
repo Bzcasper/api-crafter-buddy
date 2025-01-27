@@ -1,4 +1,3 @@
-// src/hooks/useDeployment.ts
 import { useState, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,11 +17,10 @@ export const useDeployment = (): UseDeploymentReturn => {
 
   const deployToGitHub = useCallback(async (repoName: string) => {
     try {
-      const { data: session, error: sessionError } = await supabase.auth.getSession();
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
 
       if (sessionError) throw sessionError;
-
-      if (!session?.user?.id) {
+      if (!sessionData?.session?.user?.id) {
         toast({
           title: "Authentication Required",
           description: "Please log in to connect to GitHub.",
@@ -63,11 +61,10 @@ export const useDeployment = (): UseDeploymentReturn => {
   const deployToNetlify = useCallback(
     async (siteName: string, settings: DeploymentSettingsType) => {
       try {
-        const { data: session, error: sessionError } = await supabase.auth.getSession();
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
 
         if (sessionError) throw sessionError;
-
-        if (!session?.user?.id) {
+        if (!sessionData?.session?.user?.id) {
           toast({
             title: "Authentication Required",
             description: "Please log in to deploy to Netlify.",
@@ -114,11 +111,10 @@ export const useDeployment = (): UseDeploymentReturn => {
     async (settings: DeploymentSettingsType) => {
       try {
         setIsDeploying(true);
-        const { data: session, error: sessionError } = await supabase.auth.getSession();
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
 
         if (sessionError) throw sessionError;
-
-        if (!session?.user?.id) {
+        if (!sessionData?.session?.user?.id) {
           toast({
             title: "Authentication Required",
             description: "Please log in to create a website.",
@@ -148,7 +144,7 @@ export const useDeployment = (): UseDeploymentReturn => {
             },
           },
           faviconUrl,
-          userId: session.user.id,
+          userId: sessionData.session.user.id,
         });
 
         toast({
