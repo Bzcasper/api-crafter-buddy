@@ -1,3 +1,4 @@
+import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { DeploymentSettings } from "./DeploymentSettings";
@@ -6,6 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useDeployment } from "@/hooks/useDeployment";
 import { Spinner } from "@/components/ui/spinner";
 import { useNavigate } from "react-router-dom";
+import { Trash2 } from "lucide-react";
 
 export const DeploymentForm: React.FC = () => {
   const { state, setStep } = useWebsiteCreation();
@@ -91,7 +93,7 @@ export const DeploymentForm: React.FC = () => {
       {/* Deployment Feedback */}
       {isDeploying && (
         <div className="flex items-center space-x-2">
-          <Spinner />
+          <Spinner size="sm" />
           <span>Deploying your website...</span>
         </div>
       )}
@@ -119,7 +121,7 @@ export const DeploymentForm: React.FC = () => {
           disabled={isDeploying || isAuthLoading || !userId}
           aria-label="Create Website"
         >
-          {isDeploying ? <Spinner className="mr-2 h-4 w-4" /> : null}
+          {isDeploying ? <Spinner size="sm" className="mr-2" /> : null}
           Create Website
         </Button>
       </div>
