@@ -27,11 +27,13 @@ import { WebsiteCreationForm } from "@/components/website/WebsiteCreationForm"
 const queryClient = new QueryClient()
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const [session, setSession] = useState(null)
+  const [session, setSession] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    console.log("Checking authentication status...")
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log("Session data:", session)
       setSession(session)
       setLoading(false)
     })
@@ -39,6 +41,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
+      console.log("Auth state changed:", session)
       setSession(session)
     })
 
@@ -50,6 +53,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!session) {
+    console.log("No session found, redirecting to auth...")
     return <Navigate to="/auth" />
   }
 
@@ -63,9 +67,13 @@ const App = () => (
         <Toaster />
         <Sonner />
         <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
+
+          {/* Protected Dashboard Routes */}
           <Route
             path="/dashboard"
             element={
@@ -89,7 +97,9 @@ const App = () => (
             <Route path="reports" element={<AdvancedReports />} />
             <Route path="settings" element={<SystemSettings />} />
           </Route>
-          <Route path="/" element={<Index />} />
+
+          {/* Catch all route - redirect to home */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </TooltipProvider>
     </BrowserRouter>

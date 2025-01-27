@@ -49,6 +49,11 @@ export type ContentGenerationParams = {
   platforms: Platform[];
 };
 
+export type GenerateContentResponse = {
+  content: string;
+  metadata?: Record<string, any>;
+};
+
 export type ContentScheduleEntry = {
   id: string;
   title: string;
@@ -57,4 +62,13 @@ export type ContentScheduleEntry = {
   status: 'scheduled' | 'published' | 'failed';
   created_at: string;
   created_by: string;
+};
+
+export type DeploymentSettingsType = {
+  title: string;
+  domain: string;
+  selectedTemplate: string;
+  favicon: File | null;
+  primaryColor: string;
+  font: string;
 };

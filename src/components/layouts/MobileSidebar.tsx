@@ -1,17 +1,17 @@
-import { Sheet, SheetContent } from "@/components/ui/sheet";
-import { DashboardSidebarContent } from "@/components/dashboard/DashboardSidebarContent";
+import { Sheet, SheetContent } from "@/components/ui/sheet"
+import { DashboardSidebarContent } from "@/components/dashboard/DashboardSidebarContent"
 
 interface MobileSidebarProps {
-  isOpen: boolean;
-  onClose: () => void;
+  isOpen: boolean
+  onClose: () => void
 }
 
-export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
+export const MobileSidebar = ({ isOpen, onClose }: MobileSidebarProps) => {
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent side="left" className="p-0">
-        <DashboardSidebarContent collapsed={false} />
+        <DashboardSidebarContent />
       </SheetContent>
     </Sheet>
-  );
+  )
 }
