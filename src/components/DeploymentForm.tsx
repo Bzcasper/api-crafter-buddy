@@ -36,7 +36,7 @@ export const DeploymentForm: React.FC = () => {
       const result = await deployToGitHub(repoName.trim());
       console.log('GitHub connection result:', result);
       
-      if (result && result.success) {
+      if (result?.success) {
         toast({
           title: "Success",
           description: "GitHub repository created successfully!",
