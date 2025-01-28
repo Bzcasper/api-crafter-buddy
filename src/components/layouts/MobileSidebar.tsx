@@ -10,7 +10,7 @@ export const MobileSidebar = ({ isOpen, onClose }: MobileSidebarProps) => {
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent side="left" className="p-0">
-        <DashboardSidebarContent />
+        <DashboardSidebarContent collapsed={false} />
       </SheetContent>
     </Sheet>
   )
