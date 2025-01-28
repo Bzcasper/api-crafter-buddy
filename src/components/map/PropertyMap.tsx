@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { Loader2 } from 'lucide-react'
+import { usePropertyListings } from './hooks/usePropertyListings'
+import { PropertyMarker } from './components/PropertyMarker'
 
 // Set the access token from environment variables
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN
@@ -10,6 +12,7 @@ export const PropertyMap = () => {
   const mapContainer = useRef<HTMLDivElement>(null)
   const map = useRef<mapboxgl.Map | null>(null)
   const [loading, setLoading] = useState(true)
+  const { data: properties, isLoading: propertiesLoading } = usePropertyListings()
 
   useEffect(() => {
     if (!mapContainer.current) return
@@ -87,9 +90,32 @@ export const PropertyMap = () => {
     }
   }, [])
 
+  // Add markers when properties data is loaded
+  useEffect(() => {
+    if (!map.current || !properties) return
+
+    // Add markers for each property
+    properties.forEach(property => {
+      if (property.latitude && property.longitude) {
+        new PropertyMarker({
+          map: map.current!,
+          property: {
+            latitude: property.latitude,
+            longitude: property.longitude,
+            type: property.type,
+            title: property.title,
+            address: property.address,
+            price: property.price,
+            auction_date: property.auction_date
+          }
+        })
+      }
+    })
+  }, [properties])
+
   return (
     <div className="relative w-full h-full rounded-lg overflow-hidden">
-      {loading && (
+      {(loading || propertiesLoading) && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80 backdrop-blur-sm z-10">
           <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
         </div>
