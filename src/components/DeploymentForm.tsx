@@ -32,10 +32,26 @@ export const DeploymentForm: React.FC = () => {
     }
 
     try {
-      await deployToGitHub(repoName.trim());
-      setRepoName(""); // Reset the input after successful deployment
-    } catch (error) {
-      // Error handled within the hook
+      console.log('Attempting to connect to GitHub with repo name:', repoName.trim());
+      const result = await deployToGitHub(repoName.trim());
+      console.log('GitHub connection result:', result);
+      
+      if (result && result.success) {
+        toast({
+          title: "Success",
+          description: "GitHub repository created successfully!",
+        });
+        setRepoName(""); // Reset the input after successful deployment
+      } else {
+        throw new Error(result?.error || 'Failed to create GitHub repository');
+      }
+    } catch (error: any) {
+      console.error('Error connecting to GitHub:', error);
+      toast({
+        title: "GitHub Connection Failed",
+        description: error.message || "Failed to connect to GitHub. Please try again.",
+        variant: "destructive",
+      });
     }
   }, [deployToGitHub, repoName, toast]);
 
@@ -50,10 +66,16 @@ export const DeploymentForm: React.FC = () => {
     }
 
     try {
+      console.log('Attempting to connect to Netlify with site name:', siteName.trim());
       await deployToNetlify(siteName.trim(), state);
       setSiteName(""); // Reset the input after successful deployment
-    } catch (error) {
-      // Error handled within the hook
+    } catch (error: any) {
+      console.error('Error connecting to Netlify:', error);
+      toast({
+        title: "Netlify Connection Failed",
+        description: error.message || "Failed to connect to Netlify. Please try again.",
+        variant: "destructive",
+      });
     }
   }, [deployToNetlify, siteName, state, toast]);
 
@@ -68,15 +90,19 @@ export const DeploymentForm: React.FC = () => {
     }
 
     try {
+      console.log('Attempting to create new website');
       await createNewWebsite(state);
-      // Redirect to website management using Next.js router
+      console.log('Website created successfully');
       navigate("/dashboard/website-management");
-    } catch (error) {
-      // Error handled within the hook
+    } catch (error: any) {
+      console.error('Error creating website:', error);
+      toast({
+        title: "Website Creation Failed",
+        description: error.message || "Failed to create website. Please try again.",
+        variant: "destructive",
+      });
     }
   }, [createNewWebsite, state, toast, userId, navigate]);
-
-  const isDisabled = isDeploying || isAuthLoading;
 
   return (
     <div className="space-y-6">
@@ -90,7 +116,6 @@ export const DeploymentForm: React.FC = () => {
         isDeploying={isDeploying}
       />
 
-      {/* Deployment Feedback */}
       {isDeploying && (
         <div className="flex items-center space-x-2">
           <Spinner size="sm" />
@@ -98,7 +123,6 @@ export const DeploymentForm: React.FC = () => {
         </div>
       )}
 
-      {/* Authentication Error */}
       {authError && (
         <div className="flex items-center text-red-500 space-x-2">
           <Trash2 className="h-5 w-5" />
@@ -106,7 +130,6 @@ export const DeploymentForm: React.FC = () => {
         </div>
       )}
 
-      {/* Action Buttons */}
       <div className="flex justify-between items-center">
         <Button
           variant="outline"

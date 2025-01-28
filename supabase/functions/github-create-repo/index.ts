@@ -1,5 +1,4 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -16,11 +15,19 @@ serve(async (req) => {
     const { repoName } = await req.json()
     const githubToken = Deno.env.get('GITHUB_ACCESS_TOKEN')
     
+    console.log('Starting GitHub repository creation process')
+    
     if (!githubToken) {
+      console.error('GitHub token not configured')
       throw new Error('GitHub token not configured')
     }
 
-    console.log('Creating GitHub repository:', repoName)
+    if (!repoName) {
+      console.error('Repository name not provided')
+      throw new Error('Repository name is required')
+    }
+
+    console.log(`Creating GitHub repository: ${repoName}`)
 
     // Create repository on GitHub
     const response = await fetch('https://api.github.com/user/repos', {
@@ -37,21 +44,30 @@ serve(async (req) => {
       }),
     })
 
+    const responseData = await response.json()
+
     if (!response.ok) {
-      const error = await response.json()
-      console.error('GitHub API error:', error)
-      throw new Error(`GitHub API error: ${error.message}`)
+      console.error('GitHub API error:', responseData)
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: `GitHub API error: ${responseData.message}` 
+        }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: response.status,
+        },
+      )
     }
 
-    const repo = await response.json()
-    console.log('Repository created successfully:', repo.html_url)
+    console.log('Repository created successfully:', responseData.html_url)
 
     return new Response(
       JSON.stringify({ 
         success: true, 
         data: { 
-          html_url: repo.html_url,
-          clone_url: repo.clone_url,
+          html_url: responseData.html_url,
+          clone_url: responseData.clone_url,
         }
       }),
       { 
