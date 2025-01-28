@@ -97,18 +97,21 @@ export const PropertyMap = () => {
     // Add markers for each property
     properties.forEach(property => {
       if (property.latitude && property.longitude) {
-        new PropertyMarker({
-          map: map.current!,
-          property: {
-            latitude: property.latitude,
-            longitude: property.longitude,
-            type: property.type,
-            title: property.title,
-            address: property.address,
-            price: property.price,
-            auction_date: property.auction_date
-          }
-        })
+        const marker = new mapboxgl.Marker()
+          .setLngLat([property.longitude, property.latitude])
+          .addTo(map.current!)
+
+        // Add popup with property information
+        const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
+          <div class="p-2">
+            <h3 class="font-bold">${property.title}</h3>
+            <p class="text-sm">${property.address}</p>
+            <p class="text-sm font-bold">$${property.price.toLocaleString()}</p>
+            ${property.auction_date ? `<p class="text-sm">Auction: ${new Date(property.auction_date).toLocaleDateString()}</p>` : ''}
+          </div>
+        `)
+
+        marker.setPopup(popup)
       }
     })
   }, [properties])
